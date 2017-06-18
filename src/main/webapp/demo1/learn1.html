@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="jquery-3.2.1.js"></script>
+<script type="text/javascript" src="vue.js"></script>
+<title>dict-demo1</title>
+</head>
+<body>
+	<div id="div1">
+		<input v-model="b" value="x" /> {{b}}
+	</div>
+</body>
+<script type="text/javascript">
+	var app = new Vue({
+		el : '#div1',
+		data : {
+			b : 'daa'
+		}
+	});
+</script>
+</html>

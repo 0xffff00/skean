@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="el-555.css">
+	<style>.haha{color:red;background:yellow;}
+	</style>
+	<title>dict-demo2</title>
+</head>
+
+<body>
+	<div id="s4g-body">
+	
+<el-table
+    :data="tableData"
+    border
+    style1="width: 100%"
+    :default-sort = "{prop: 'date', order: 'descending'}"
+    >
+    <el-table-column
+      prop="word"
+      label="单词"
+      sortable
+      >
+    </el-table-column>
+    <el-table-column
+      prop="qual"
+      label="限定词"
+      sortable
+      >
+    </el-table-column>
+    <el-table-column
+      prop="lang"
+      label="语言"
+      >
+    </el-table-column>
+    <el-table-column
+      prop="type"
+      label="类型"
+      >
+      </el-table-column>
+    <el-table-column label="操作">
+      <template scope="scope">
+        <el-button
+          size="small"
+          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+        <el-button
+          size="small"
+          type="danger"
+          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+	
+	
+	</div>
+	
+</body>
+
+<script type="text/javascript" src="vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script type="text/javascript">
+
+	var tb=new Vue({
+		el: 'el-table',	
+		data:{
+			tableData: null
+		},
+		computed:{
+			
+		},
+// 		methods: {
+// 		      handleEdit(index, row) {
+// 		        console.log(index, row);
+// 		      },
+// 		      handleDelete(index, row) {
+// 		        console.log(index, row);
+// 		      }
+// 		    }
+	})
+	
+	function fetch1(){
+		fetch('http://localhost:8080/webs4g-basic/dict/nouns/')
+		.then(r => r.json())
+		.then(data => tb.tableData = data)
+	}
+	fetch1();
+
+</script>
+
+</html>
