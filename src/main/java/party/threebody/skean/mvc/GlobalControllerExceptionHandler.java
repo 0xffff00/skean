@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -65,6 +66,11 @@ public class GlobalControllerExceptionHandler {
 		return handleApiError(e, HttpStatus.CONFLICT);
 	}
 
+	@ExceptionHandler(EmptyResultDataAccessException.class)
+	public ResponseEntity<ApiErrorBody> handleGetEmpty(Exception e) {
+		ApiErrorBody errBody = new ApiErrorBody(0, "resouces not found.", null);
+		return new ResponseEntity<ApiErrorBody>(errBody, HttpStatus.NOT_FOUND);
+	}
 }
 
 class ApiErrorBody {

@@ -25,6 +25,7 @@ public class GenericMapCrudRestControllerTemplate {
 
 	public Map<String, Object> get(String table, Map<String, Object> byWhat) {
 		return genericMapCrudService.get(table, byWhat);
+
 	}
 
 	public Map<String, Object> get(String table, String[] byCols, Object[] byVals) {
@@ -68,24 +69,28 @@ public class GenericMapCrudRestControllerTemplate {
 
 	public ResponseEntity<Map<String, Object>> update(String table, Map<String, Object> changes,
 			Map<String, Object> byWhat) {
-		int rna = genericMapCrudService.update(table, changes, byWhat);
-		if (rna == 0) {
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
-		}
-		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
+		return respondUD(genericMapCrudService.update(table, changes, byWhat));
+	}
+
+	public ResponseEntity<Map<String, Object>> update(String table, String[] afCols, Map<String, Object> changes,
+			String[] byCols, Map<String, Object> byWhat) {
+		return respondUD(genericMapCrudService.update(table, afCols, changes, byCols, byWhat));
 	}
 
 	public ResponseEntity<Map<String, Object>> delete(String table, Map<String, Object> byWhat) {
-		int rna = genericMapCrudService.delete(table, byWhat);
-		if (rna == 0) {
-			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
-		}
-		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
+		return respondUD(genericMapCrudService.delete(table, byWhat));
+	}
+
+	public ResponseEntity<Map<String, Object>> delete(String table, String[] byCols, String[] byVals) {
+		return respondUD(genericMapCrudService.delete(table, byCols, byVals));
 	}
 
 	public ResponseEntity<Map<String, Object>> delete(String table, String[] byCols, Map<String, Object> byWhat) {
-		int rna = genericMapCrudService.delete(table, byCols, byWhat);
-		if (rna == 0) {
+		return respondUD(genericMapCrudService.delete(table, byCols, byWhat));
+	}
+
+	private ResponseEntity<Map<String, Object>> respondUD(int rowNumAffected) {
+		if (rowNumAffected == 0) {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
 		}
 		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);

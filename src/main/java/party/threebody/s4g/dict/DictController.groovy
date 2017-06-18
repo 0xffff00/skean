@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -29,14 +30,14 @@ class DictController {
 	}
 
 	@PostMapping("/nouns")
-	public ResponseEntity createNoun(@RequestParam Map reqestParamMap ){
+	public ResponseEntity createNoun(@RequestParam Map reqestParamMap){
 		controllerTemplate.createAndGet(table, afCols, reqestParamMap, byCols)
 	}
 
 
 
 	@DeleteMapping("/nouns/{word}")
-	public ResponseEntity deleteNoun(@PathVariable String word  ){
+	public ResponseEntity deleteNoun(@PathVariable String word){
 		controllerTemplate.delete(table, byCols, [word,''] as String[])
 	}
 	@PutMapping("/nouns/{word}")
@@ -44,7 +45,10 @@ class DictController {
 		//TODO distinguish path var & post var
 		controllerTemplate.update(table, afCols, reqestParamMap, byCols,[word,''] as String[])
 	}
-
+	@PatchMapping("/nouns/{word}")
+	public ResponseEntity patchNoun(@RequestBody Map reqestParamMap,@PathVariable String word ){
+		controllerTemplate.update(table, reqestParamMap, [word:word,qual:''])
+	}
 	@GetMapping('/nouns/{word:[^()]+}')
 	public Noun getNoun(@PathVariable String word){
 		dictService.getNoun(word)
