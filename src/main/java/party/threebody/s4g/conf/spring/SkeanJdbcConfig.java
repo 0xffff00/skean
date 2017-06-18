@@ -28,7 +28,9 @@ public class SkeanJdbcConfig {
 	@Bean
 	ChainedJdbcTemplate chainedJdbcTemplate(DataSource dataSource, JdbcTemplate jdbcTmpl, NamedParameterJdbcTemplate npJdbcTmpl) {
 		SqlBuilderConfig sqlBuilderConfig = new SqlBuilderConfig();
+		sqlBuilderConfig.setEnableBackquote("true");
 		SqlBuilder sqlBuilder = new SqlBuilderMysqlImpl(sqlBuilderConfig);
+		
 		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext(dataSource, jdbcTmpl, npJdbcTmpl, sqlBuilder);
 		return new ChainedJdbcTemplate(pc);
 	}

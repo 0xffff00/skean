@@ -54,9 +54,9 @@ class QueryParamsBuildUtils {
 			String v = map.get(k);
 			if (StringUtils.isNotEmpty(v)) {
 				try {
-					return Integer.valueOf(map.get(v));
+					return Integer.valueOf(v);
 				} catch (NumberFormatException e) {
-					throw new SkeanException(e);
+					throw new SkeanException("not numeric value: [" + k + "=" + v + "]", e);
 				}
 			}
 		}

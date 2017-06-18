@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
 
-public class SqlPhrase extends DefaultRootPhrase{
+public class SqlPhrase extends DefaultRootPhrase {
 
 	static Logger logger = LoggerFactory.getLogger(SqlPhrase.class);
 
@@ -20,15 +20,12 @@ public class SqlPhrase extends DefaultRootPhrase{
 	Map<String, Object> argMap;
 	Object[] args;
 
-	
-	
-	public SqlPhrase(ChainedJdbcTemplateContext context, String table) {
+	public SqlPhrase(ChainedJdbcTemplateContext context, String sql) {
 		super();
 		this.context = context;
+		this.sql = sql;
 	}
 
-	
-	
 	// ------ args value filling --------
 	protected ArgPhrase argArr(Object[] vals) {
 		this.args = vals;
@@ -67,18 +64,19 @@ public class SqlPhrase extends DefaultRootPhrase{
 	public List<Map<String, Object>> list() {
 		return context.getJdbcTmpl().query(sql, args, context.getColumnMapRowMapper());
 	}
+
 	@Override
 	public <T> List<T> list(Class<T> elementType) {
 		return context.getJdbcTmpl().queryForList(sql, elementType, args);
 	}
+
 	@Override
 	public <T> List<T> list(RowMapper<T> rowMapper) {
 		return context.getJdbcTmpl().query(sql, args, rowMapper);
 	}
 
-	
-	public <T> T single(Class<T> elementType) {		
-		return context.getJdbcTmpl().queryForObject(sql, args,elementType);
+	public <T> T single(Class<T> elementType) {
+		return context.getJdbcTmpl().queryForObject(sql, args, elementType);
 	}
 
 	// ------ modifying --------
@@ -88,5 +86,4 @@ public class SqlPhrase extends DefaultRootPhrase{
 
 	}
 
-	
 }

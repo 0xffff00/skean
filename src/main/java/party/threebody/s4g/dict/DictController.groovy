@@ -1,9 +1,13 @@
 package party.threebody.s4g.dict
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -15,32 +19,45 @@ import party.threebody.skean.mvc.generic.GenericMapCrudRestControllerTemplate
 @RequestMapping("/dict")
 class DictController {
 	@Autowired GenericMapCrudRestControllerTemplate controllerTemplate;
-	final tableName='dct_noun'
-	final pkCols=['word', 'qual']
+	@Autowired DictService dictService;
+	final table='dct_noun'
+	final String[] byCols=['word', 'qual']
+	final String[] afCols=['word', 'qual', 'lang', 'type']
 	@GetMapping("/nouns")
 	public ResponseEntity listNouns(@RequestParam Map reqestParamMap){
-		controllerTemplate.list(tableName,reqestParamMap )
+		controllerTemplate.list(table,reqestParamMap )
 	}
 
+	@PostMapping("/nouns")
 	public ResponseEntity createNoun(@RequestParam Map reqestParamMap ){
-		controllerTemplate.createAndGet(tableName, reqestParamMap, pkCols)
+		controllerTemplate.createAndGet(table, afCols, reqestParamMap, byCols)
 	}
 
-	public ResponseEntity deleteNoun(@RequestParam Map reqestParamMap ){
-		controllerTemplate.delete(tableName, reqestParamMap, pkCols)
+
+
+	@DeleteMapping("/nouns/{word}")
+	public ResponseEntity deleteNoun(@PathVariable String word  ){
+		controllerTemplate.delete(table, byCols, [word,''] as String[])
+	}
+	@PutMapping("/nouns/{word}")
+	public ResponseEntity updateNoun(@RequestBody Map reqestParamMap,@PathVariable String word ){
+		//TODO distinguish path var & post var
+		controllerTemplate.update(table, afCols, reqestParamMap, byCols,[word,''] as String[])
 	}
 
-	public ResponseEntity updateNoun(@RequestParam Map reqestParamMap ){
-		controllerTemplate.update(tableName, reqestParamMap, pkCols)
+	@GetMapping('/nouns/{word:[^()]+}')
+	public Noun getNoun(@PathVariable String word){
+		dictService.getNoun(word)
 	}
 
-	@RequestMapping('/nouns/{word}')
-	public ResponseEntity getNoun(String word){
-		getNoun(word,null)
+	@GetMapping('/nouns/x2/{word}')
+	public Noun getNoun2(@PathVariable String word){
+		dictService.getNoun2(word)
 	}
 
-	@RequestMapping('/nouns/{word}({qual})')
-	public ResponseEntity getNoun(String word,String qual){
-		controllerTemplate.get(tableName, [word:word,qual:qual])
+	@GetMapping('/nouns/x3/{word}({qual})')
+	public Noun getNoun3(String word,String qual){
+		//controllerTemplate.get(table, [word:word,qual:qual])
+		dictService.getNoun(word, qual)
 	}
 }

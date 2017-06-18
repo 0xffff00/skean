@@ -1,5 +1,7 @@
 package party.threebody.skean.jdbc.phrase;
 
+import java.util.Arrays;
+
 public class SqlAndArgs {
 	String sql;
 	Object[] args;
@@ -12,7 +14,11 @@ public class SqlAndArgs {
 
 	@Override
 	public String toString() {
-		return toANSIString();
+		return toPlainString();
+	}
+
+	public String toPlainString() {
+		return sql + "\n>>>>" + Arrays.toString(args);
 	}
 
 	public String toANSIString() {

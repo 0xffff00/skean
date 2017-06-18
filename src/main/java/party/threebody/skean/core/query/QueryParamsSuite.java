@@ -42,12 +42,20 @@ public class QueryParamsSuite {
 		return pageLength;
 	}
 
+	public int getPageIndexNonNull() {
+		return pageIndex == null ? 1 : pageIndex;
+	}
+
+	public int getPageLengthNonNull() {
+		return pageLength == null ? 0 : pageLength;
+	}
+
 	public void setPageLength(Integer pageLength) {
 		this.pageLength = pageLength;
 	}
 
 	public boolean isPaginationEnabled() {
-		return pageLength > 0;
+		return pageLength != null && pageLength > 0;
 	}
 
 }

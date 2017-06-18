@@ -9,6 +9,10 @@ public class OrderByPhrase implements Phrase {
 
 	private FromPhrase root;
 
+	OrderByPhrase(FromPhrase root) {
+		this.root = root;
+	}
+
 	// ------ paging --------
 	public PagePhrase page(int page, int size) {
 		return root.page(page, size);
@@ -23,20 +27,19 @@ public class OrderByPhrase implements Phrase {
 	}
 
 	// ------ fetching --------
-	OrderByPhrase(FromPhrase root) {
-		this.root = root;
-	}
 
-	public List<Map<String,Object>> list() {
+	public List<Map<String, Object>> list() {
 		return root.list();
 	}
+
 	public <T> List<T> list(Class<T> elementType) {
 		return root.list(elementType);
 	}
+
 	public <T> List<T> list(RowMapper<T> rowMapper) {
 		return root.list(rowMapper);
 	}
-	
+
 	public Map<String, Object> first() {
 		return root.first();
 	}

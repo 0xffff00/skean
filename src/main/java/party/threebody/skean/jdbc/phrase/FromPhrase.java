@@ -32,7 +32,7 @@ public class FromPhrase extends DefaultRootPhrase {
 	Object valObj;
 	Map<String, Object> valMap;
 	Object[] valArr;
-	
+
 	boolean afValEnabled;
 	Object afValObj;
 	Map<String, Object> afValMap;
@@ -46,7 +46,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		this.context = context;
 		this.table = table;
 		enableCount = false;
-		valEnabled=afValEnabled = false;
+		valEnabled = afValEnabled = false;
 		limit = offset = 0;
 	}
 
@@ -57,7 +57,8 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	// ------ suite -------
 	public PagePhrase suite(QueryParamsSuite qps) {
-		return criteria(qps.getCriteria()).orderBy(qps.getSortingField()).page(qps.getPageIndex(), qps.getPageLength());
+		return criteria(qps.getCriteria()).orderBy(qps.getSortingField()).page(qps.getPageIndexNonNull(),
+				qps.getPageLengthNonNull());
 	}
 
 	// ------ filtering --------
@@ -65,7 +66,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		colsBy = cols;
 		return new ByPhrase(this);
 	}
-	
+
 	public ValPhrase by(Map<String, Object> colsNameValMap) {
 		String[] cols = colsNameValMap.keySet().toArray(new String[0]);
 		return by(cols).valMap(colsNameValMap);
@@ -99,7 +100,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		this.valObj = vals;
 		return new ValPhrase(this);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected ValPhrase val(Object... val) {
 		if (val == null || val.length == 0) {
@@ -135,7 +136,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		this.afValObj = vals;
 		return new AffectValPhrase(this);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected AffectValPhrase afVal(Object... val) {
 		if (val == null || val.length == 0) {
@@ -152,7 +153,6 @@ public class FromPhrase extends DefaultRootPhrase {
 		}
 		return afValArr(val);
 	}
-	
 
 	// ------ sorting --------
 	public OrderByPhrase orderBy(String... cols) {
@@ -166,12 +166,12 @@ public class FromPhrase extends DefaultRootPhrase {
 	}
 
 	// ------ paging --------
-	public PagePhrase page(int page, int size) {
+	public PagePhrase page(int page, Integer size) {
 		if (page < 1) {
 			throw new ChainedJdbcTemplateException("page index should be a positive number.");
 		}
-		if (size < 1) {
-			throw new ChainedJdbcTemplateException("page size should be a positive number.");
+		if (size < 0) {
+			throw new ChainedJdbcTemplateException("page size should be a non-negative number.");
 		}
 		this.limit = size;
 		this.offset = (page - 1) * size;
@@ -214,12 +214,11 @@ public class FromPhrase extends DefaultRootPhrase {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
 		return context.getJdbcTmpl().queryForObject(sa.sql, elementType);
 	}
-	
-	public Map<String,Object> single(){
-		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().queryForMap(sa.sql);
-	}
 
+	public Map<String, Object> single() {
+		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
+		return context.getJdbcTmpl().queryForMap(sa.sql, sa.args);
+	}
 
 	// ------ modifying --------
 
@@ -228,11 +227,11 @@ public class FromPhrase extends DefaultRootPhrase {
 		return new AffectPhrase(this);
 	}
 
-	public AffectValPhrase affect(Map<String,Object> colsNameValMap) {
+	public AffectValPhrase affect(Map<String, Object> colsNameValMap) {
 		String[] cols = colsNameValMap.keySet().toArray(new String[0]);
 		return affect(cols).valMap(colsNameValMap);
 	}
-	
+
 	protected int insert() {
 		SqlAndArgs sa = context.getSqlBuilder().buildInsertSql(this);
 		return context.getJdbcTmpl().update(sa.sql, new ArgumentPreparedStatementSetter(sa.args));

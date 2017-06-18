@@ -13,42 +13,63 @@ public class GenericMapCrudService {
 
 	@Autowired
 	GenericMapCrudDao genericMapCrudDao;
-	
-	public int insert(String tableName, Map<String, Object> entity, String[] byColsName) {
-		return genericMapCrudDao.insert(tableName, entity);
+
+	public int create(String table, Map<String, Object> entity) {
+		return genericMapCrudDao.insert(table, entity);
 	}
-	public Map<String, Object> insertAndGetInserted(String tableName, Map<String, Object> entity, String[] byColsName) {
-		genericMapCrudDao.insert(tableName, entity);
-		return genericMapCrudDao.get(tableName, byColsName, entity);
+
+	public int create(String table, String[] afCols, Map<String, Object> what) {
+		return genericMapCrudDao.insert(table, afCols, what);
+	}
+
+	public Map<String, Object> createAndGet(String table, Map<String, Object> what, String[] byCols) {
+		genericMapCrudDao.insert(table, what);
+		return genericMapCrudDao.get(table, byCols, what);
+	}
+
+	public Map<String, Object> createAndGet(String table, String[] afCols, Map<String, Object> what,
+			String[] byCols) {
+		genericMapCrudDao.insert(table, afCols, what);
+		return genericMapCrudDao.get(table, byCols, what);
 	}
 
 	/**
 	 * count only by criteria in QueryParamsSuite
-	 * @param tableName
+	 * 
+	 * @param table
 	 * @param qps
 	 * @return
 	 */
-	public int count(String tableName, QueryParamsSuite qps) {
-		return genericMapCrudDao.count(tableName, qps);
+	public int count(String table, QueryParamsSuite qps) {
+		return genericMapCrudDao.count(table, qps);
 	}
 
-	public List<Map<String, Object>> list(String tableName, QueryParamsSuite qps) {
-		return genericMapCrudDao.list(tableName, qps);
+	public List<Map<String, Object>> list(String table, QueryParamsSuite qps) {
+		return genericMapCrudDao.list(table, qps);
 	}
 
-	public Map<String, Object> get(String tableName, Map<String, Object> byColsNameValMap) {
-		return genericMapCrudDao.get(tableName, byColsNameValMap);
+	public Map<String, Object> get(String table, Map<String, Object> byWhat) {
+		return genericMapCrudDao.get(table, byWhat);
 	}
 
-	public Map<String, Object> get(String tableName, String[] byColsName, Object[] byColsyVal){
-		return genericMapCrudDao.get(tableName, byColsName, byColsyVal);
+	public Map<String, Object> get(String table, String[] byCols, Object[] byWhat) {
+		return genericMapCrudDao.get(table, byCols, byWhat);
 	}
 
-	public int update(String tableName, Map<String, Object> changes, Map<String, Object> byWhat){
-		return genericMapCrudDao.update(tableName, changes, byWhat);
+	public int update(String table, Map<String, Object> afWhat, Map<String, Object> byWhat) {
+		return genericMapCrudDao.update(table, afWhat, byWhat);
 	}
-	
-	public int delete(String tableName, Map<String, Object> byWhat){
-		return genericMapCrudDao.delete(tableName, byWhat);
+
+	public int update(String table, String[] afCols, Map<String, Object> afWhat, String[] byCols,
+			Map<String, Object> byWhat) {
+		return genericMapCrudDao.update(table, afCols, afWhat, byCols, byWhat);
+	}
+
+	public int delete(String table, Map<String, Object> byWhat) {
+		return genericMapCrudDao.delete(table, byWhat);
+	}
+
+	public int delete(String table, String[] byCols, Map<String, Object> byWhat) {
+		return genericMapCrudDao.delete(table, byCols, byWhat);
 	}
 }

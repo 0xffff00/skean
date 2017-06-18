@@ -21,58 +21,79 @@ public class GenericMapCrudRestControllerTemplate {
 
 	@Autowired
 	GenericMapCrudService genericMapCrudService;
-    static final String HEADER_NAME_TOTAL_COUNT="X-Total-Count";
-	public Map<String, Object> get(String tableName, Map<String, Object> byColsNameValMap) {
-		return genericMapCrudService.get(tableName, byColsNameValMap);
+	static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
+
+	public Map<String, Object> get(String table, Map<String, Object> byWhat) {
+		return genericMapCrudService.get(table, byWhat);
 	}
 
-	public Map<String, Object> get(String tableName, String[] byColsName, Object[] byColsyVal) {
-		return genericMapCrudService.get(tableName, byColsName, byColsyVal);
+	public Map<String, Object> get(String table, String[] byCols, Object[] byVals) {
+		return genericMapCrudService.get(table, byCols, byVals);
 	}
 
-	public ResponseEntity<List<Map<String, Object>>> list( String tableName,Map<String, String> reqestParamMap) {
+	public ResponseEntity<List<Map<String, Object>>> list(String table, Map<String, String> reqestParamMap) {
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);
-		 List<Map<String, Object>> items=genericMapCrudService.list(tableName, qps);
-		 int totalCount=0;
-		if (qps.isPaginationEnabled()){
-			totalCount=genericMapCrudService.count(tableName, qps);
-		}else{
-			totalCount=items.size();
+		List<Map<String, Object>> items = genericMapCrudService.list(table, qps);
+		int totalCount = 0;
+		if (qps.isPaginationEnabled()) {
+			totalCount = genericMapCrudService.count(table, qps);
+		} else {
+			totalCount = items.size();
 		}
 		return ResponseEntity.ok().header(HEADER_NAME_TOTAL_COUNT, String.valueOf(totalCount)).body(items);
-		
+
 	}
 
-	public ResponseEntity<Map<String, Object>> createAndGet(String tableName, Map<String, Object> entity, String[] byCols) {
-		Map<String, Object> map = genericMapCrudService.insertAndGetInserted(tableName, entity, byCols);
+	public ResponseEntity<Map<String, Object>> createAndGet(String table, Map<String, Object> entity, String[] byCols) {
+		Map<String, Object> map = genericMapCrudService.createAndGet(table, entity, byCols);
 		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.CREATED);
 	}
-	public ResponseEntity<Map<String, Object>> create(String tableName, Map<String, Object> entity, String[] byCols) {
-		genericMapCrudService.insert(tableName, entity, byCols);
-		return new ResponseEntity<Map<String, Object>>( HttpStatus.CREATED);
+
+	public ResponseEntity<Map<String, Object>> create(String table, Map<String, Object> entity, String[] byCols) {
+		genericMapCrudService.create(table, entity);
+		return new ResponseEntity<Map<String, Object>>(HttpStatus.CREATED);
 	}
 
-	public ResponseEntity<Map<String, Object>> update(String tableName, Map<String, Object> changes,
+	public ResponseEntity<Map<String, Object>> createAndGet(String table, String[] afCols, Map<String, Object> entity,
+			String[] byCols) {
+		Map<String, Object> map = genericMapCrudService.createAndGet(table, afCols, entity, byCols);
+		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<Map<String, Object>> create(String table, String[] afCols, Map<String, Object> entity,
+			String[] byCols) {
+		genericMapCrudService.create(table, afCols, entity);
+		return new ResponseEntity<Map<String, Object>>(HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<Map<String, Object>> update(String table, Map<String, Object> changes,
 			Map<String, Object> byWhat) {
-		int rna = genericMapCrudService.update(tableName, changes, byWhat);
+		int rna = genericMapCrudService.update(table, changes, byWhat);
 		if (rna == 0) {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
 		}
 		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
 	}
 
-	public ResponseEntity<Map<String, Object>> delete(String tableName, Map<String, Object> byWhat) {
-		int rna = genericMapCrudService.delete(tableName, byWhat);
+	public ResponseEntity<Map<String, Object>> delete(String table, Map<String, Object> byWhat) {
+		int rna = genericMapCrudService.delete(table, byWhat);
 		if (rna == 0) {
 			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
-
 		}
 		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
 	}
 
-	public int count(String tableName, Map<String, String> reqestParamMap) {
+	public ResponseEntity<Map<String, Object>> delete(String table, String[] byCols, Map<String, Object> byWhat) {
+		int rna = genericMapCrudService.delete(table, byCols, byWhat);
+		if (rna == 0) {
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
+		}
+		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
+	}
+
+	public int count(String table, Map<String, String> reqestParamMap) {
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);
-		return genericMapCrudService.count(tableName, qps);
+		return genericMapCrudService.count(table, qps);
 	}
 
 }

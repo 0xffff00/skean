@@ -28,17 +28,17 @@ public class GlobalControllerExceptionHandler {
 
 	@ExceptionHandler(value = Exception.class)
 	public ResponseEntity<ApiErrorBody> defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-		getLogger().error("An exception raised.", e);
+
 		// If the exception is annotated with @ResponseStatus re-throw it and
-		// let the framework handle it 
-		
-		ResponseStatus respSt=AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class); 
+		// let the framework handle it
+
+		ResponseStatus respSt = AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class);
 		if (respSt != null) {
 			return handleApiError(e, respSt.code());
-		}else{
+		} else {
 			return handleApiError(e, HttpStatus.BAD_REQUEST);
 		}
-		
+
 	}
 
 	protected ModelAndView handleViewError(String url, String errorStack, String errorMessage, String viewName) {
@@ -51,6 +51,7 @@ public class GlobalControllerExceptionHandler {
 	}
 
 	protected ResponseEntity<ApiErrorBody> handleApiError(Exception e, HttpStatus httpStatus) {
+		getLogger().error("An exception raised.", e);
 		ApiErrorBody errBody = new ApiErrorBody(0, e.getLocalizedMessage(), null);
 		return new ResponseEntity<ApiErrorBody>(errBody, httpStatus);
 	}
@@ -59,9 +60,9 @@ public class GlobalControllerExceptionHandler {
 		return LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 	}
 
-	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public void handleConflict() {
+	public ResponseEntity<ApiErrorBody> handleConflict(Exception e) {
+		return handleApiError(e, HttpStatus.CONFLICT);
 	}
 
 }

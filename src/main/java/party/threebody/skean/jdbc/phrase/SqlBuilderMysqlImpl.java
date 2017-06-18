@@ -112,16 +112,12 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 					throw new ChainedJdbcTemplateException("illegal column name via by(): " + p.colsBy[i]);
 				}
 			}
-			if (p.valArr != null) { // '?' style
-				for (int i = 0, n = p.colsBy.length; i < n; i++) {
-					sql0.append("  AND ").append(nq).append(p.colsBy[i]).append(nq).append("=?").append(dlmt);
-				}
+			
+			for (int i = 0, n = p.colsBy.length; i < n; i++) {
+				sql0.append("  AND ").append(nq).append(p.colsBy[i]).append(nq).append("=?").append(dlmt);
 			}
-			if (p.valMap != null) {
-				for (int i = 0, n = p.colsBy.length; i < n; i++) {
-					sql0.append("  AND ").append(nq).append(p.colsBy[i]).append(nq).append("=?").append(dlmt);
-				}
-			}
+		
+			
 		}
 
 		// (2/3)Handle 'criteria()' & fill 'valArr'
@@ -185,10 +181,10 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		// PRINT>>>> UPDATE ... SET ...
 		sql0.append("UPDATE ");
 		sql0.append(nq).append(p.table).append(nq).append(" SET ");
-		// colsAffected auto-generation by valMap
+		// colsAffected auto-generation by afValMap
 		if (p.colsAffected == null) {
-			if (p.valMap != null) {
-				Set<String> colSet = new HashSet<String>(p.valMap.keySet());
+			if (p.afValMap != null) {
+				Set<String> colSet = new HashSet<String>(p.afValMap.keySet());
 				if (p.colsBy != null) { // remove colsBy from colsAffected
 					for (String c : p.colsBy) {
 						colSet.remove(c);
@@ -245,7 +241,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				res = ArrayUtils.addAll(res, p.afValArr);
 			}
 			if (p.afValMap != null) {
-				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.afValMap, p.colsBy));
+				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.afValMap, p.colsAffected));
 			}
 			if (p.afValObj != null) {
 				// TODO afValObj parsing
