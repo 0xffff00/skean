@@ -19,7 +19,7 @@ class DictController {
 	final pkCols=['word', 'qual']
 	@GetMapping("/nouns")
 	public ResponseEntity listNouns(@RequestParam Map reqestParamMap){
-		controllerTemplate.list(reqestParamMap, tableName)
+		controllerTemplate.list(tableName,reqestParamMap )
 	}
 
 	public ResponseEntity createNoun(@RequestParam Map reqestParamMap ){
