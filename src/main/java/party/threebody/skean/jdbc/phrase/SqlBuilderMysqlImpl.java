@@ -254,6 +254,9 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				res = ArrayUtils.addAll(res, p.valArr);
 			}
 			if (p.valMap != null) {
+				if (!p.afValEnabled){
+					res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsAffected));
+				}
 				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsBy));
 			}
 			if (p.valObj != null) {
