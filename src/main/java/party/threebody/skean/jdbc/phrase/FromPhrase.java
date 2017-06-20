@@ -1,5 +1,6 @@
 package party.threebody.skean.jdbc.phrase;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -101,13 +102,24 @@ public class FromPhrase extends DefaultRootPhrase {
 		return new ValPhrase(this);
 	}
 
+	/**
+	 * val(nullObj) will regarded as valMap(null)
+	 * @param val
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	protected ValPhrase val(Object... val) {
-		if (val == null || val.length == 0) {
+		if (val == null){
+			throw new ChainedJdbcTemplateException("'val(null)' is ambigious; please use valArr(null) or valMap(null) instead.");
+		}
+		if (val.length == 0) {
 			return new ValPhrase(this);
 		}
 		if (val.length == 1) {
 			Object v0 = val[0];
+			if (v0==null){
+				return valMap(Collections.emptyMap());
+			}
 			if (v0 instanceof Map) {
 				return valMap((Map<String, Object>) v0);
 			}

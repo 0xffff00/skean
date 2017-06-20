@@ -112,12 +112,12 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 					throw new ChainedJdbcTemplateException("illegal column name via by(): " + p.colsBy[i]);
 				}
 			}
-			
+
 			for (int i = 0, n = p.colsBy.length; i < n; i++) {
+				//TODO by() support 'is null'
 				sql0.append("  AND ").append(nq).append(p.colsBy[i]).append(nq).append("=?").append(dlmt);
 			}
-		
-			
+
 		}
 
 		// (2/3)Handle 'criteria()' & fill 'valArr'
@@ -128,6 +128,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 					sql0.append("  AND ").append(cp.clauses[i]).append(dlmt);
 				}
 			}
+			p.valEnabled = true;
 			p.valArr = cp.args; // filling
 		}
 
@@ -254,7 +255,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				res = ArrayUtils.addAll(res, p.valArr);
 			}
 			if (p.valMap != null) {
-				if (!p.afValEnabled){
+				if (!p.afValEnabled) {
 					res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsAffected));
 				}
 				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsBy));

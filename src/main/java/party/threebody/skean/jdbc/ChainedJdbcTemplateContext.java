@@ -4,7 +4,6 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import party.threebody.skean.jdbc.phrase.SqlBuilder;
 
@@ -12,23 +11,19 @@ public class ChainedJdbcTemplateContext {
 
 	private DataSource dataSource;
 	private JdbcTemplate jdbcTmpl;
-	private NamedParameterJdbcTemplate npJdbcTmpl;
 	private SqlBuilder sqlBuilder;
 	private ColumnMapRowMapper columnMapRowMapper;
 
-	
 	public ChainedJdbcTemplateContext() {
 		this.setColumnMapRowMapper(new ColumnMapRowMapper());
 	}
 
-	public ChainedJdbcTemplateContext(DataSource dataSource, JdbcTemplate jdbcTmpl, NamedParameterJdbcTemplate npJdbcTmpl,
-			 SqlBuilder sqlBuilder) {
+	public ChainedJdbcTemplateContext(DataSource dataSource, JdbcTemplate jdbcTmpl, SqlBuilder sqlBuilder) {
 		this();
 		this.dataSource = dataSource;
 		this.jdbcTmpl = jdbcTmpl;
-		this.npJdbcTmpl = npJdbcTmpl;
 		this.sqlBuilder = sqlBuilder;
-		
+
 	}
 
 	public DataSource getDataSource() {
@@ -46,15 +41,6 @@ public class ChainedJdbcTemplateContext {
 	public void setJdbcTmpl(JdbcTemplate jdbcTmpl) {
 		this.jdbcTmpl = jdbcTmpl;
 	}
-
-	public NamedParameterJdbcTemplate getNpJdbcTmpl() {
-		return npJdbcTmpl;
-	}
-
-	public void setNpJdbcTmpl(NamedParameterJdbcTemplate npJdbcTmpl) {
-		this.npJdbcTmpl = npJdbcTmpl;
-	}
-
 
 	public ColumnMapRowMapper getColumnMapRowMapper() {
 		return columnMapRowMapper;

@@ -18,7 +18,7 @@ import party.threebody.s4g.conf.spring.RootConfig
 @ContextConfiguration(classes = RootConfig.class)
 @ActiveProfiles("memdb")
 @Rollback
-class TestQuerierBuilder2 {
+class TestChainedJdbcCUD {
 	@Autowired
 	JdbcTemplate jdbcTmpl;
 	@Autowired
@@ -47,8 +47,12 @@ class TestQuerierBuilder2 {
 		assert 1==q.from('t1ship').affect('weig').val(33003).by([code:'CV06']).update()
 		assert q.from('t1ship').by('code').val('CV06').single()['weig']==33003
 		
-		assert 1==q.from('t1ship').affect([code:'CV06',name:'moha',weig:33599]).by([code:'CV06']).update()
+		assert 1==q.from('t1ship').affect([code:'CV06',name:null,weig:33599]).by([code:'CV06']).update()
 		assert q.from('t1ship').by('code').val('CV06').single()['weig']==33599
+		
+		assert 1==q.from('t1ship').affect([code:'CV06',name:'moha',weig:33599]).by([code:'CV06',name:null]).update()
+		assert q.from('t1ship').by('code').val('CV06').single()['name']=='moha'
+		assert 0==q.from('t1ship').affect([weig:33599]).by([code:null]).update()
 		
 	}
 	

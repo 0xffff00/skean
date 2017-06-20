@@ -8,9 +8,6 @@ public class SkeanConflictException extends SkeanException {
 
 	private static final long serialVersionUID = 0xfefee00409L;
 
-	public SkeanConflictException() {
-		super();
-	}
 	
 	public SkeanConflictException(String message, Throwable cause) {
 		super(message, cause);
@@ -20,9 +17,6 @@ public class SkeanConflictException extends SkeanException {
 		super(message);
 	}
 
-	public SkeanConflictException(Throwable cause) {
-		super(cause);
-	}
 	
 	
 

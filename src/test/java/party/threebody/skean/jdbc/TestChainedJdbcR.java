@@ -21,7 +21,7 @@ import party.threebody.skean.core.query.BasicCriterion;
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)
 @ActiveProfiles("memdb")
-public class TestQuerierBuilder {
+public class TestChainedJdbcR {
 
 	@Autowired
 	JdbcTemplate jdbcTmpl;
@@ -48,8 +48,11 @@ public class TestQuerierBuilder {
 		prt(q.from("dct_noun").page(2, 3).list());
 		prt(q.from("dct_noun").select("word","lang").orderBy("word desc").list());
 		prt(q.from("dct_noun").orderBy("word","type").list());
-		assertNotNull(q.from("dct_noun").by("word").val("fdu").list());
-		assertNotNull(q.from("dct_noun").by("type").val(null).list());
+		
+		assert 0<q.from("dct_noun").by("word").val("fdu").count();
+		int x1= q.from("dct_noun").by("type").val((String)null).count();
+		assert x1>0;
+		assert x1==q.from("dct_noun").by("type").val((String)null).list().size();
 		assertNotNull(q.from("dct_noun").by("word","lang").val("fdu","en").list());
 		prt("######t1ship#######");
 		prt(q.from("t1ship").by("code").valMap(new HashMap()).firstCell());	

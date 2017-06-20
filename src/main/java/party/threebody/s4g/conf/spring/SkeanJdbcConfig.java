@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,12 +25,11 @@ public class SkeanJdbcConfig {
 	Environment env;
 
 	@Bean
-	ChainedJdbcTemplate chainedJdbcTemplate(DataSource dataSource, JdbcTemplate jdbcTmpl, NamedParameterJdbcTemplate npJdbcTmpl) {
+	ChainedJdbcTemplate chainedJdbcTemplate(DataSource dataSource, JdbcTemplate jdbcTmpl) {
 		SqlBuilderConfig sqlBuilderConfig = new SqlBuilderConfig();
-		sqlBuilderConfig.setEnableBackquote("true");
 		SqlBuilder sqlBuilder = new SqlBuilderMysqlImpl(sqlBuilderConfig);
 		
-		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext(dataSource, jdbcTmpl, npJdbcTmpl, sqlBuilder);
+		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext(dataSource, jdbcTmpl, sqlBuilder);
 		return new ChainedJdbcTemplate(pc);
 	}
 
