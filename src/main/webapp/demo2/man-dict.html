@@ -4,6 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="el-555.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
 	<style>.haha{color:red;background:yellow;}
 	</style>
 	<title>dict-demo2</title>
@@ -11,12 +12,43 @@
 
 <body>
 	<div id="s4g-body">
-	
+<div class="opt-head-bar">
+<el-button type="success" @click="dialogFormVisible = true"><i class="fa fa-plus"></i>新增</el-button>
+<el-dialog id="item-add-dialog" 
+title="新增单词" 
+:visible.sync="dialogFormVisible"
+show-close>
+  <el-form :model="form">
+    <el-form-item label="名称" :label-width="formLabelWidth">
+      <el-input v-model="form.word" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="限定词" :label-width="formLabelWidth">
+      <el-input v-model="form.qual" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="语言" :label-width="formLabelWidth">
+      <el-input v-model="form.lang" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="类型" :label-width="formLabelWidth">
+      <el-input v-model="form.type" auto-complete="off"></el-input>
+    </el-form-item>
+<!--     <el-form-item label="" :label-width="100"> -->
+<!--       <el-select v-model="form.word placeholder="请选择活动区域"> -->
+<!--         <el-option label="区域一" value="shanghai"></el-option> -->
+<!--         <el-option label="区域二" value="beijing"></el-option> -->
+<!--       </el-select> -->
+<!--     </el-form-item> -->
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取消</el-button>
+    <el-button type="primary" @click="close0">确定</el-button>
+  </div>
+</el-dialog>
+</div>
 <el-table
     :data="tableData"
     border
     style1="width: 100%"
-    :default-sort = "{prop: 'date', order: 'descending'}"
+    :default-sort = "{prop: 'word', order: 'descending'}"
     >
     <el-table-column
       prop="word"
@@ -44,11 +76,11 @@
       <template scope="scope">
         <el-button
           size="small"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          @click="handleEdit(scope.$index, scope.row)"><i class="fa fa-pencil"></i></el-button>
         <el-button
           size="small"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          @click="handleDelete(scope.$index, scope.row)"><i class="fa fa-trash-o"></i></el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -70,23 +102,62 @@
 		computed:{
 			
 		},
-// 		methods: {
-// 		      handleEdit(index, row) {
-// 		        console.log(index, row);
-// 		      },
-// 		      handleDelete(index, row) {
-// 		        console.log(index, row);
-// 		      }
-// 		    }
+		methods: {
+		      handleEdit(index, row) {
+		        console.log(index, row);
+		      },
+		      handleDelete(index, row) {
+		        console.log(index, row);
+		      }
+		    }
 	})
-	
+	let CTX='http://localhost:8080/skean'
 	function fetch1(){
-		fetch('http://localhost:8080/webs4g-basic/dict/nouns/')
+		fetch(CTX+'/dict/nouns/')
 		.then(r => r.json())
 		.then(data => tb.tableData = data)
 	}
 	fetch1();
 
+// 	var v1=new Vue({
+// 		el:'.opt-head-bar1',
+// 		methods: {
+// 			itemAdd(){
+// 				function fetch1(){
+// 					fetch(CTX+'/dict/nouns/',{
+// 					    headers: {
+// 					        'Content-Type': 'application/json'
+// 					      },
+// 					      method: "POST",
+// 					      body: JSON.stringify({a: 1, b: 2})
+// 					  })
+					
+// 					.then(r => r.json())
+// 					.then(data => tb.tableData = data)
+// 				}
+// 			}
+// 		}
+// 	})
+	
+	var tb=new Vue({
+		el:'.opt-head-bar',
+		data:{
+			formLabelWidth:'120px',
+			dialogFormVisible:false,
+			form: {word:null,qual:'',lang:'CN',type:null}
+		},
+		
+		methods: {
+		      close(index ) {
+		        console.log(index);
+		      },
+		      close0(e) {
+		        console.log(this.form,e);
+		        this.dialogFormVisible=false;
+		      }
+		    }
+	})
+	
 </script>
 
 </html>
