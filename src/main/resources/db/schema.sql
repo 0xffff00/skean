@@ -23,3 +23,9 @@ create table `dct_noun` (
 	`lang` char (18),
 	`type` char (18)
 ); 
+create table `dct_rel` (
+	`subject` varchar (150),
+	`verb` varchar (150),
+	`object` char (150),
+	`adverb` char (150)
+); 

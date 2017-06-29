@@ -23,3 +23,7 @@ insert into `dct_noun` (`word`, `claz`, `lang`, `type`) values('沪','','zh','ab
 insert into `dct_noun` (`word`, `claz`, `lang`, `type`) values('省级行政区','','zh',NULL);
 insert into `dct_noun` (`word`, `claz`, `lang`, `type`) values('魔都','','zh','surn');
 
+insert into `dct_rel`(`this`,`verb`,`that`,`abverb`) values('Chine','eq','China',null);
+insert into `dct_rel`(`this`,`verb`,`that`,`abverb`) values('Chine','eq','China','lang',null);
+insert into `dct_rel`(`this`,`verb`,`that`,`abverb`) values('Chine','eq','China',null);
+insert into `dct_rel`(`this`,`verb`,`that`,`abverb`) values('Chine','eq','China',null);

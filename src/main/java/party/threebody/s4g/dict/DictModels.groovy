@@ -6,11 +6,26 @@ class Word {
 	String word
 	String qual
 	String lang
-	String type
+	String type    
+	
+	
+	@Override
+	public String toString() {
+		return "Word [word=" + word + ", qual=" + qual + ", lang=" + lang + ", type=" + type + "]";
+	}
+	
 }
 
 class Noun extends Word {
+	
+	
 }
+
+class NounDTO extends Noun{
+	List<Noun> wordsRelated
+	
+}
+
 class Verb extends Word {
 }
 class Rel {

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import party.threebody.skean.core.query.Criterion;
@@ -214,7 +215,7 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	public <T> List<T> list(Class<T> elementType) {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().queryForList(sa.sql, elementType, sa.args);
+		return context.getJdbcTmpl().query(sa.sql, sa.args, new BeanPropertyRowMapper<T>(elementType));
 	}
 
 	public <T> List<T> list(RowMapper<T> rowMapper) {

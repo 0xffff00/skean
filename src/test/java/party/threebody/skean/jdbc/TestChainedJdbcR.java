@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
+import party.threebody.s4g.dict.Noun;
 import party.threebody.skean.core.query.BasicCriterion;
 
 @RunWith(SpringRunner.class)
@@ -39,6 +40,18 @@ public class TestChainedJdbcR {
 		
 	}
 	
+	@Test
+	public void from_fetching_obj(){
+		Noun n1=new Noun();
+		n1.setQual("xxx");
+		n1.setWord("CHN");
+		
+		prt(q.from("dct_noun").by("word").val(n1).list());
+		prt(q.from("dct_noun").by("word").val("CHN").list(Noun.class));
+		
+
+		
+	}
 	@Test
 	public void from_fetching(){
 		assertNotNull(q.from("dct_noun").list());

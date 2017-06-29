@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -261,7 +262,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsBy));
 			}
 			if (p.valObj != null) {
-				// TODO valObj parsing
+			
 			}
 		}
 
