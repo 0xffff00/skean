@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import party.threebody.skean.core.query.BasicCriterion;
-import party.threebody.skean.jdbc.phrase.CriteriaUtils;
+import party.threebody.skean.jdbc.util.CriteriaUtils;
 
 public class TestCriteriaUtils {
 

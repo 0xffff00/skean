@@ -1,15 +1,24 @@
-package party.threebody.skean.jdbc.phrase;
+package party.threebody.skean.jdbc.util;
 
 import java.util.Arrays;
 
 public class SqlAndArgs {
-	String sql;
-	Object[] args;
+	private String sql;
+	private Object[] args;
 
 	public SqlAndArgs(String sql, Object[] args) {
 		super();
 		this.sql = sql;
 		this.args = args;
+	}
+
+	
+	public String getSql() {
+		return sql;
+	}
+
+	public Object[] getArgs() {
+		return args;
 	}
 
 	@Override

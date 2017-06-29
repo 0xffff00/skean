@@ -1,10 +1,9 @@
-package party.threebody.skean.jdbc.phrase;
+package party.threebody.skean.jdbc.util;
 
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 
-import party.threebody.skean.SkeanException;
 import party.threebody.skean.core.query.BasicCriterion;
 import party.threebody.skean.core.query.Criterion;
 import party.threebody.skean.core.query.SortingField;
@@ -58,7 +57,7 @@ public class CriteriaUtils {
 		if (criterion instanceof BasicCriterion){
 			return toClauseAndArgs((BasicCriterion)criterion);
 		}
-		throw new SkeanException("unsupport Criterion Impl yet");
+		throw new ChainedJdbcTemplateException("unsupport Criterion Impl yet");
 		
 	}
 	public static ClauseAndArgs toClauseAndArgs(BasicCriterion criterion) {
@@ -145,7 +144,12 @@ public class CriteriaUtils {
 		return new ClauseAndArgs(part0 + part1 + part2, valArr);
 	}
 
-	protected static String generateQMarkArrStrWithComma(int paramNum) {
+	/**
+	 * generateQMarkArrStrWithComma(4)=="(?,?,?,?)"
+	 * @param paramNum
+	 * @return
+	 */
+	public static String generateQMarkArrStrWithComma(int paramNum) {
 		StringBuilder sb = new StringBuilder("(");
 
 		for (; paramNum > 1; paramNum--) {

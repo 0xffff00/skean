@@ -17,7 +17,7 @@ class Word {
 }
 
 class Noun extends Word {
-	
+	 
 	
 }
 

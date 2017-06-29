@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import party.threebody.skean.jdbc.phrase.SqlSecurityUtils;
+import party.threebody.skean.jdbc.util.SqlSecurityUtils;
 
 public class TestSqlSecurityUtils {
 

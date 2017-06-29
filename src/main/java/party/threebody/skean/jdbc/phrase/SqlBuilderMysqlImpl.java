@@ -1,10 +1,8 @@
 package party.threebody.skean.jdbc.phrase;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import party.threebody.skean.core.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
+import party.threebody.skean.jdbc.util.ClausesAndArgs;
+import party.threebody.skean.jdbc.util.CriteriaUtils;
+import party.threebody.skean.jdbc.util.MapUtils;
+import party.threebody.skean.jdbc.util.SqlAndArgs;
+import party.threebody.skean.jdbc.util.SqlSecurityUtils;
 
 public class SqlBuilderMysqlImpl implements SqlBuilder {
 
@@ -24,8 +27,8 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 	final static char CM = ','; // Comma
 	final static char SC = ';'; // Semicolon
 
-	private String dlmt;
-	private String nq;
+	private String dlmt; // delimiter
+	private String nq; // name quote (such as back quote or empty)
 
 	@Override
 	public void setConfig(SqlBuilderConfig conf) {
@@ -115,7 +118,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 			}
 
 			for (int i = 0, n = p.colsBy.length; i < n; i++) {
-				//TODO by() support 'is null'
+				// TODO by() support 'is null'
 				sql0.append("  AND ").append(nq).append(p.colsBy[i]).append(nq).append("=?").append(dlmt);
 			}
 
@@ -124,13 +127,12 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		// (2/3)Handle 'criteria()' & fill 'valArr'
 		if (p.criteria != null) {
 			ClausesAndArgs cp = CriteriaUtils.toClausesAndArgs(p.criteria);
-			if (ArrayUtils.isNotEmpty(cp.clauses)) {
-				for (int i = 0, n = cp.clauses.length; i < n; i++) {
-					sql0.append("  AND ").append(cp.clauses[i]).append(dlmt);
+			if (ArrayUtils.isNotEmpty(cp.getClauses())) {
+				for (int i = 0, n = cp.getClauses().length; i < n; i++) {
+					sql0.append("  AND ").append(cp.getClause(i)).append(dlmt);
 				}
 			}
-			p.valEnabled = true;
-			p.valArr = cp.args; // filling
+			p.val.valArr(cp.getArgs()); // filling
 		}
 
 		// (3/3)Handle 'where()'
@@ -156,8 +158,8 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		sql0.append("INSERT INTO ");
 		sql0.append(nq).append(p.table).append(nq);
 		if (p.colsAffected == null) {
-			if (p.valMap != null) { // auto generate colsAffected
-				Set<String> colSet = new HashSet<String>(p.valMap.keySet());
+			if (p.val.getMap() != null) { // auto generate colsAffected
+				Set<String> colSet = new HashSet<String>(p.val.getMap().keySet());
 				p.colsAffected = colSet.toArray(new String[colSet.size()]);
 			} else {
 				throw new ChainedJdbcTemplateException(
@@ -185,8 +187,8 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		sql0.append(nq).append(p.table).append(nq).append(" SET ");
 		// colsAffected auto-generation by afValMap
 		if (p.colsAffected == null) {
-			if (p.afValMap != null) {
-				Set<String> colSet = new HashSet<String>(p.afValMap.keySet());
+			if (p.afVal.getMap() != null) {
+				Set<String> colSet = new HashSet<String>(p.afVal.getMap().keySet());
 				if (p.colsBy != null) { // remove colsBy from colsAffected
 					for (String c : p.colsBy) {
 						colSet.remove(c);
@@ -238,31 +240,31 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 	private static Object[] buildArgs(FromPhrase p) {
 		Object[] res = null;
-		if (p.afValEnabled) {
-			if (p.afValArr != null) {
-				res = ArrayUtils.addAll(res, p.afValArr);
+		if (p.afVal.enabled()) {
+			if (p.afVal.getArr() != null) {
+				res = ArrayUtils.addAll(res, p.afVal.getArr());
 			}
-			if (p.afValMap != null) {
-				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.afValMap, p.colsAffected));
+			if (p.afVal.getMap() != null) {
+				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.val.getMap(), p.colsAffected));
 			}
-			if (p.afValObj != null) {
+			if (p.afVal.getObj() != null) {
 				// TODO afValObj parsing
 			}
 
 		}
 
-		if (p.valEnabled) {
-			if (p.valArr != null) {
-				res = ArrayUtils.addAll(res, p.valArr);
+		if (p.val.enabled()) {
+			if (p.val.getArr() != null) {
+				res = ArrayUtils.addAll(res, p.val.getArr());
 			}
-			if (p.valMap != null) {
-				if (!p.afValEnabled) {
-					res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsAffected));
+			if (p.val.getMap() != null) {
+				if (!p.afVal.enabled()) {
+					res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.val.getMap(), p.colsAffected));
 				}
-				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.valMap, p.colsBy));
+				res = ArrayUtils.addAll(res, MapUtils.getValsArr(p.val.getMap(), p.colsBy));
 			}
-			if (p.valObj != null) {
-			
+			if (p.val.getObj() != null) {
+				// TODO valObj parsing
 			}
 		}
 

@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 
 import party.threebody.skean.core.query.BasicCriterion
-import party.threebody.skean.jdbc.phrase.ClauseAndArgs
-import party.threebody.skean.jdbc.phrase.ClausesAndArgs
-import party.threebody.skean.jdbc.phrase.CriteriaUtils
+import party.threebody.skean.jdbc.util.ClauseAndArgs
+import party.threebody.skean.jdbc.util.ClausesAndArgs
+import party.threebody.skean.jdbc.util.CriteriaUtils
 
 class TestPhrase {
 

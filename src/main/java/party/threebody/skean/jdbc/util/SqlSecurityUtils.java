@@ -1,4 +1,4 @@
-package party.threebody.skean.jdbc.phrase;
+package party.threebody.skean.jdbc.util;
 
 public class SqlSecurityUtils {
 	/**
