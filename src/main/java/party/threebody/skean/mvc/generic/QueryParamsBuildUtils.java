@@ -16,19 +16,35 @@ class QueryParamsBuildUtils {
 		// build criteria
 		BasicCriterion[] criterionArr = CriterionBuildUtils.buildBasicCriterionArray(criteria);
 		// build sortingFields
-		SortingField[] sortingFields = null;
-		if (StringUtils.isNotEmpty(orders)) {
-			String[] strs = orders.split(",");
-			int n = strs.length;
-			sortingFields = new SortingField[n];
-			for (int i = 0; i < n; i++) {
-				if (strs[i].length() > 0) {
-					sortingFields[i] = new SortingField(strs[i].substring(1), strs[i].charAt(0) == '-');
-				}
-			}
-		}
-
+		SortingField[] sortingFields = buildSortingFields(orders);
 		return new QueryParamsSuite(criterionArr, sortingFields, pageIndex, pageLength);
+	}
+	
+	private static SortingField[] buildSortingFields(String params) {
+		if (StringUtils.isEmpty(params)){
+			return null;
+		}
+		String[] strs = params.split(",");
+		int n = strs.length;
+		SortingField[] res = new SortingField[n];
+		for (int i = 0; i < n; i++) {
+			res[i] = buildSortingField(strs[i]);
+		}
+		return res;
+	}
+	private static SortingField buildSortingField(String param) {
+		if (param.isEmpty()){
+			return null;
+		}
+		switch (param.charAt(0)) {
+		case '-':
+		case '!':
+			return new SortingField(param.substring(1), true);
+		case '+':
+			return new SortingField(param.substring(1), false);
+		default:
+			return new SortingField(param, false);
+		}
 	}
 
 	public static QueryParamsSuite buildQueryParamsSuite(Map<String, String> paramsMap) {

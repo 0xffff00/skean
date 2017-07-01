@@ -3,161 +3,185 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="el-555.css">
+	<!-- 	<link rel="stylesheet" href="el-555.css"> -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
 	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
-	<style>.haha{color:red;background:yellow;}
+	<style>
+		.haha {
+			color: red;
+			background: yellow;
+		}
 	</style>
 	<title>dict-demo2</title>
 </head>
 
 <body>
 	<div id="s4g-body">
-<div class="opt-head-bar">
-<el-button type="success" @click="dialogFormVisible = true"><i class="fa fa-plus"></i>新增</el-button>
-<el-dialog id="item-add-dialog" 
-title="新增单词" 
-:visible.sync="dialogFormVisible"
-show-close>
-  <el-form :model="form">
-    <el-form-item label="名称" :label-width="formLabelWidth">
-      <el-input v-model="form.word" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="限定词" :label-width="formLabelWidth">
-      <el-input v-model="form.qual" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="语言" :label-width="formLabelWidth">
-      <el-input v-model="form.lang" auto-complete="off"></el-input>
-    </el-form-item>
-    <el-form-item label="类型" :label-width="formLabelWidth">
-      <el-input v-model="form.type" auto-complete="off"></el-input>
-    </el-form-item>
-<!--     <el-form-item label="" :label-width="100"> -->
-<!--       <el-select v-model="form.word placeholder="请选择活动区域"> -->
-<!--         <el-option label="区域一" value="shanghai"></el-option> -->
-<!--         <el-option label="区域二" value="beijing"></el-option> -->
-<!--       </el-select> -->
-<!--     </el-form-item> -->
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogFormVisible = false">取消</el-button>
-    <el-button type="primary" @click="close0">确定</el-button>
-  </div>
-</el-dialog>
-</div>
-<el-table
-    :data="tableData"
-    border
-    style1="width: 100%"
-    :default-sort = "{prop: 'word', order: 'descending'}"
-    >
-    <el-table-column
-      prop="word"
-      label="单词"
-      sortable
-      >
-    </el-table-column>
-    <el-table-column
-      prop="qual"
-      label="限定词"
-      sortable
-      >
-    </el-table-column>
-    <el-table-column
-      prop="lang"
-      label="语言"
-      >
-    </el-table-column>
-    <el-table-column
-      prop="type"
-      label="类型"
-      >
-      </el-table-column>
-    <el-table-column label="操作">
-      <template scope="scope">
-        <el-button
-          size="small"
-          @click="handleEdit(scope.$index, scope.row)"><i class="fa fa-pencil"></i></el-button>
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"><i class="fa fa-trash-o"></i></el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-	
-	
+
+
+		<div id="optHeadBar">
+			<el-button type="success" @click="openEditorDialog(null)"> <i class="fa fa-plus"></i>新增</el-button>
+			<el-button type="success" @click="a1.x = 3"> <i class="fa fa-plus"></i>xxx</el-button>
+		</div>
+		<el-table :data="items" border @sort-change="sortChanged" v-loading.body="ui.loading">
+			<el-table-column prop="word" label="单词" sortable="custom">
+			</el-table-column>
+			<el-table-column prop="qual" label="限定词">
+			</el-table-column>
+			<el-table-column prop="lang" label="语言"> </el-table-column>
+			<el-table-column prop="type" label="类型"> </el-table-column>
+			<el-table-column label="操作">
+				<template scope="scope">
+					<el-button size="small" @click="openEditorDialog(scope.row)">
+						<i class="fa fa-pencil"></i></el-button>
+					<el-button size="small" type="danger" @click="deleteItem(scope.row)">
+						<i class="fa fa-trash-o"></i></el-button>
+				</template>
+			</el-table-column>
+		</el-table>
+
+		<el-pagination @size-change="pageSizeChanged" @current-change="pageCurrentChanged"
+		 :current-page="1" :page-sizes="[10, 20, 50, 100]" :page-size="queryParams.l" layout="total, sizes, prev, pager, next, jumper"
+		 :total="itemsCount">
+		</el-pagination>
+
+
+		<el-dialog :title="editor.isNew ? '新增' : '修改'" :visible.sync="editor.ui.visible"
+		 show-close>
+			<el-form :model="editor.item">
+				<el-form-item label="名称" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.word" auto-complete="off" placeholder=></el-input>
+				</el-form-item>
+				<el-form-item label="限定词" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.qual"></el-input>
+				</el-form-item>
+				<el-form-item label="语言" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.lang"></el-input>
+				</el-form-item>
+				<el-form-item label="类型" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.type"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="editor.ui.visible = false">取消</el-button>
+				<el-button type="primary" @click="saveItem" :loading="editor.ui.saving">{{editor.ui.saving?'保存中...':'保存'}}</el-button>
+			</div>
+		</el-dialog>
+
 	</div>
-	
+
 </body>
 
-<script type="text/javascript" src="vue.js"></script>
+<!-- <script type="text/javascript" src="vue.js"></script> -->
+<script src="vue.js"></script>
+<script src="vue-resource.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script type="text/javascript">
-
-	var tb=new Vue({
-		el: 'el-table',	
-		data:{
-			tableData: null
+	var crud = new Vue({
+		el: '#s4g-body',
+		data: {
+			items: null,
+			editor: {
+				isNew: true,
+				item: {},
+				itemDefault: { word: null, qual: '', lang: 'CN', type: null },
+				ui: {
+					labelWidth: '120px',
+					visible: false,
+					saving: false
+				}
+			},
+			itemsCount: 0,
+			queryParams: { o: '-word', p: 1, l: 10 },
+			ui: {
+				loading: false
+			}
 		},
-		computed:{
-			
+		computed: {
+
 		},
 		methods: {
-		      handleEdit(index, row) {
-		        console.log(index, row);
-		      },
-		      handleDelete(index, row) {
-		        console.log(index, row);
-		      }
-		    }
-	})
-	let CTX='http://localhost:8080/skean'
-	function fetch1(){
-		fetch(CTX+'/dict/nouns/')
-		.then(r => r.json())
-		.then(data => tb.tableData = data)
+			openEditorDialog(item) {
+				this.editor.isNew = item == null;
+				this.editor.item = item || this.editor.itemDefault;
+				this.editor.ui.visible = true;
+
+			},
+			deleteItem(index, row) {
+				console.log(index, row);
+			},
+			saveItem() {
+				this.editor.ui.saving = true;
+				Vue.http
+					.post(CTX + URL0, this.editor.item)
+					.then(
+					resp => {
+						this.$notify.info({
+							title: '保存成功'
+						});
+						this.editor.ui.saving = false;
+					},
+					resp => {
+						this.$notify.error({
+							title: '保存错误',
+							message: resp.body && resp.body.message
+						});
+						this.editor.ui.saving = false;
+
+					});
+
+
+			},
+			pageSizeChanged(size) {
+				this.queryParams.l = size;
+				reqGetList();
+			},
+			pageCurrentChanged(current) {
+				this.queryParams.p = current;
+				reqGetList();
+			},
+			sortChanged(e) {
+				if (e.prop) {
+					this.queryParams.o = (e.order == 'descending' ? '-' : '') + e.prop;
+				} else {
+					delete this.queryParams.o;
+				}
+
+				reqGetList();
+
+			}
+		}
+	});
+
+
+
+
+
+	let CTX = 'http://localhost:8080/skean';
+	let URL0 = '/dict/nouns/';
+
+	function buildUrl(urlStr, params) {
+		var url = new URL(urlStr);
+		if (params) {
+			Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+		}
+		return url.href;
 	}
-	fetch1();
 
-// 	var v1=new Vue({
-// 		el:'.opt-head-bar1',
-// 		methods: {
-// 			itemAdd(){
-// 				function fetch1(){
-// 					fetch(CTX+'/dict/nouns/',{
-// 					    headers: {
-// 					        'Content-Type': 'application/json'
-// 					      },
-// 					      method: "POST",
-// 					      body: JSON.stringify({a: 1, b: 2})
-// 					  })
-					
-// 					.then(r => r.json())
-// 					.then(data => tb.tableData = data)
-// 				}
-// 			}
-// 		}
-// 	})
-	
-	var tb=new Vue({
-		el:'.opt-head-bar',
-		data:{
-			formLabelWidth:'120px',
-			dialogFormVisible:false,
-			form: {word:null,qual:'',lang:'CN',type:null}
-		},
-		
-		methods: {
-		      close(index ) {
-		        console.log(index);
-		      },
-		      close0(e) {
-		        console.log(this.form,e);
-		        this.dialogFormVisible=false;
-		      }
-		    }
-	})
-	
+	function reqGetList() {
+		Vue.http.get(buildUrl(CTX + URL0, crud.queryParams))
+			.then(resp => {
+				crud.itemsCount = parseInt(resp.headers.get('X-Total-Count'));
+				crud.items = resp.body;
+				crud.ui.loading = false;
+
+			})
+	}
+
+
+
+	reqGetList();
+
 </script>
 
 </html>

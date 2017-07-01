@@ -24,9 +24,9 @@ public class LangLearn2 {
 		Object[] ps = getPropVals(c1, new String[] {"arr","dates","value","x3", "s1","s2333"});
 		
 		System.out.println(Arrays.toString(ps));
-		Object obb=PropertyUtils.getProperty(c1, "m1");
-		Object obj1=PropertyUtils.getProperty(c1, "arr");
-		Object ddd1=PropertyUtils.getProperty(c1, "dates");
+		//Object obb=PropertyUtils.getProperty(c1, "m1");
+		//Object obj1=PropertyUtils.getProperty(c1, "arr");
+		//Object ddd1=PropertyUtils.getProperty(c1, "dates");
 		
 	}
 

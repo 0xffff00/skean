@@ -25,16 +25,16 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	String table;
 	String tableAlias;
-	String[] colsSelected;
-	String[] colsAffected;
-	String[] colsBy;
+	String[] seCols;	//column names to display,  via 'select(seCols)'
+	String[] afCols;	//column names to affect,   via 'affect(afCols)'
+	String[] byCols;	//column names to filter,   via 'by(byCols)'
 
 	String[] whereClauses;
 
 	Criterion[] criteria;
 
-	ValueHolder val;
-	ValueHolder afVal;
+	ValueHolder val;	//values to affect or filter, via 'by(byCols).val(val)'
+	ValueHolder afVal;	//values to affect,           via 'affect(afCols).val(afVal)'
 
 	SortingField[] sortingFields;
 	int limit, offset;
@@ -50,7 +50,7 @@ public class FromPhrase extends DefaultRootPhrase {
 	}
 
 	public SelectPhrase select(String... cols) {
-		colsSelected = cols;
+		seCols = cols;
 		return new SelectPhrase(this);
 	}
 
@@ -62,7 +62,7 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	// ------ filtering --------
 	public ByPhrase by(String... cols) {
-		colsBy = cols;
+		byCols = cols;
 		return new ByPhrase(this);
 	}
 
@@ -208,7 +208,7 @@ public class FromPhrase extends DefaultRootPhrase {
 	// ------ modifying --------
 
 	public AffectPhrase affect(String... cols) {
-		colsAffected = cols;
+		afCols = cols;
 		return new AffectPhrase(this);
 	}
 

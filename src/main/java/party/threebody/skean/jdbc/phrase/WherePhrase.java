@@ -24,8 +24,11 @@ public class WherePhrase implements Phrase {
 		return root.valArr(vals);
 	}
 
+	/**
+	 * valMap,valObj is disallowed.
+	 */
 	public ValPhrase val(Object... vals) {
-		return root.val(vals);
+		return root.valArr(vals);
 	}
 
 	// ------ fetching --------

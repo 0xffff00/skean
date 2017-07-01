@@ -41,13 +41,13 @@ public class CriteriaUtils {
 
 		for (int i = 0; i < n; i++) {
 			clauseAndParamsArr[i] = toClauseAndArgs(criteria[i]);
-			clauses[i] = clauseAndParamsArr[i].clause;
-			pNum += clauseAndParamsArr[i].args.length;
+			clauses[i] = clauseAndParamsArr[i].getClause();
+			pNum += clauseAndParamsArr[i].getArgs().length;
 		}
 		Object[] args = new Object[pNum];
 		for (int i = 0, j = 0; i < n; i++) {
-			for (int k = 0; k < clauseAndParamsArr[i].args.length; k++) {
-				args[j++] = clauseAndParamsArr[i].args[k];
+			for (int k = 0; k < clauseAndParamsArr[i].getArgs().length; k++) {
+				args[j++] = clauseAndParamsArr[i].getArgs()[k];
 			}
 		}
 		return new ClausesAndArgs(clauses, args);

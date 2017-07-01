@@ -34,7 +34,7 @@ class TestChainedJdbcCUD {
 	}
 	@Test
 	public void from_updating(){
-		assert 6<q.from("t1ship").affect("birth").where("1=1").val(1999).update();
+		assert 6<=q.from("t1ship").affect("birth").where("1=1").val(1999).update();
 		assert 1==q.from("t1ship").affect("birth").by("code").val(1918,"CV06").update();
 		assert 1==q.from("t1ship").affect("birth").by("code").val([birth:1918,code:"CV06"]).update();
 		

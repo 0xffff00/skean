@@ -6,6 +6,10 @@ public class BasicCriterion implements Criterion {
 	private String operator;
 	private Object value;
 
+	public BasicCriterion() {
+		this(null, null, null);
+	}
+
 	public BasicCriterion(String name, Object value) {
 		this(name, null, value);
 	}
@@ -45,9 +49,4 @@ public class BasicCriterion implements Criterion {
 		return "SimpleCriterionImpl{name:" + name + ", operator:" + operator + ", value:" + value + "}";
 	}
 
-	
-	
-
-	
-	
 }

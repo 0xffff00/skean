@@ -30,7 +30,7 @@ class DictController {
 	}
 
 	@PostMapping("/nouns")
-	public ResponseEntity createNoun(@RequestParam Map reqestParamMap){
+	public ResponseEntity createNoun(@RequestBody Map reqestParamMap){
 		controllerTemplate.createAndGet(table, afCols, reqestParamMap, byCols)
 	}
 

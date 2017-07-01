@@ -51,9 +51,10 @@ public class ValueHolder {
 			if (v0 instanceof Collection) {
 				valColl((Collection<Object>) v0);
 			}
-			if (!(v0 instanceof Number) && !(v0 instanceof String)) {
-				valObj(v0);
+			if ((v0 instanceof Number) || (v0 instanceof String)) {
+				valArr(vals);
 			}
+			valObj(v0);
 		} else {
 			valArr(vals);
 		}

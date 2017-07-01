@@ -40,7 +40,7 @@ public class TestChainedJdbcR {
 		
 	}
 	
-	@Test
+	//@Test
 	public void from_fetching_obj(){
 		Noun n1=new Noun();
 		n1.setQual("xxx");
@@ -62,6 +62,7 @@ public class TestChainedJdbcR {
 		prt(q.from("dct_noun").select("word","lang").orderBy("word desc").list());
 		prt(q.from("dct_noun").orderBy("word","type").list());
 		
+		assert 0<q.from("dct_noun").by("word").valArr(new String[]{"fdu"}).count();
 		assert 0<q.from("dct_noun").by("word").val("fdu").count();
 		int x1= q.from("dct_noun").by("type").val((String)null).count();
 		assert x1>0;

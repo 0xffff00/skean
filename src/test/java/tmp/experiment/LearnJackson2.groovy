@@ -23,7 +23,6 @@ class LearnJackson2 {
 		def s='''{"x1":3}'''
 		A a=objMapper.readerFor(A.class).readValue(s)
 		println a.x
-		println 
 		objMapper.writer().writeValueAsString(a)
 	}
 }
