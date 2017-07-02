@@ -50,7 +50,7 @@ public class GenericMapCrudRestControllerTemplate {
 		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.CREATED);
 	}
 
-	public ResponseEntity<Map<String, Object>> create(String table, Map<String, Object> entity, String[] byCols) {
+	public ResponseEntity<Map<String, Object>> create(String table, Map<String, Object> entity) {
 		genericMapCrudService.create(table, entity);
 		return new ResponseEntity<Map<String, Object>>(HttpStatus.CREATED);
 	}
@@ -71,10 +71,14 @@ public class GenericMapCrudRestControllerTemplate {
 			Map<String, Object> byWhat) {
 		return respondUD(genericMapCrudService.update(table, changes, byWhat));
 	}
-
-	public ResponseEntity<Map<String, Object>> update(String table, String[] afCols, Map<String, Object> changes,
+	
+	public ResponseEntity<Map<String, Object>> update(String table, String[] afCols, Map<String, Object> afWhat,
+			String[] byCols, Object[] byVals) {
+		return respondUD(genericMapCrudService.update(table, afCols, afWhat, byCols, byVals));
+	}
+	public ResponseEntity<Map<String, Object>> update(String table, String[] afCols, Map<String, Object> afWhat,
 			String[] byCols, Map<String, Object> byWhat) {
-		return respondUD(genericMapCrudService.update(table, afCols, changes, byCols, byWhat));
+		return respondUD(genericMapCrudService.update(table, afCols, afWhat, byCols, byWhat));
 	}
 
 	public ResponseEntity<Map<String, Object>> delete(String table, Map<String, Object> byWhat) {

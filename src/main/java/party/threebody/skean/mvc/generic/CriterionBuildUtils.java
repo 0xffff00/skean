@@ -20,7 +20,7 @@ public class CriterionBuildUtils {
 			return null;
 		}
 		try {
-			return objectMapper.readerFor(BasicCriterion[].class).readValue(criteria);
+			return objectMapper.readerFor(BasicCriterionWithBrief[].class).readValue(criteria);
 		} catch (IOException e) {
 			throw new SkeanException("IO error occurred in buildBasicCriterionArray", e);
 		}

@@ -53,6 +53,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 		.allowedOrigins("*")
+		.allowedMethods("*")
 		.allowedHeaders("*")
 		.exposedHeaders("X-Total-Count");
 	}

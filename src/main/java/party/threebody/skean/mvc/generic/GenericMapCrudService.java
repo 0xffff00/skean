@@ -55,17 +55,21 @@ public class GenericMapCrudService {
 		return cjt.from(table).by(byCols).valMap(byWhat).single();
 	}
 
-	public int update(String table, Map<String, Object> changes, Map<String, Object> byWhat) {
-		return cjt.from(table).affect(changes).by(byWhat).update();
+	public int update(String table, Map<String, Object> afWhat, Map<String, Object> byWhat) {
+		return cjt.from(table).affect(afWhat).by(byWhat).update();
 
 	}
 
-	public int update(String table, String[] afCols, Map<String, Object> changes, String[] byCols,
+	public int update(String table, String[] afCols, Map<String, Object> afWhat, String[] byCols,
 			Map<String, Object> byWhat) {
-		return cjt.from(table).affect(afCols).val(changes).by(byCols).valMap(byWhat).update();
-
+		return cjt.from(table).affect(afCols).val(afWhat).by(byCols).valMap(byWhat).update();
 	}
-
+	
+	public int update(String table, String[] afCols, Map<String, Object> afWhat, String[] byCols,
+			 Object[] byVals) {
+		return cjt.from(table).affect(afCols).val(afWhat).by(byCols).valArr(byVals).update();
+	}
+	
 	public int delete(String table, Map<String, Object> byWhat) {
 		return cjt.from(table).by(byWhat).delete();
 	}

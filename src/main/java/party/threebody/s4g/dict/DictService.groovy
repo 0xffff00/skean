@@ -16,10 +16,6 @@ class DictService {
 		q.from("dct_noun").list();
 	}
 	
-	public Noun getNoun2(String word){
-		q.from('dct_noun').by('word').val(word).single()
-	}
-	
 	public Noun getNoun(String word){
 		q.from('dct_noun').by('word','qual').val(word,'').single()
 	}

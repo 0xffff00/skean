@@ -34,34 +34,22 @@ class DictController {
 		controllerTemplate.createAndGet(table, afCols, reqestParamMap, byCols)
 	}
 
-
-
-	@DeleteMapping("/nouns/{word}")
-	public ResponseEntity deleteNoun(@PathVariable String word){
-		controllerTemplate.delete(table, byCols, [word,''] as String[])
+	@DeleteMapping("/nouns/{word}({qual})")
+	public ResponseEntity deleteNoun(@PathVariable String word,@PathVariable String qual){
+		controllerTemplate.delete(table, byCols, [word, qual] as String[])
 	}
-	@PutMapping("/nouns/{word}")
-	public ResponseEntity updateNoun(@RequestBody Map reqestParamMap,@PathVariable String word ){
+	@PutMapping("/nouns/{word}({qual})")
+	public ResponseEntity updateNoun(@RequestBody Map reqestParamMap,@PathVariable String word, @PathVariable String qual){
 		//TODO distinguish path var & post var
-		controllerTemplate.update(table, afCols, reqestParamMap, byCols,[word,''] as String[])
+		controllerTemplate.update(table, afCols, reqestParamMap, byCols,[word, qual] as String[])
 	}
-	@PatchMapping("/nouns/{word}")
-	public ResponseEntity patchNoun(@RequestBody Map reqestParamMap,@PathVariable String word ){
-		controllerTemplate.update(table, reqestParamMap, [word:word,qual:''])
-	}
+
 	@GetMapping('/nouns/{word:[^()]+}')
 	public Noun getNoun(@PathVariable String word){
 		dictService.getNoun(word)
 	}
-
-	@GetMapping('/nouns/x2/{word}')
-	public Noun getNoun2(@PathVariable String word){
-		dictService.getNoun2(word)
-	}
-
-	@GetMapping('/nouns/x3/{word}({qual})')
-	public Noun getNoun3(String word,String qual){
-		//controllerTemplate.get(table, [word:word,qual:qual])
-		dictService.getNoun(word, qual)
+	@GetMapping('/nouns/{word}({qual})')
+	public Noun getNoun(@PathVariable String word,@PathVariable String qual){
+		controllerTemplate.get(table, byCols, [word, qual] as String[])
 	}
 }
