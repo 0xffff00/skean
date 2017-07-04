@@ -15,7 +15,7 @@ public class ChainedJdbcTemplateContext {
 	private ColumnMapRowMapper columnMapRowMapper;
 
 	public ChainedJdbcTemplateContext() {
-		this.setColumnMapRowMapper(new ColumnMapRowMapper());
+		this.setColumnMapRowMapper(new LowerCasedColumnMapRowMapper());
 	}
 
 	public ChainedJdbcTemplateContext(DataSource dataSource, JdbcTemplate jdbcTmpl, SqlBuilder sqlBuilder) {
