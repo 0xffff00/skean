@@ -26,13 +26,16 @@ public class CriteriaUtils {
 		if (StringUtils.isNotEmpty(col)) {
 			if (col.charAt(0) == '!' || col.charAt(0) == '-') {
 				return new SortingField(col.substring(1), true);
-			} else {
+			} else if (col.endsWith(" desc")||col.endsWith(" DESC")){
+				int len=col.length();
+				return new SortingField(col.substring(0, len-5),true);
+			}else{
 				return new SortingField(col);
 			}
 		}
 		return null;
 	}
-	
+
 	public static ClausesAndArgs toClausesAndArgs(Criterion[] criteria) {
 		int n = criteria.length;
 		int pNum = 0;
@@ -53,17 +56,17 @@ public class CriteriaUtils {
 		return new ClausesAndArgs(clauses, args);
 
 	}
+
 	public static ClauseAndArgs toClauseAndArgs(Criterion criterion) {
-		if (criterion instanceof BasicCriterion){
-			return toClauseAndArgs((BasicCriterion)criterion);
+		if (criterion instanceof BasicCriterion) {
+			return toClauseAndArgs((BasicCriterion) criterion);
 		}
 		throw new ChainedJdbcTemplateException("unsupport Criterion Impl yet");
-		
+
 	}
+
 	public static ClauseAndArgs toClauseAndArgs(BasicCriterion criterion) {
-		if (!SqlSecurityUtils.checkNameLegality(criterion.getName())) {
-			throw new ChainedJdbcTemplateException("illegal column name: " + criterion.getName());
-		}
+		SqlSecurityUtils.checkColumnNameLegality(criterion.getName());
 		// handle 'opt'
 		String name = criterion.getName();
 		String opt = criterion.getOperator();
@@ -134,18 +137,19 @@ public class CriteriaUtils {
 
 		}
 		if (valArr == null) {
-			if ("?".equals(part2)){
+			if ("?".equals(part2)) {
 				valArr = new Object[] { val };
-			}else{
-				valArr = new Object[] { };
+			} else {
+				valArr = new Object[] {};
 			}
-			
+
 		}
 		return new ClauseAndArgs(part0 + part1 + part2, valArr);
 	}
 
 	/**
 	 * generateQMarkArrStrWithComma(4)=="(?,?,?,?)"
+	 * 
 	 * @param paramNum
 	 * @return
 	 */

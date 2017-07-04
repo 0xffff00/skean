@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,14 +41,18 @@ public class TestChainedJdbcR {
 		
 	}
 	
-	//@Test
+	@Test
 	public void from_fetching_obj(){
 		Noun n1=new Noun();
 		n1.setQual("xxx");
 		n1.setWord("CHN");
 		
-		prt(q.from("dct_noun").by("word").val(n1).list());
-		prt(q.from("dct_noun").by("word").val("CHN").list(Noun.class));
+		List<Map<String, Object>> res1=q.from("dct_noun").by("word").val(n1).list();
+		assert 1==res1.size();
+		assert res1.get(0).get("word").equals("CHN");
+		List<Noun> res2=q.from("dct_noun").by("word").val("CHN").list(Noun.class);
+		assert 1==res2.size();
+		assert res2.get(0).getWord().equals("CHN");
 		
 
 		

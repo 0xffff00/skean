@@ -1,25 +1,42 @@
 package party.threebody.skean.jdbc.util;
 
+import party.threebody.skean.SkeanSqlSecurityException;
+
 public class SqlSecurityUtils {
 	/**
-	 * check column name or table name legality.<br>
-	 * Helping prevent persistence layer from SQL injection attack. 
+	 * check table name legality.<br>
+	 * Helping prevent persistence layer from SQL injection attack.
+	 * 
 	 * @param name
-	 * @return legal or illegal
+	 * @throws SkeanSqlSecurityException
 	 */
-	public static boolean checkNameLegality(String name) {
-		// TODO let simple function wrapper pass. eg. upper(col1)
-		if (name==null) return false;
-		return name.matches("(`\\w+`|\\w+)");
+	public static void checkTableNameLegality(String name) {
+		if (name == null) {
+			throw new SkeanSqlSecurityException("illegal table name: null");
+		}
+		if (!name.matches("\\w+")) {
+			throw new SkeanSqlSecurityException("illegal table name: \"" + name + "\"");
+		}
 	}
+
 	/**
-	 * pass 'col1 desc','col1 asc','col1'
+	 * check column name or table name legality.<br>
+	 * Helping prevent persistence layer from SQL injection attack.
+	 * 
 	 * @param name
-	 * @return
+	 * @throws SkeanSqlSecurityException
 	 */
-	public static boolean checkColsOrderByLegality(String name) {
-		
-		if (name==null) return false;
-		return name.matches("(`\\w+`|\\w+)( (desc|asc|DESC|ASC))?");
+	public static void checkColumnNameLegality(String name) {
+		// TODO let simple function wrapper pass. eg. upper(col1)
+		if (name == null) {
+			throw new SkeanSqlSecurityException("illegal column name: null");
+		}
+		if (!name.matches("\\w+")) {
+			throw new SkeanSqlSecurityException("illegal column name: \"" + name + "\"");
+		}
 	}
+
+	
+	
+	
 }

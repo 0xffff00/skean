@@ -15,7 +15,9 @@ import party.threebody.skean.jdbc.util.ArrayAndMapUtils;
 import party.threebody.skean.jdbc.util.ClauseAndArgs;
 import party.threebody.skean.jdbc.util.ClausesAndArgs;
 import party.threebody.skean.jdbc.util.CriteriaUtils;
+import party.threebody.skean.jdbc.util.ReflectionUtils;
 import party.threebody.skean.jdbc.util.SqlAndArgs;
+import party.threebody.skean.jdbc.util.SqlSecurityUtils;
 
 public class SqlBuilderMysqlImpl implements SqlBuilder {
 
@@ -81,7 +83,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		if (ArrayUtils.isNotEmpty(p.sortingFields)) {
 			sql.append(BL).append(dlmt).append("ORDER BY ");
 			for (int i = 0, n = p.sortingFields.length; i < n; i++) {
-				String oc = buildOrderByClause(p.sortingFields[i]);
+				String oc = buildOrderByClause(p.sortingFields[i], nq);
 				sql.append(oc);
 				if (i != n - 1) {
 					sql.append(CM);
@@ -170,8 +172,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				return ArrayAndMapUtils.getValsArr(p.afVal.getMap(), p.afCols);
 			}
 			if (p.afVal.getObj() != null) {
-				// TODO afValObj parsing
-				return null;
+				return ReflectionUtils.getProperties(p.afVal.getObj(), p.afCols);
 			}
 			throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
 		}
@@ -190,8 +191,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				return ArrayAndMapUtils.getValsArr(p.val.getMap(), p.afCols);
 			}
 			if (p.val.getObj() != null) {
-				// TODO valObj parsing
-				return null;
+				return ReflectionUtils.getProperties(p.val.getObj(), p.afCols);
 			}
 		}
 		throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
@@ -236,7 +236,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 			return ArrayAndMapUtils.getValsArr(p.val.getMap(), p.byCols);
 		}
 		if (p.val.getObj() != null) {
-			// TODO valObj() build
+			return ReflectionUtils.getProperties(p.val.getObj(), p.byCols);
 		}
 		throw new ChainedJdbcTemplateException("build args of 'WHERE' clause failed. ");
 	}
@@ -248,6 +248,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 	@Override
 	public SqlAndArgs buildInsertSql(FromPhrase p) {
+		SqlSecurityUtils.checkTableNameLegality(p.table);
 		StringBuilder sql0 = new StringBuilder();
 		sql0.append("INSERT INTO ");
 		sql0.append(nq).append(p.table).append(nq);
@@ -274,6 +275,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 	@Override
 	public SqlAndArgs buildUpdateSql(FromPhrase p) {
+		SqlSecurityUtils.checkTableNameLegality(p.table);
 		Object[] args = null;
 		StringBuilder sql = new StringBuilder();
 		// PRINT>>>> UPDATE ... SET ...
@@ -316,6 +318,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 	@Override
 	public SqlAndArgs buildDeleteSql(FromPhrase p) {
+		SqlSecurityUtils.checkTableNameLegality(p.table);
 		StringBuilder sql = new StringBuilder();
 		// PRINT>>>> DELETE FROM ...
 		sql.append("DELETE FROM ");
@@ -332,14 +335,17 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 	}
 
 	private static String joinNamesByComma(String[] names, String nq) {
+		for (String name : names) {
+			SqlSecurityUtils.checkColumnNameLegality(name);
+		}
 		return nq + String.join(nq + CM + nq, names) + nq;
 	}
 
-	public String buildOrderByClause(SortingField sf) {
+	private static String buildOrderByClause(SortingField sf, String nq) {
 		if (sf == null) {
 			return null;
 		}
-		// TODO sql injection prevention
+		SqlSecurityUtils.checkColumnNameLegality(sf.getName());
 		return nq + sf.getName() + nq + (sf.isDesc() ? " DESC" : "");
 	}
 

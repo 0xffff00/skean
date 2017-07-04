@@ -32,7 +32,6 @@ public class ExifLearn {
 			    }
 			}
 		} catch (ImageProcessingException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
