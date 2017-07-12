@@ -28,6 +28,16 @@ class DictController {
 	public ResponseEntity listNouns(@RequestParam Map reqestParamMap){
 		controllerTemplate.list(table,reqestParamMap )
 	}
+	
+	@GetMapping('/nouns/allInRel')
+	public Object allInRel(){
+		dictService.listAllInRel()
+	}
+	
+	@GetMapping('/nouns/{word}/treeParts')
+	public Object treeParts(@PathVariable String word){
+		dictService.treeParts(word)
+	}
 
 	@PostMapping("/nouns")
 	public ResponseEntity createNoun(@RequestBody Map reqestParamMap){
@@ -52,4 +62,15 @@ class DictController {
 	public Noun getNoun(@PathVariable String word,@PathVariable String qual){
 		controllerTemplate.get(table, byCols, [word, qual] as String[])
 	}
+	
+	@GetMapping('/nouns/{word}/related')
+	public Object getRelated(@PathVariable String word){
+		[
+			aliasObjects:dictService.listRelatedAliasObject(word),
+			instanceObjects:dictService.listRelatedInstanceObject(word),
+			subjects:dictService.listRelatedSubject(word)
+		]
+	}
+	
+	
 }

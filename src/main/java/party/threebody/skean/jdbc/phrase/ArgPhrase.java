@@ -18,7 +18,7 @@ public class ArgPhrase implements Phrase {
 	public List<Map<String,Object>> list() {
 		return root.list();
 	}
-	public <T> List<T> list(Class<T> elementType) {
+	public <T> List<T> list(Class<T> elementType) {		
 		return root.list(elementType);
 	}
 	public <T> List<T> list(RowMapper<T> rowMapper) {

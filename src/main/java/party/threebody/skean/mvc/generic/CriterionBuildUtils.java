@@ -20,7 +20,7 @@ public class CriterionBuildUtils {
 			return null;
 		}
 		try {
-			return objectMapper.readerFor(BasicCriterionWithBrief[].class).readValue(criteria);
+			return objectMapper.readerFor(BasicCriterionVO[].class).readValue(criteria);
 		} catch (IOException e) {
 			throw new SkeanException("IO error occurred in buildBasicCriterionArray", e);
 		}
@@ -28,22 +28,30 @@ public class CriterionBuildUtils {
 
 }
 
-class BasicCriterionWithBrief extends BasicCriterion {
+class BasicCriterionVO extends BasicCriterion {
 
-	public BasicCriterionWithBrief(String name, String operator, Object value) {
-		super(name, operator, value);
-	}
-
-	void setO(String o) {
+	public void setO(String o) {
 		setOperator(o);
 	}
 
-	void setN(String n) {
+	public void setN(String n) {
 		setName(n);
 	}
 
-	void setV(String v) {
+	public void setV(Object v) {
 		setValue(v);
+	}
+
+	public String getO() {
+		return getOperator();
+	}
+
+	public String getN() {
+		return getName();
+	}
+
+	public Object getV() {
+		return getValue();
 	}
 
 }

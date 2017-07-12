@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
@@ -27,23 +28,23 @@ public class SqlPhrase extends DefaultRootPhrase {
 	}
 
 	// ------ args value filling --------
-	protected ArgPhrase argArr(Object[] vals) {
+	public ArgPhrase argArr(Object[] vals) {
 		this.args = vals;
 		return new ArgPhrase(this);
 	}
 
-	protected ArgPhrase argMap(Map<String, Object> vals) {
+	public ArgPhrase argMap(Map<String, Object> vals) {
 		this.argMap = vals;
 		return new ArgPhrase(this);
 	}
 
-	protected ArgPhrase argObj(Object vals) {
+	public ArgPhrase argObj(Object vals) {
 		this.argObj = vals;
 		return new ArgPhrase(this);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ArgPhrase arg(Object... val) {
+	public ArgPhrase arg(Object... val) {
 		if (val == null || val.length == 0) {
 			return new ArgPhrase(this);
 		}
@@ -67,8 +68,9 @@ public class SqlPhrase extends DefaultRootPhrase {
 
 	@Override
 	public <T> List<T> list(Class<T> elementType) {
-		return context.getJdbcTmpl().queryForList(sql, elementType, args);
+		return context.getJdbcTmpl().query(sql, args, new BeanPropertyRowMapper<T>(elementType));
 	}
+
 
 	@Override
 	public <T> List<T> list(RowMapper<T> rowMapper) {

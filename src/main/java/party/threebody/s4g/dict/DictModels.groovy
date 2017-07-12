@@ -11,7 +11,10 @@ class Word {
 	
 	@Override
 	public String toString() {
-		return "Word [word=" + word + ", qual=" + qual + ", lang=" + lang + ", type=" + type + "]";
+		if (qual==null || qual.isEmpty()){
+			return word;
+		}
+		return word+'('+qual+')';
 	}
 	
 }
@@ -27,10 +30,4 @@ class NounDTO extends Noun{
 }
 
 class Verb extends Word {
-}
-class Rel {
-	String subject
-	String verb
-	String object
-	String adverb
 }

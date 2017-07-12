@@ -11,6 +11,7 @@ public class DateLearn {
 		System.out.println(DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.format(System.currentTimeMillis()));
 		System.out.println(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.format(System.currentTimeMillis()));
 		logger.info("sfsd");
+		
 	}
 
 }
