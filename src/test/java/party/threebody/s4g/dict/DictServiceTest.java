@@ -40,8 +40,10 @@ public class DictServiceTest {
 	}
 
 	@Test
-	public void testListInstances() {
-		//TODO unittest
+	public void treeParts() {
+		TNode t=dictService.treeParts("中国");
+		
+		System.out.println(t);
 	}
 
 	@Test
