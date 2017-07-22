@@ -25,11 +25,15 @@ public class SkeanJdbcConfig {
 	Environment env;
 
 	@Bean
-	ChainedJdbcTemplate chainedJdbcTemplate(DataSource dataSource, JdbcTemplate jdbcTmpl) {
+	ChainedJdbcTemplate chainedJdbcTemplate(DataSource dataSource, JdbcTemplate jdbcTemplate) {
 		SqlBuilderConfig sqlBuilderConfig = new SqlBuilderConfig();
 		SqlBuilder sqlBuilder = new SqlBuilderMysqlImpl(sqlBuilderConfig);
 		
-		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext(dataSource, jdbcTmpl, sqlBuilder);
+		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext();
+		pc.setDataSource(dataSource);
+		pc.setJdbcTemplate(jdbcTemplate);
+		pc.setSqlBuilder(sqlBuilder);
+		pc.setPrintSqlAndResultToConsole(true);
 		return new ChainedJdbcTemplate(pc);
 	}
 

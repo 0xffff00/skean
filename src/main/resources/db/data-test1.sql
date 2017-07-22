@@ -12,9 +12,9 @@ MySQL - 10.1.23-MariaDB : Database - skean0
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`skean0` /*!40100 DEFAULT CHARACTER SET utf8 */;
+--CREATE DATABASE /*!32312 IF NOT EXISTS*/`skean0` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `skean0`;
+--USE `skean0`;
 
 /*Table structure for table `dct_noun` */
 
@@ -98,10 +98,10 @@ CREATE TABLE `dct_rel_alias` (
 /*Data for the table `dct_rel_alias` */
 
 insert  into `dct_rel_alias`(`main`,`attr`,`lang`,`vno`,`val`,`adv`,`time1`,`time2`) values 
-('复旦大学','ABBR','en',0,'FDU\r',NULL,NULL,NULL),
-('复旦大学','ABBR','zh',0,'复旦\r',NULL,NULL,NULL),
-('复旦大学','FULL','en',0,'Fudan University\r',NULL,NULL,NULL),
-('复旦大学','FULL','zh',0,'复旦大学\r',NULL,NULL,NULL);
+('复旦大学','ABBR','en',0,'FDU',NULL,NULL,NULL),
+('复旦大学','ABBR','zh',0,'复旦',NULL,NULL,NULL),
+('复旦大学','FULL','en',0,'Fudan University',NULL,NULL,NULL),
+('复旦大学','FULL','zh',0,'复旦大学',NULL,NULL,NULL);
 
 /*Table structure for table `dct_rel_attr` */
 
@@ -124,17 +124,17 @@ insert  into `dct_rel_attr`(`claz`,`attr`,`attr2`,`type`) values
 ('国家','人口','','str'),
 ('国家','所在洲','','str'),
 ('国家','面积','','str'),
-('学校','办学性质','','str\r'),
-('学校','学科特色','主要','str\r'),
-('学校','学院','','str\r'),
-('学校','所在地(地级）','','str\r'),
-('学校','所在地(省级）','','str\r'),
-('学校','所属国家','','str\r'),
-('学校','所属部门','','str\r'),
-('学校','校区','','str\r'),
-('学校','校长','','str\r'),
-('学校','面积','大致','str\r'),
-('学校','高考招生批次','主要','str\r'),
+('学校','办学性质','','str'),
+('学校','学科特色','主要','str'),
+('学校','学院','','str'),
+('学校','所在地(地级）','','str'),
+('学校','所在地(省级）','','str'),
+('学校','所属国家','','str'),
+('学校','所属部门','','str'),
+('学校','校区','','str'),
+('学校','校长','','str'),
+('学校','面积','大致','str'),
+('学校','高考招生批次','主要','str'),
 ('学校社团','所属学校','','str');
 
 /*Table structure for table `dct_rel_attr_dat0` */
@@ -234,21 +234,21 @@ CREATE TABLE `dct_rel_dual` (
 /*Data for the table `dct_rel_dual` */
 
 insert  into `dct_rel_dual`(`main`,`attr`,`vno`,`val`,`adv`,`time1`,`time2`) values 
-('211高校','PART',0,'985高校\r',NULL,NULL,NULL),
-('985高校','PART',0,'C9高校\r',NULL,NULL,NULL),
-('985高校','PART',1,'华东五校\r',NULL,NULL,NULL),
-('C9高校','INST',0,'复旦大学\r',NULL,NULL,NULL),
-('C9高校','INST',1,'北京大学\r',NULL,NULL,NULL),
-('中国','UND',0,'中国高校\r',NULL,NULL,NULL),
-('中国','UND',1,'中国经济\r',NULL,NULL,NULL),
-('中国高校','PART',0,'211高校\r',NULL,NULL,NULL),
-('华东五校','INST',0,'复旦大学\r',NULL,NULL,NULL),
-('复旦研究生园委会','PART',0,'复旦研究生园委会主席团\r',NULL,NULL,NULL),
-('复旦研究生园委会','PART',0,'复旦研究生园委会新媒体部\r',NULL,NULL,NULL),
-('学校社团','INST',0,'复旦大学旅游协会\r',NULL,NULL,NULL),
-('学校社团','INST',1,'复旦研究生园委会\r',NULL,NULL,NULL),
-('高校','PART',0,'中国高校\r',NULL,NULL,NULL),
-('﻿学校','PART',0,'高校\r',NULL,NULL,NULL);
+('211高校','PART',0,'985高校',NULL,NULL,NULL),
+('985高校','PART',0,'C9高校',NULL,NULL,NULL),
+('985高校','PART',1,'华东五校',NULL,NULL,NULL),
+('C9高校','INST',0,'复旦大学',NULL,NULL,NULL),
+('C9高校','INST',1,'北京大学',NULL,NULL,NULL),
+('中国','UND',0,'中国高校',NULL,NULL,NULL),
+('中国','UND',1,'中国经济',NULL,NULL,NULL),
+('中国高校','PART',0,'211高校',NULL,NULL,NULL),
+('华东五校','INST',0,'复旦大学',NULL,NULL,NULL),
+('复旦研究生园委会','PART',0,'复旦研究生园委会主席团',NULL,NULL,NULL),
+('复旦研究生园委会','PART',0,'复旦研究生园委会新媒体部',NULL,NULL,NULL),
+('学校社团','INST',0,'复旦大学旅游协会',NULL,NULL,NULL),
+('学校社团','INST',1,'复旦研究生园委会',NULL,NULL,NULL),
+('高校','PART',0,'中国高校',NULL,NULL,NULL),
+('﻿学校','PART',0,'高校',NULL,NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

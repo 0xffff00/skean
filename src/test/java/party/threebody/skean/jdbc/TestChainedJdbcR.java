@@ -54,9 +54,8 @@ public class TestChainedJdbcR {
 		assert 1==res2.size();
 		assert res2.get(0).getWord().equals("CHN");
 		
-
-		
 	}
+	
 	@Test
 	public void from_fetching(){
 		assertNotNull(q.from("dct_noun").list());

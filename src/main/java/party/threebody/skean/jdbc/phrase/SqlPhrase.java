@@ -63,28 +63,28 @@ public class SqlPhrase extends DefaultRootPhrase {
 	// ------ fetching --------
 	@Override
 	public List<Map<String, Object>> list() {
-		return context.getJdbcTmpl().query(sql, args, context.getColumnMapRowMapper());
+		return context.getJdbcTemplate().query(sql, args, context.getColumnMapRowMapper());
 	}
 
 	@Override
 	public <T> List<T> list(Class<T> elementType) {
-		return context.getJdbcTmpl().query(sql, args, new BeanPropertyRowMapper<T>(elementType));
+		return context.getJdbcTemplate().query(sql, args, new BeanPropertyRowMapper<T>(elementType));
 	}
 
 
 	@Override
 	public <T> List<T> list(RowMapper<T> rowMapper) {
-		return context.getJdbcTmpl().query(sql, args, rowMapper);
+		return context.getJdbcTemplate().query(sql, args, rowMapper);
 	}
 
 	public <T> T single(Class<T> elementType) {
-		return context.getJdbcTmpl().queryForObject(sql, args, elementType);
+		return context.getJdbcTemplate().queryForObject(sql, args, elementType);
 	}
 
 	// ------ modifying --------
 
 	protected int update() {
-		return context.getJdbcTmpl().update(sql, new ArgumentPreparedStatementSetter(args));
+		return context.getJdbcTemplate().update(sql, new ArgumentPreparedStatementSetter(args));
 
 	}
 

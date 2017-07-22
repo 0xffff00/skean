@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
+
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)

@@ -25,16 +25,16 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	String table;
 	String tableAlias;
-	String[] seCols;	//column names to display,  via 'select(seCols)'
-	String[] afCols;	//column names to affect,   via 'affect(afCols)'
-	String[] byCols;	//column names to filter,   via 'by(byCols)'
+	String[] seCols; // column names to display, via 'select(seCols)'
+	String[] afCols; // column names to affect, via 'affect(afCols)'
+	String[] byCols; // column names to filter, via 'by(byCols)'
 
 	String[] whereClauses;
 
 	Criterion[] criteria;
 
-	ValueHolder val;	//values to affect or filter, via 'by(byCols).val(val)'
-	ValueHolder afVal;	//values to affect,           via 'affect(afCols).val(afVal)'
+	ValueHolder val; // values to affect or filter, via 'by(byCols).val(val)'
+	ValueHolder afVal; // values to affect, via 'affect(afCols).val(afVal)'
 
 	SortingField[] sortingFields;
 	int limit, offset;
@@ -180,29 +180,82 @@ public class FromPhrase extends DefaultRootPhrase {
 	}
 
 	// ------ fetching --------
-	public List<Map<String, Object>> list() {
+	private SqlAndArgs buildAndLogSelectSql() {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().query(sa.getSql(), sa.getArgs(), context.getColumnMapRowMapper());
+		if (context.isPrintSqlAndResultToConsole()) {
+			logger.info(">>>>>>>>>>>   SQL  >>>>>>>>>>>\n{}", sa.toANSIString2());
+		}
+		return sa;
+	}
+
+	private <T> void printSqlResult(List<T> list) {
+		if (context.isPrintSqlAndResultToConsole()) {
+			int count = list.size();
+
+			String text = null;
+			if (count == 0) {
+				text = "(None)";
+			} else {
+				int rsmax = context.getMaxCharsToPrintSqlResult();
+				int lnmax = context.getMaxCharsToPrintInOneLine() - 1;
+				StringBuilder sb = new StringBuilder();
+				int i = 0, ln = 0;
+				for (i = 0, ln = 0; i < count; i++) {
+					String str = list.get(0).toString();
+					if (sb.length() + str.length() > rsmax) {
+						break;
+					}
+					ln += str.length();
+					sb.append(str);
+					if (ln > lnmax) {
+						sb.append("\n");
+						ln = 0;
+					} else {
+						sb.append("\t");
+						ln += 4;
+					}
+				}
+				if (i < count) {
+					sb.append("...(other ").append(count - i).append(" items left)");
+				}
+				text = sb.toString();
+			}
+			logger.info("<<<<<<<<<<< Result({}) <<<<<<<<<<<\n{}", count, text);
+		}
+
+	}
+
+	public List<Map<String, Object>> list() {
+		SqlAndArgs sa = buildAndLogSelectSql();
+		List<Map<String, Object>> res = context.getJdbcTemplate().query(sa.getSql(), sa.getArgs(),
+				context.getColumnMapRowMapper());
+		printSqlResult(res);
+		return res;
 	}
 
 	public <T> List<T> list(Class<T> elementType) {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().query(sa.getSql(), sa.getArgs(), new BeanPropertyRowMapper<T>(elementType));
+		List<T> res = context.getJdbcTemplate().query(sa.getSql(), sa.getArgs(),
+				new BeanPropertyRowMapper<T>(elementType));
+		printSqlResult(res);
+		return res;
 	}
 
 	public <T> List<T> list(RowMapper<T> rowMapper) {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().query(sa.getSql(), sa.getArgs(), rowMapper);
+		List<T> res = context.getJdbcTemplate().query(sa.getSql(), sa.getArgs(), rowMapper);
+		printSqlResult(res);
+		return res;
 	}
 
 	public <T> T single(Class<T> elementType) {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().queryForObject(sa.getSql(), elementType);
+		return context.getJdbcTemplate().queryForObject(sa.getSql(), elementType);
 	}
 
 	public Map<String, Object> single() {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		return context.getJdbcTmpl().queryForMap(sa.getSql(), sa.getArgs());
+		return context.getJdbcTemplate().queryForMap(sa.getSql(), sa.getArgs());
 	}
 
 	// ------ modifying --------
@@ -219,19 +272,19 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	protected int insert() {
 		SqlAndArgs sa = context.getSqlBuilder().buildInsertSql(this);
-		return context.getJdbcTmpl().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
+		return context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
 
 	}
 
 	protected int update() {
 		SqlAndArgs sa = context.getSqlBuilder().buildUpdateSql(this);
-		return context.getJdbcTmpl().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
+		return context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
 
 	}
 
 	protected int delete() {
 		SqlAndArgs sa = context.getSqlBuilder().buildDeleteSql(this);
-		return context.getJdbcTmpl().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
+		return context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
 
 	}
 }

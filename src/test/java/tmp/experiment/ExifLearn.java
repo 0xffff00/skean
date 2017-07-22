@@ -27,7 +27,9 @@ public class ExifLearn {
 		try {
 			metadata = ImageMetadataReader.readMetadata(f);
 			for (Directory directory : metadata.getDirectories()) {
+				 System.out.println(">>>>Dir>>>>>"+directory);
 			    for (Tag tag : directory.getTags()) {
+			    	
 			        System.out.println(tag);
 			    }
 			}

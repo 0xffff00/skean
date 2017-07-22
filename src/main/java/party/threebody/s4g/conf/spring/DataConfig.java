@@ -48,12 +48,12 @@ public class DataConfig {
 
 }
 @Configuration
-class DbConfig {
+class DataSourceConfig {
 
 
 	@Bean
 	@Profile("!memdb")
-	public DataSource dataSource() {
+	public DataSource defaultDataSource() {
 		HikariConfig config = new HikariConfig("/jdbc.properties");
 		HikariDataSource ds = new HikariDataSource(config);
 		return ds;
@@ -61,14 +61,14 @@ class DbConfig {
 	
 	@Bean
 	@Profile("memdb")
-	public DataSource dataSource1() {
+	public DataSource memdbDataSource() {
 
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		EmbeddedDatabase db = builder
 				.setType(EmbeddedDatabaseType.H2)
 				.addScript("db/h2-init.sql")
-				.addScript("db/schema.sql")
-				.addScript("db/data.sql")
+				//.addScript("db/schema.sql")
+				.addScript("db/data-test1.sql")
 				.build();
 		return db;
 	}

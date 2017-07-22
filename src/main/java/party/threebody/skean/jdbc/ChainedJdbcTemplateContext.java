@@ -10,18 +10,23 @@ import party.threebody.skean.jdbc.phrase.SqlBuilder;
 public class ChainedJdbcTemplateContext {
 
 	private DataSource dataSource;
-	private JdbcTemplate jdbcTmpl;
+	private JdbcTemplate jdbcTemplate;
 	private SqlBuilder sqlBuilder;
 	private ColumnMapRowMapper columnMapRowMapper;
-
+	private boolean printSqlAndResultToConsole;
+	private int maxCharsToPrintSqlResult;
+	private int maxCharsToPrintInOneLine;
 	public ChainedJdbcTemplateContext() {
 		this.setColumnMapRowMapper(new LowerCasedColumnMapRowMapper());
+		this.setMaxCharsToPrintSqlResult(1024);
+		this.setMaxCharsToPrintInOneLine(200);
+		this.setPrintSqlAndResultToConsole(false);
 	}
 
 	public ChainedJdbcTemplateContext(DataSource dataSource, JdbcTemplate jdbcTmpl, SqlBuilder sqlBuilder) {
 		this();
 		this.dataSource = dataSource;
-		this.jdbcTmpl = jdbcTmpl;
+		this.jdbcTemplate = jdbcTmpl;
 		this.sqlBuilder = sqlBuilder;
 
 	}
@@ -34,12 +39,12 @@ public class ChainedJdbcTemplateContext {
 		this.dataSource = dataSource;
 	}
 
-	public JdbcTemplate getJdbcTmpl() {
-		return jdbcTmpl;
+	public JdbcTemplate getJdbcTemplate() {
+		return jdbcTemplate;
 	}
 
-	public void setJdbcTmpl(JdbcTemplate jdbcTmpl) {
-		this.jdbcTmpl = jdbcTmpl;
+	public void setJdbcTemplate(JdbcTemplate jdbcTmpl) {
+		this.jdbcTemplate = jdbcTmpl;
 	}
 
 	public ColumnMapRowMapper getColumnMapRowMapper() {
@@ -57,5 +62,31 @@ public class ChainedJdbcTemplateContext {
 	public void setSqlBuilder(SqlBuilder sqlBuilder) {
 		this.sqlBuilder = sqlBuilder;
 	}
+
+	public boolean isPrintSqlAndResultToConsole() {
+		return printSqlAndResultToConsole;
+	}
+
+	public void setPrintSqlAndResultToConsole(boolean printSqlAndResultToConsole) {
+		this.printSqlAndResultToConsole = printSqlAndResultToConsole;
+	}
+
+	public int getMaxCharsToPrintSqlResult() {
+		return maxCharsToPrintSqlResult;
+	}
+
+	public void setMaxCharsToPrintSqlResult(int maxCharsToPrintSqlResult) {
+		this.maxCharsToPrintSqlResult = maxCharsToPrintSqlResult;
+	}
+
+	public int getMaxCharsToPrintInOneLine() {
+		return maxCharsToPrintInOneLine;
+	}
+
+	public void setMaxCharsToPrintInOneLine(int maxCharsToPrintInOneLine) {
+		this.maxCharsToPrintInOneLine = maxCharsToPrintInOneLine;
+	}
+
+
 
 }

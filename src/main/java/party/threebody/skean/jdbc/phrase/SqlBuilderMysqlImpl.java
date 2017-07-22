@@ -102,9 +102,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		}
 
 		// return the result
-		SqlAndArgs sa = new SqlAndArgs(sql.toString(), wherePart.getArgs());
-		logger.info(">>>>> final SQL >>>>>>>>>>>\n{}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", sa.toANSIString2());
-		return sa;
+		return  new SqlAndArgs(sql.toString(), wherePart.getArgs());
 
 	}
 
@@ -197,7 +195,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
 	}
 
-	private Object[] buildNullableArgsOfWhereClause(FromPhrase p) {
+	private static Object[] buildNullableArgsOfWhereClause(FromPhrase p) {
 		if (!p.val.enabled()) {
 			return null;
 		}
