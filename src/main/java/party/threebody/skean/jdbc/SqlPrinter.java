@@ -19,6 +19,13 @@ public class SqlPrinter {
 		this.context = context;
 	}
 
+	public void printSql(String sql, Object[] args) {
+		if (!context.isPrintSqlAndResult()) {
+			return;
+		}
+		logger.info(">>>>>>>>>>>   SQL  >>>>>>>>>>>\n{}", SqlPrintUtils.ansiFormatSql(sql, args));
+	}
+
 	public void printSql(SqlAndArgs sa) {
 		if (!context.isPrintSqlAndResult()) {
 			return;
@@ -30,7 +37,7 @@ public class SqlPrinter {
 		if (!context.isPrintSqlAndResult()) {
 			return;
 		}
-		logger.info("<<<<<<<<<<< {} rows(s) affected. <<<<<<<<<<<\n{}", rowNumAffected);
+		logger.info("<<<<<<<<<<< {} rows(s) affected. <<<<<<<<<<<", rowNumAffected);
 	}
 
 	public <T> void printResultBean(T resultBean) {

@@ -58,14 +58,18 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		} else if (p.enableCount) {
 			sels = "count(*) cnt"; // simple counting col
 		}
-		sql.append("SELECT ").append(sels).append(dlmt).append("FROM ").append(nq).append(p.table).append(nq);
+		sql.append("SELECT ").append(sels).append(BL);
+		if (sels.length() > conf.getMaxCharsOfInlineSelCols()) {
+			sql.append(dlmt);
+		}
+		sql.append("FROM ").append(nq).append(p.table).append(nq).append(BL);
 		if (p.enableCount) {
 			if (p.tableAlias == null && p.seCols == null) {
 				p.tableAlias = "t";
 			}
 		}
 		if (p.tableAlias != null) {
-			sql.append(BL).append(p.tableAlias).append(dlmt);
+			sql.append(p.tableAlias).append(BL);
 		}
 
 		// PRINT>>>> WHERE...
@@ -81,7 +85,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 		// Handle 'orderBy()'
 		if (ArrayUtils.isNotEmpty(p.sortingFields)) {
-			sql.append(BL).append(dlmt).append("ORDER BY ");
+			sql.append(dlmt).append("ORDER BY ");
 			for (int i = 0, n = p.sortingFields.length; i < n; i++) {
 				String oc = buildOrderByClause(p.sortingFields[i], nq);
 				sql.append(oc);
@@ -93,8 +97,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 		// Handle 'page()'
 		if (p.limit > 0) {
-
-			sql.append(BL).append(dlmt).append("LIMIT ");
+			sql.append(dlmt).append("LIMIT ");
 			if (p.offset > 0) {
 				sql.append(p.offset).append(CM);
 			}
@@ -102,7 +105,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		}
 
 		// return the result
-		return  new SqlAndArgs(sql.toString(), wherePart.getArgs());
+		return new SqlAndArgs(sql.toString(), wherePart.getArgs());
 
 	}
 
@@ -120,7 +123,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 			ClausesAndArgs cp = CriteriaUtils.toClausesAndArgs(p.criteria);
 			if (ArrayUtils.isNotEmpty(cp.getClauses())) {
 				for (int i = 0, n = cp.getClauses().length; i < n; i++) {
-					sql.append("  AND ").append(cp.getClause(i)).append(dlmt);
+					sql.append(dlmt).append("  AND ").append(cp.getClause(i)).append(BL);
 				}
 			}
 			args = cp.getArgs();
@@ -133,13 +136,13 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 			args = ArrayAndMapUtils.toNonNullArr(nullableArgs);
 			// consider null value situation
 			for (int i = 0, n = p.byCols.length; i < n; i++) {
-				sql.append("  AND ").append(nq).append(p.byCols[i]).append(nq);
+				sql.append(dlmt).append("  AND ").append(nq).append(p.byCols[i]).append(nq);
 				if (nullableArgs[i] == null) {
 					sql.append(" IS NULL");
 				} else {
 					sql.append("=?");
 				}
-				sql.append(dlmt);
+				sql.append(BL);
 			}
 		}
 
@@ -147,12 +150,12 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		if (p.whereClauses != null) {
 			args = buildNullableArgsOfWhereClause(p);
 			for (int i = 0, n = p.whereClauses.length; i < n; i++) {
-				sql.append("  AND ").append(p.whereClauses[i]).append(dlmt);
+				sql.append(dlmt).append("  AND ").append(p.whereClauses[i]).append(BL);
 			}
 
 		}
 		if (sql.length() > 5) {
-			sql.replace(0, 5, dlmt + "WHERE");
+			sql.replace(0, dlmt.length() + 6, dlmt + "WHERE ");
 		}
 		return new ClauseAndArgs(sql.toString(), args);
 	}

@@ -63,28 +63,42 @@ public class SqlPhrase extends DefaultRootPhrase {
 	// ------ fetching --------
 	@Override
 	public List<Map<String, Object>> list() {
-		return context.getJdbcTemplate().query(sql, args, context.getColumnMapRowMapper());
+		context.getSqlPrinter().printSql(sql, args);
+		List<Map<String, Object>> res = context.getJdbcTemplate().query(sql, args, context.getColumnMapRowMapper());
+		context.getSqlPrinter().printResultList(res);
+		return res;
 	}
 
 	@Override
 	public <T> List<T> list(Class<T> elementType) {
-		return context.getJdbcTemplate().query(sql, args, new BeanPropertyRowMapper<T>(elementType));
+		context.getSqlPrinter().printSql(sql, args);
+		List<T> res = context.getJdbcTemplate().query(sql, args, new BeanPropertyRowMapper<T>(elementType));
+		context.getSqlPrinter().printResultList(res);
+		return res;
 	}
-
 
 	@Override
 	public <T> List<T> list(RowMapper<T> rowMapper) {
-		return context.getJdbcTemplate().query(sql, args, rowMapper);
+		context.getSqlPrinter().printSql(sql, args);
+		List<T> res = context.getJdbcTemplate().query(sql, args, rowMapper);
+		context.getSqlPrinter().printResultList(res);
+		return res;
 	}
 
 	public <T> T single(Class<T> elementType) {
-		return context.getJdbcTemplate().queryForObject(sql, args, elementType);
+		context.getSqlPrinter().printSql(sql, args);
+		T res = context.getJdbcTemplate().queryForObject(sql, args, elementType);
+		context.getSqlPrinter().printResultBean(res);
+		return res;
 	}
 
 	// ------ modifying --------
 
 	protected int update() {
-		return context.getJdbcTemplate().update(sql, new ArgumentPreparedStatementSetter(args));
+		context.getSqlPrinter().printSql(sql, args);
+		int rna = context.getJdbcTemplate().update(sql, new ArgumentPreparedStatementSetter(args));
+		context.getSqlPrinter().printRowNumAffected(rna);
+		return rna;
 
 	}
 

@@ -11,14 +11,17 @@ import party.threebody.skean.jdbc.ChainedJdbcTemplate
 
 @Service
 class DictService {
-
+	@Autowired DictDao dictDao
 	@Autowired ChainedJdbcTemplate cjt
 	
+	String getFormal(String alias){
+		dictDao.getAliasRoot(alias) || alias
+	}
 	
-	
-//	List<Noun> listNouns(){
-//		cjt.from("dct_noun").list().collect{it};
-//	}
+	List<Word> getWordA(String text){
+		
+		cjt.from("dct_rel_sp_alias").by("key").val(text).list().collect{it};
+	}
 	
 	
 	

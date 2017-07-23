@@ -3,6 +3,7 @@ package party.threebody.skean.util;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -11,8 +12,9 @@ import java.time.temporal.TemporalUnit;
 /**
  * 
  * A vague date-time which granularity varies from <b>second</b> to
- * <b>year</b><br>
- * Mostly, VagueDateTime represents a range of [begin,end).<br>
+ * <b>years</b><br>
+ * Mostly, VagueDateTime represents a time point that cannot be remembered
+ * precisely but only approximated into a range of [begin,end).<br>
  * Here is examples:<br>
  * <code>
  * <li>VagueDateTime.parse("2017Q3").begin().equals(LocalDateTime.parse("2017-07-01T00:00:00"));</li>
@@ -106,8 +108,13 @@ public class VagueDateTime {
 				LocalDateTime t = LocalDateTime.parse(text, DateTimeFormatters.DASHED_YEAR2SEC);
 				return new VagueDateTime(t, ChronoUnit.SECONDS);
 			} catch (DateTimeParseException e) {
-				return VagueDateTime.NA;
-
+				// skip
+			}
+			try {
+				LocalDateTime t = LocalDateTime.parse(text, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+				return new VagueDateTime(t, ChronoUnit.SECONDS);
+			} catch (DateTimeParseException e) {
+				// skip
 			}
 		}
 		return VagueDateTime.NA;

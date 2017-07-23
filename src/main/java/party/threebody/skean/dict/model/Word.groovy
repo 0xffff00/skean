@@ -4,6 +4,7 @@ package party.threebody.skean.dict.model
  * suppose there is a Word texted as 'China'<br>
  * query algorithms of the following collections are:<br>
  * <pre>
+ * <i>|collection|		criteria     | -> |result|</i>
  * instances: 	key='China',attr='INST' -> val 
  * definitions:	val='China',attr='INST' -> key 
  * children:	key='China',attr='GECH' -> val 
@@ -14,7 +15,6 @@ package party.threebody.skean.dict.model
  * references:	val='China' -> attr,attrx,key 
  * aliases:		key='China' -> val  
  * </pre>
- * 
  * 
  * @author hzk
  * @since 2017-07-23
@@ -69,8 +69,10 @@ class DualRelation{
 enum AliasType{
 	ABBR,FULL
 }
+
 enum DualType{
-	INSTANCE,	//a instance node, definition-instance relationship
-	CHILD,		//a generic child node, composition relationship
-	SUBSET		//a subset node, aggregation relationship
+	INSTANCE,	//INST: a instance node, definition-instance relationship
+	CHILD,		//GECH: a generic child node, composition relationship
+	SUBSET		//SUBS: a subset node, aggregation relationship
 }
+

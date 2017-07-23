@@ -1,5 +1,6 @@
-package party.threebody.s4g.dict;
+package party.threebody.skean.dict.serivce;
 
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,22 +10,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
-import party.threebody.skean.jdbc.ChainedJdbcTemplate;
+import party.threebody.skean.dict.model.DictService;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)
-@ActiveProfiles("memdb")
-public class DictServiceTest2 {
+@ActiveProfiles("~memdb")
+public class DictServiceTest {
 	@Autowired
-	ChainedJdbcTemplate cjt;
-	
+	DictService ds
+
 	@Test
-	public void t1() {
-		//cjt.sql("SELECT * FROM dct_rel_alias").list();
-		cjt.from("dct_rel_alias").list();
-		
+	void t1() {
+		assertEquals "复旦大学",ds.getFormal("复旦大学")
 	}
-
-
 }

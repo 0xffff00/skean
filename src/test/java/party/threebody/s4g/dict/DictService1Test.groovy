@@ -17,7 +17,7 @@ import party.threebody.s4g.conf.spring.RootConfig;
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)
 @ActiveProfiles("memdb")
-public class DictServiceTest {
+public class DictService1Test {
 	@Autowired
 	DictService1 dictService;
 	@Test

@@ -9,7 +9,6 @@ import party.threebody.skean.jdbc.util.CriteriaUtils;
 
 public class TestCriteriaUtils {
 
-	
 	@Test
 	public void testToClausesAndArgs() {
 

@@ -239,7 +239,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		SqlAndArgs sa = context.getSqlBuilder().buildInsertSql(this);
 		context.getSqlPrinter().printSql(sa);
 		int rna= context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
-		context.getSqlPrinter().printResultBean(rna);
+		context.getSqlPrinter().printRowNumAffected(rna);
 		return rna;
 	}
 
@@ -247,7 +247,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		SqlAndArgs sa = context.getSqlBuilder().buildUpdateSql(this);
 		context.getSqlPrinter().printSql(sa);
 		int rna= context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
-		context.getSqlPrinter().printResultBean(rna);
+		context.getSqlPrinter().printRowNumAffected(rna);
 		return rna;
 
 	}
@@ -256,7 +256,7 @@ public class FromPhrase extends DefaultRootPhrase {
 		SqlAndArgs sa = context.getSqlBuilder().buildDeleteSql(this);
 		context.getSqlPrinter().printSql(sa);
 		int rna= context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
-		context.getSqlPrinter().printResultBean(rna);
+		context.getSqlPrinter().printRowNumAffected(rna);
 		return rna;
 
 	}

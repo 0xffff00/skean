@@ -5,14 +5,16 @@ public class SqlBuilderConfig {
 	private String dlmt;
 	private String clauseDlmt;
 	private String ln;
-	private String enableBackquote;
+	private boolean enableBackquote;
 	private String enableModifyAllRows;
+	private int maxCharsOfInlineSelCols;
 
 	private void init(){
-		setClauseDlmt(" \n");
+		setClauseDlmt("\n");
 		setSubSelectIndent("  ");
-		setDlmt(" \n");
+		setDlmt("\n");
 		setLn("\n");
+		setMaxCharsOfInlineSelCols(40);
 	}
 	public SqlBuilderConfig() {
 		init();
@@ -53,11 +55,8 @@ public class SqlBuilderConfig {
 	public String getNameQuote(){
 		return isBackquoteEnabled()?"`":"";
 	}
-	public boolean isBackquoteEnabled() {
-		if (enableBackquote!=null && enableBackquote.equalsIgnoreCase("true")){
-			return true;
-		}
-		return false;
+	public boolean isBackquoteEnabled() {		
+		return enableBackquote;
 	}
 
 	public boolean isModifyAllRowsEnabled() {
@@ -66,13 +65,21 @@ public class SqlBuilderConfig {
 		}
 		return false;
 	}
-	
-	public void setEnableBackquote(String enableBackquote) {
+	public void setEnableBackquote(String s) {
+		this.enableBackquote = "true".equalsIgnoreCase(s);
+	}
+	public void setEnableBackquote(boolean enableBackquote) {
 		this.enableBackquote = enableBackquote;
 	}
 	
 	public void setEnableModifyAllRows(String enableModifyAllRows) {
 		this.enableModifyAllRows = enableModifyAllRows;
+	}
+	public int getMaxCharsOfInlineSelCols() {
+		return maxCharsOfInlineSelCols;
+	}
+	public void setMaxCharsOfInlineSelCols(int maxCharsOfInlineSelCols) {
+		this.maxCharsOfInlineSelCols = maxCharsOfInlineSelCols;
 	}
 	
 
