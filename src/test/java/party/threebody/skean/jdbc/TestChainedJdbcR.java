@@ -1,6 +1,6 @@
 package party.threebody.skean.jdbc;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
-import party.threebody.s4g.dict.Noun;
 import party.threebody.skean.core.query.BasicCriterion;
 
 @RunWith(SpringRunner.class)
@@ -30,60 +29,63 @@ public class TestChainedJdbcR {
 	@Autowired
 	ChainedJdbcTemplate q;
 
-	static void prt(Object a){
+	static void prt(Object a) {
 		System.out.println(a);
 	}
+
 	@Test
 	public void jdbcTmpl() {
-		List list = jdbcTmpl.queryForList("select * from `dct_noun`");
-		System.out.println(list);		
-		//q.from("t").criteria(null).orderBy().page(0, 0).first();
-		
+		List list = jdbcTmpl.queryForList("select * from `t1ship`");
+		System.out.println(list);
+
 	}
-	
+
 	@Test
-	public void from_fetching_obj(){
-		Noun n1=new Noun();
-		n1.setQual("xxx");
-		n1.setWord("CHN");
-		
-		List<Map<String, Object>> res1=q.from("dct_noun").by("word").val(n1).list();
-		assert 1==res1.size();
-		assert res1.get(0).get("word").equals("CHN");
-		List<Noun> res2=q.from("dct_noun").by("word").val("CHN").list(Noun.class);
-		assert 1==res2.size();
-		assert res2.get(0).getWord().equals("CHN");
-		
+	public void from_fetching_obj() {
+		ShipDO cv06 = new ShipDO();
+		cv06.setCode("CV06");
+		cv06.setName("Big E");
+		cv06.setBirth(1989);
+
+		List<Map<String, Object>> res1 = q.from("t1ship").by("code").val(cv06).list();
+		assert 1 == res1.size();
+		assert res1.get(0).get("birth").equals(1989);
+		List<ShipDO> res2 = q.from("t1ship").by("code","birth").val("CV06",1989).list(ShipDO.class);
+		assert 1 == res2.size();
+		assert res2.get(0).getName().equals("Big E");
+
 	}
-	
+
 	@Test
-	public void from_fetching(){
-		assertNotNull(q.from("dct_noun").list());
-		assert q.from("dct_noun").count()>10;
-		assert q.from("dct_noun").select("word").count()>0;
-		prt(q.from("dct_noun").page(1, 3).list());
-		prt(q.from("dct_noun").page(2, 3).list());
-		prt(q.from("dct_noun").select("word","lang").orderBy("word desc").list());
-		prt(q.from("dct_noun").orderBy("word","type").list());
+	public void from_fetching() {
+		//list,count,page 
+		assertNotNull(q.from("t1ship").list());
+		assert q.from("t1ship").count() >4;
+		assert q.from("t1ship").select("code").count() > 4;
+		assert q.from("t1ship").page(1, 3).list().size()==3;
+		assert q.from("t1ship").page(2, 4).list().size()>=2;
+		//orderBy
+		assert q.from("t1ship").orderBy("code").list().get(0).get("code").equals("BB14");
+		assertEquals("BB16",q.from("t1ship").where("code like 'BB%'").orderBy("code desc").list().get(0).get("code"));
+		assertEquals("BB16",q.from("t1ship").where("code like 'BB%'").orderBy("!code").list().get(0).get("code"));
+		assertEquals("BB16",q.from("t1ship").where("code like 'BB%'").orderBy("-code").list().get(0).get("code"));
+
+		//by
+		assert 0 < q.from("t1ship").by("code").valArr(new String[] { "BB15" }).count();
+		assert 0 < q.from("t1ship").by("code").val("BB15").count();
+		int x1 = q.from("t1ship").by("weig").val((String) null).count();
+		assert x1 == 1;
 		
-		assert 0<q.from("dct_noun").by("word").valArr(new String[]{"fdu"}).count();
-		assert 0<q.from("dct_noun").by("word").val("fdu").count();
-		int x1= q.from("dct_noun").by("type").val((String)null).count();
-		assert x1>0;
-		assert x1==q.from("dct_noun").by("type").val((String)null).list().size();
-		assertNotNull(q.from("dct_noun").by("word","lang").val("fdu","en").list());
-		prt("######t1ship#######");
-		prt(q.from("t1ship").by("code").valMap(new HashMap()).firstCell());	
-		assertNotNull(q.from("t1ship").criteria().list());	
-		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("weig",">",30000)).list());	
-		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code","^","CV")).list());
-		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code","~","V0"),
-				new BasicCriterion("weig",">",30000),new BasicCriterion("name","!=",null)
-				).list());
-		
+		prt(q.from("t1ship").by("code").valMap(new HashMap()).firstCell());
+		assertNotNull(q.from("t1ship").criteria().list());
+		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("weig", ">", 30000)).list());
+		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code", "^", "CV")).list());
+		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code", "~", "V0"),
+				new BasicCriterion("weig", ">", 30000), new BasicCriterion("name", "!=", null)).list());
+
 		assertNotNull(q.from("t1ship").where("code like ?").val("DD%").list());
 	}
-	
 
+	
 
 }

@@ -59,8 +59,8 @@ class TestChainedJdbcCUD {
 	
 	@Test
 	public void from_deleting(){
-		assert 2==q.from("t1ship").by("birth").val(1987).delete();
-		assert q.from("t1ship").by("birth").val(1987).count()==0;
+		assertEquals 2,q.from("t1ship").by("birth").val(1987).delete()
+		assertEquals 0, q.from("t1ship").by("birth").val(1987).count()
 	}
 
 }

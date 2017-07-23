@@ -33,7 +33,7 @@ public class SkeanJdbcConfig {
 		pc.setDataSource(dataSource);
 		pc.setJdbcTemplate(jdbcTemplate);
 		pc.setSqlBuilder(sqlBuilder);
-		pc.setPrintSqlAndResultToConsole(true);
+		pc.setPrintSqlAndResult(true);
 		return new ChainedJdbcTemplate(pc);
 	}
 

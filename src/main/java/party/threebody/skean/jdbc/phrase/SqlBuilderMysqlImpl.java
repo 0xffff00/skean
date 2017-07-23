@@ -267,7 +267,6 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
 		Object[] args = buildNullableArgsOfAffectClause(p);
 		SqlAndArgs sa = new SqlAndArgs(sql0.toString(), args);
-		logger.info(">>>>> final SQL >>>>>>>>>>>\n{}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", sa.toANSIString2());
 		return sa;
 	}
 
@@ -310,7 +309,6 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		sql.append(wherePart.getClause());
 		args = ArrayUtils.addAll(argsToSet, wherePart.getArgs());
 		SqlAndArgs sa = new SqlAndArgs(sql.toString(), args);
-		logger.info(">>>>> final SQL >>>>>>>>>>>\n{}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", sa.toANSIString2());
 		return sa;
 	}
 
@@ -328,7 +326,6 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		}
 		sql.append(wherePart.getClause());
 		SqlAndArgs sa = new SqlAndArgs(sql.toString(), wherePart.getArgs());
-		logger.info(">>>>> final SQL >>>>>>>>>>>\n{}\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", sa.toANSIString2());
 		return sa;
 	}
 

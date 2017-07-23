@@ -67,8 +67,8 @@ class DataSourceConfig {
 		EmbeddedDatabase db = builder
 				.setType(EmbeddedDatabaseType.H2)
 				.addScript("db/h2-init.sql")
-				//.addScript("db/schema.sql")
-				.addScript("db/data-test1.sql")
+				.addScript("db/test0.sql")
+				.addScript("db/test1.sql")
 				.build();
 		return db;
 	}

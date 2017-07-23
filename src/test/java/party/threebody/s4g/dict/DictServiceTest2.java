@@ -17,8 +17,6 @@ import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 @ActiveProfiles("memdb")
 public class DictServiceTest2 {
 	@Autowired
-	DictService dictService;
-	@Autowired
 	ChainedJdbcTemplate cjt;
 	
 	@Test

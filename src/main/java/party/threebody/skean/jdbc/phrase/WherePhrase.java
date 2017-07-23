@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import party.threebody.skean.core.query.SortingField;
+
 /**
  * neither 'where().valObj()' nor 'where().valMap()' impl yet
  * 
@@ -17,6 +19,15 @@ public class WherePhrase implements Phrase {
 
 	WherePhrase(FromPhrase root) {
 		this.root = root;
+	}
+
+	// ------ sorting --------
+	public OrderByPhrase orderBy(String... cols) {
+		return root.orderBy(cols);
+	}
+
+	public OrderByPhrase orderBy(SortingField[] cols) {
+		return root.orderBy(cols);
 	}
 
 	// ------ value filling --------

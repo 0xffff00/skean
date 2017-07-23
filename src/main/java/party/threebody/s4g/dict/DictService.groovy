@@ -10,7 +10,7 @@ import groovy.transform.ToString
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 
 @Service
-class DictService {
+class DictService1 {
 
 	@Autowired ChainedJdbcTemplate cjt
 	

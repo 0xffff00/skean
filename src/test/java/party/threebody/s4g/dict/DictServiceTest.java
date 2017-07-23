@@ -19,7 +19,7 @@ import party.threebody.s4g.conf.spring.RootConfig;
 @ActiveProfiles("memdb")
 public class DictServiceTest {
 	@Autowired
-	DictService dictService;
+	DictService1 dictService;
 	@Test
 	public void testListNouns() {
 		//TODO unittest

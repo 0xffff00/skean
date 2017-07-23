@@ -12,15 +12,18 @@ public class ChainedJdbcTemplateContext {
 	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplate;
 	private SqlBuilder sqlBuilder;
+	private SqlPrinter sqlPrinter;
 	private ColumnMapRowMapper columnMapRowMapper;
-	private boolean printSqlAndResultToConsole;
+	private boolean printSqlAndResult;
 	private int maxCharsToPrintSqlResult;
 	private int maxCharsToPrintInOneLine;
+
 	public ChainedJdbcTemplateContext() {
 		this.setColumnMapRowMapper(new LowerCasedColumnMapRowMapper());
 		this.setMaxCharsToPrintSqlResult(1024);
 		this.setMaxCharsToPrintInOneLine(200);
-		this.setPrintSqlAndResultToConsole(false);
+		this.setPrintSqlAndResult(false);
+		this.setSqlPrinter(new SqlPrinter(this));
 	}
 
 	public ChainedJdbcTemplateContext(DataSource dataSource, JdbcTemplate jdbcTmpl, SqlBuilder sqlBuilder) {
@@ -63,14 +66,6 @@ public class ChainedJdbcTemplateContext {
 		this.sqlBuilder = sqlBuilder;
 	}
 
-	public boolean isPrintSqlAndResultToConsole() {
-		return printSqlAndResultToConsole;
-	}
-
-	public void setPrintSqlAndResultToConsole(boolean printSqlAndResultToConsole) {
-		this.printSqlAndResultToConsole = printSqlAndResultToConsole;
-	}
-
 	public int getMaxCharsToPrintSqlResult() {
 		return maxCharsToPrintSqlResult;
 	}
@@ -87,6 +82,20 @@ public class ChainedJdbcTemplateContext {
 		this.maxCharsToPrintInOneLine = maxCharsToPrintInOneLine;
 	}
 
+	public boolean isPrintSqlAndResult() {
+		return printSqlAndResult;
+	}
 
+	public void setPrintSqlAndResult(boolean printSqlAndResult) {
+		this.printSqlAndResult = printSqlAndResult;
+	}
+
+	public SqlPrinter getSqlPrinter() {
+		return sqlPrinter;
+	}
+
+	public void setSqlPrinter(SqlPrinter sqlPrinter) {
+		this.sqlPrinter = sqlPrinter;
+	}
 
 }

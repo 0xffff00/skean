@@ -20,7 +20,7 @@ import party.threebody.skean.mvc.generic.GenericMapCrudRestControllerTemplate
 @RequestMapping("/dict")
 class DictController {
 	@Autowired GenericMapCrudRestControllerTemplate controllerTemplate;
-	@Autowired DictService dictService;
+	@Autowired DictService1 dictService;
 	final table='dct_noun'
 	final String[] byCols=['word', 'qual']
 	final String[] afCols=['word', 'qual', 'lang', 'type']
