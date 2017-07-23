@@ -23,7 +23,7 @@ import party.threebody.skean.dict.model.DualRelation
 public class DictServiceTest {
 	@Autowired DictService ds
 	@Autowired DictDao dd
-	@Test
+	//@Test
 	void getFormal() {
 		assertEquals "复旦大学",ds.getFormal("复旦大学")
 		assertEquals "复旦大学",ds.getFormal("复旦")
@@ -35,8 +35,10 @@ public class DictServiceTest {
 		//println dd.listAliasRelations('复旦大学')
 		//println dd.listDualRelationsByKey('复旦大学')
 		
-		println dd.listDualRelationsByVal('复旦大学')
-		println ds.getWord('高校')
+		//println dd.listDualRelationsByVal('复旦大学')
+		//println ds.getWord('高校')
+		ds.t2('高校')
 		
 	}
+	
 }

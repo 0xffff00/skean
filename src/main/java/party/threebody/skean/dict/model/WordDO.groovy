@@ -104,16 +104,3 @@ enum DualType{
 	GECH,	//GECH: a generic child node, composition relationship
 	SUBS	//SUBS: a subset node, aggregation relationship
 }
-
-class TreeNode<T>{
-	T self
-	List<TreeNode<T>> sons
-
-	TreeNode(T self){
-		this.self = self
-	}
-	TreeNode(T self,List<TreeNode<T>> sons){
-		this.self = self
-		this.sons = sons
-	}
-}

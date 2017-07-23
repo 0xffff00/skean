@@ -31,25 +31,6 @@ class DictService {
 		w
 	}
 
-	void t2(String text){
-		Word w=new Word()
-		w.setText(text)
-		List<String> subsets=listSubsets(text)
-		TreeNode<String> subsetTree=new TreeNode(text,subsets)
-	}
-	void dfs(TreeNode node,String text){
-		node=new TreeNode(text)
-		List<String> subsets=listSubsets(text)
-		
-		
-	}
-	
-	List<String> listSubsets(String text){
-		listSubsetRelations(text).collect{it.key}
-	}
-	List<DualRelation> listSupersets(String text){
-		listSupersetRelations(text).collect{it.val}
-	}
 	
 	
 	List<DualRelation> listInstanceRelations(String text){
