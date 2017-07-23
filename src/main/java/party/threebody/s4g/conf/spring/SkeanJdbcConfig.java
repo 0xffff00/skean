@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
+import party.threebody.skean.jdbc.SqlPrinter;
 import party.threebody.skean.jdbc.phrase.SqlBuilder;
 import party.threebody.skean.jdbc.phrase.SqlBuilderConfig;
 import party.threebody.skean.jdbc.phrase.SqlBuilderMysqlImpl;
@@ -31,10 +32,14 @@ public class SkeanJdbcConfig {
 		SqlBuilder sqlBuilder = new SqlBuilderMysqlImpl(sqlBuilderConfig);
 		
 		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext();
+		SqlPrinter sqlPrinter=new SqlPrinter(pc);
 		pc.setDataSource(dataSource);
 		pc.setJdbcTemplate(jdbcTemplate);
 		pc.setSqlBuilder(sqlBuilder);
+		pc.setSqlPrinter(sqlPrinter);
 		pc.setPrintSqlAndResult(true);
+		pc.setMaxCharsToPrintInOneLine(60);
+		pc.setPrintSqlResultStrategy("REFLECTION");
 		return new ChainedJdbcTemplate(pc);
 	}
 

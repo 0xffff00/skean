@@ -17,6 +17,11 @@ public class ChainedJdbcTemplateContext {
 	private boolean printSqlAndResult;
 	private int maxCharsToPrintSqlResult;
 	private int maxCharsToPrintInOneLine;
+	private PrintSqlResultStrategy printSqlResultStrategy;
+
+	public enum PrintSqlResultStrategy {
+		ALWAYS_TOSTRING, REFLECTION, JACKSON
+	}
 
 	public ChainedJdbcTemplateContext() {
 		this.setColumnMapRowMapper(new LowerCasedColumnMapRowMapper());
@@ -24,6 +29,7 @@ public class ChainedJdbcTemplateContext {
 		this.setMaxCharsToPrintInOneLine(200);
 		this.setPrintSqlAndResult(false);
 		this.setSqlPrinter(new SqlPrinter(this));
+		this.setPrintSqlResultStrategy(PrintSqlResultStrategy.ALWAYS_TOSTRING);
 	}
 
 	public ChainedJdbcTemplateContext(DataSource dataSource, JdbcTemplate jdbcTmpl, SqlBuilder sqlBuilder) {
@@ -96,6 +102,18 @@ public class ChainedJdbcTemplateContext {
 
 	public void setSqlPrinter(SqlPrinter sqlPrinter) {
 		this.sqlPrinter = sqlPrinter;
+	}
+
+	public PrintSqlResultStrategy getPrintSqlResultStrategy() {
+		return printSqlResultStrategy;
+	}
+
+	public void setPrintSqlResultStrategy(String printSqlResultStrategy) {
+		this.printSqlResultStrategy = PrintSqlResultStrategy.valueOf(printSqlResultStrategy);
+	}
+
+	public void setPrintSqlResultStrategy(PrintSqlResultStrategy printSqlResultStrategy) {
+		this.printSqlResultStrategy = printSqlResultStrategy;
 	}
 
 }

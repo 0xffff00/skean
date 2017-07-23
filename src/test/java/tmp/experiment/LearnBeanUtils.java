@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class LearnBeanUtils {
 
@@ -33,6 +34,9 @@ public class LearnBeanUtils {
 		System.out.println(PropertyUtils.getSimpleProperty(stu, "arr").getClass());
 		System.out.println(PropertyUtils.getSimpleProperty(stu, "friends"));
 		System.out.println(PropertyUtils.getSimpleProperty(stu, "friends").getClass());
+		
+		System.out.println("==============reflectionToString===========");
+		System.out.println(ToStringBuilder.reflectionToString(stu));
 	}
 
 }

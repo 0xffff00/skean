@@ -3,6 +3,7 @@ package party.threebody.skean.jdbc;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,7 @@ public class SqlPrinter {
 			StringBuilder sb = new StringBuilder();
 			int i = 0, ln = 0;
 			for (i = 0, ln = 0; i < count; i++) {
-				String str = resultList.get(0).toString();
+				String str = stringify(resultList.get(i));
 				if (sb.length() + str.length() > rsmax) {
 					break;
 				}
@@ -82,4 +83,21 @@ public class SqlPrinter {
 
 	}
 
+	private <T> String stringify(T bean) {
+		switch (context.getPrintSqlResultStrategy()) {
+		case JACKSON:
+			// TODO refactor sqlPrintConfig
+		case REFLECTION:
+			if (bean.toString().startsWith(bean.getClass().getName() + "@")) {
+				return ToStringBuilder.reflectionToString(bean);
+			} else {
+				return bean.toString();
+			}
+		case ALWAYS_TOSTRING:
+
+		default:
+			return bean.toString();
+
+		}
+	}
 }
