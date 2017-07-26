@@ -1,6 +1,4 @@
-package party.threebody.skean.dict.model;
-
-import static org.junit.Assert.*;
+package party.threebody.skean.dict.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
+import party.threebody.skean.dict.dao.DictDao;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)
@@ -22,9 +21,12 @@ public class WordServiceTest {
 
 	@Test
 	public void testT2() {
-		System.out.println(ws.t2("高校").toString(0));
-		System.out.println(ws.listAttributeRelations("高校"));
-		System.out.println(ws.listReferenceRelations("高校"));
+		
+//		System.out.println(ws.listAttributeRelations("高校"));
+//		System.out.println(ws.listReferenceRelations("高校"));
+//		
+		System.out.println(ws.listSupersets("高校"));
+		System.out.println(ws.listSupersetRelations("高校"));
 	}
 
 }

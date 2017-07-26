@@ -1,4 +1,7 @@
 package party.threebody.skean.dict.model
+
+import party.threebody.skean.util.TreeNode
+
 /**
  * for example :<br>
  * suppose there is a Word texted as 'China'<br>
@@ -25,25 +28,31 @@ package party.threebody.skean.dict.model
  * @since 2017-07-23
  */
 class Word extends WordDO {
-	//trees composed of recursive collections above
+	//------ tree values ----
+	// trees composed of recursive collections above
 	TreeNode<String> childTree, parentTree
 	TreeNode<String> subsetTree, supersetTree
+	
+	// tree composed of recursive supersets of definitions shallow
+	List<TreeNode<String>> definitionTrees	
+	
+	//------ flatten values ----
+	
+	List<String> instances			// all instances of subsets deep
+	List<String> definitions0		// shallow nodes
+	List<String> definitions		// all nodes in all definitionTrees
+	List<String> descendants		// all nodes in childTree
+	List<String> ancestors			// all nodes in parentTree
+	List<String> subsets			// all nodes in subsetTree
+	List<String> supersets			// all nodes in supersetTree
+	List<String> attributeVals			// shallow nodes
+	List<String> attributes				// shallow nodes
+	List<String> attributesNonRef		// shallow nodes
+	List<String> referenceKeys			// shallow nodes
+	
 
-	//---- computed results -----
-	//real key of collections
-	List<String> instances			//all instances of subsets
-	List<String> definitions		//shallow nodes
-	List<String> descendants		//all nodes of childTree
-	List<String> ancestors			//all nodes of parentTree
-	List<String> subsets			//all nodes in subsetTree
-	List<String> supersets			//all nodes in supersetTree
-	List<String> attributes			//shallow nodes
-	List<String> attributesNonRef	//shallow nodes
-	List<String> references			//shallow nodes
-
+	
 	void init(){
-
-
 
 	}
 
@@ -59,7 +68,7 @@ class WordDO {
 
 
 	List<GenericRelation> attributeRelations		// key <-> val
-	List<GenericRelation> attributeNonRefRelations	// key --> val, 'val' cannot be referenced
+	List<GenericNonRefRelation> attributeNonRefRelations	// key --> val, 'val' cannot be referenced
 
 	List<GenericRelation> referenceRelations		//reverse of attributes
 
@@ -67,8 +76,11 @@ class WordDO {
 
 
 }
-
-class AliasRelation{
+class Relation{
+	String key
+	String val
+}
+class AliasRelation extends Relation{
 	String key
 	AliasType attr
 	String lang
@@ -78,23 +90,57 @@ class AliasRelation{
 		this.attr = AliasType.valueOf(attr)
 	}
 }
-class GenericRelation{
+class GenericRelation extends Relation{
 	String key
 	String attr
 	String attrx
+	String pred
+	Integer vno
 	String val
 
 }
-class DualRelation{
+
+class GenericNonRefRelation {
 	String key
-	private DualType attr
+	String attr
+	String attrx
+	String pred
+	Integer vno
+	String valstr
+	Integer valnum
+	String adv
+	Integer time1
+	Integer time2
+	
+	String getVal(){
+		valstr?:valnum
+	}
+
+}
+class GenericRelationDTO{
+	String adv
+	String pred
+	String val
+}
+class DualRelation extends Relation{
+	String key
+	DualType attr
 	String val
 
 	void setAttr(String attr) {
 		this.attr = DualType.valueOf(attr)
 	}
-}
 
+	@Override
+	public String toString() {
+		"$key 's $attr = $val"
+	}
+	
+	
+}
+class AttrMap{
+	String key
+}
 enum AliasType{
 	ABBR,FULL
 }

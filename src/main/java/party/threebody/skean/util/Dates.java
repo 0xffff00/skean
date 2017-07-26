@@ -6,11 +6,11 @@ public final class Dates {
 	private Dates() {
 	}
 
-	public String format() {
+	public static String format() {
 		return format(LocalDateTime.now());
 	}
 
-	public String format(LocalDateTime ldt) {
+	public static String format(LocalDateTime ldt) {
 		return ldt.format(DateTimeFormatters.DEFAULT);
 	}
 }

@@ -1,13 +1,13 @@
-package party.threebody.skean.dict.model
+package party.threebody.skean.dict.service
 
-import org.apache.commons.collections4.MultiValuedMap
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.SingleColumnRowMapper
 import org.springframework.stereotype.Service
 
-import groovy.transform.ToString
-import party.threebody.skean.jdbc.ChainedJdbcTemplate
+import party.threebody.skean.dict.dao.DictDao
+import party.threebody.skean.dict.model.DualRelation
+import party.threebody.skean.dict.model.DualType
+import party.threebody.skean.dict.model.GenericRelation
+import party.threebody.skean.dict.model.Word
 
 @Service
 class DictService {
@@ -17,8 +17,8 @@ class DictService {
 		dictDao.getAliasRoot(alias) ?: alias
 	}
 
-	WordDO getWord(String text){
-		WordDO w=new WordDO()
+	Word getWord(String text){
+		Word w=new Word()
 		w.setText(text)
 		w.setInstanceRelations(listInstanceRelations(text))
 		w.setDefinitionRelations(listDefinitionRelations(text))

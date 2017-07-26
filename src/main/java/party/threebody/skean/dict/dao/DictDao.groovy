@@ -1,10 +1,11 @@
-package party.threebody.skean.dict.model
-
-import java.util.List
+package party.threebody.skean.dict.dao
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
+import party.threebody.skean.dict.model.DualRelation
+import party.threebody.skean.dict.model.GenericNonRefRelation
+import party.threebody.skean.dict.model.GenericRelation
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 
 @Repository
@@ -32,10 +33,14 @@ class DictDao {
 		cjt.from("dct_rel_sp_dual").by("val","attr").val(text,attr).list(DualRelation.class)
 	}
 
+		
 	List<GenericRelation> listGenericRelationsByKey(String text){
 		cjt.sql("SELECT * FROM dct_rel_ge_dat1 WHERE `key`=?").arg(text).list(GenericRelation.class)
 	}
 	
+	List<GenericNonRefRelation> listGenericNonRefRelationsByKey(String text){
+		cjt.sql("SELECT * FROM dct_rel_ge_dat2 WHERE `key`=?").arg(text).list(GenericNonRefRelation.class)
+	}
 
 	List<GenericRelation> listGenericRelationsByVal(String text){
 		cjt.sql("SELECT * FROM dct_rel_ge_dat1 WHERE `val`=?").arg(text).list(GenericRelation.class)

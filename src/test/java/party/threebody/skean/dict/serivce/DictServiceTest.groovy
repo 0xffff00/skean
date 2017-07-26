@@ -11,10 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
-import party.threebody.skean.dict.model.AliasRelation
-import party.threebody.skean.dict.model.DictDao
-import party.threebody.skean.dict.model.DictService;
-import party.threebody.skean.dict.model.DualRelation
+import party.threebody.skean.dict.dao.DictDao
+import party.threebody.skean.dict.service.DictService
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
