@@ -1,4 +1,4 @@
-package party.threebody.skean.dict.service;
+package party.threebody.skean.dict.serivce;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +10,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
 import party.threebody.skean.dict.dao.DictDao;
+import party.threebody.skean.dict.service.WordService;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)

@@ -12,20 +12,18 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
 import party.threebody.skean.dict.dao.DictDao
-import party.threebody.skean.dict.service.DictService
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)
 @ActiveProfiles("~memdb")
 public class DictServiceTest {
-	@Autowired DictService ds
 	@Autowired DictDao dd
 	//@Test
 	void getFormal() {
-		assertEquals "复旦大学",ds.getFormal("复旦大学")
-		assertEquals "复旦大学",ds.getFormal("复旦")
-		assertEquals "CVCV",ds.getFormal("CVCV")
+//		assertEquals "复旦大学",ds.getFormal("复旦大学") 
+//		assertEquals "复旦大学",ds.getFormal("复旦")
+//		assertEquals "CVCV",ds.getFormal("CVCV")
 	}
 	
 	@Test

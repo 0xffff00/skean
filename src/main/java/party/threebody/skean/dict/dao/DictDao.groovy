@@ -3,6 +3,7 @@ package party.threebody.skean.dict.dao
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
+import party.threebody.skean.dict.model.AliasRelation
 import party.threebody.skean.dict.model.DualRelation
 import party.threebody.skean.dict.model.GenericNonRefRelation
 import party.threebody.skean.dict.model.GenericRelation
@@ -16,7 +17,27 @@ class DictDao {
 	String getAliasRoot(String alias){
 		cjt.from("dct_rel_sp_alias").select('key').by("val").val(alias).limit(1).firstCell()
 	}
-
+	
+	List<AliasRelation> listAliasRelationsByVal(String text){
+		cjt.from("dct_rel_sp_alias").by("val").val(text).list(AliasRelation.class)
+	}
+	
+	List<AliasRelation> listAliasRelationsByKey(String text){
+		cjt.from("dct_rel_sp_alias").by("key").val(text).list(AliasRelation.class)
+	}
+	
+	int insertAliasRelation(AliasRelation rel){
+		cjt.from("dct_rel_sp_alias").affect('key','attr','lang','vno','val','adv').val(rel).insert()
+	}
+	
+	int updateAliasRelationByKV(AliasRelation rel){
+		cjt.from("dct_rel_sp_alias")
+		.affect('key','attr','lang','vno','val','adv').by('key','val').val(rel).update()
+	}	
+	
+	int deleteAliasRelationsByKV(String key,String val){
+		cjt.from("dct_rel_sp_alias").by('key','val').val(key,val).delete()
+	}
 
 
 	List<DualRelation> listDualRelationsByKey(String text){

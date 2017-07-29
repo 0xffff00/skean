@@ -13,11 +13,12 @@ import party.threebody.skean.core.query.QueryParamsSuite;
 /**
  * a middleware between controller layer and service layer
  * 
+ * 
  * @author hzk
- * @since 2017-06-18
+ * @since 2017-07-27
  */
 @Component
-public class GenericMapCrudRestControllerTemplate {
+public class GenericBeanCrudRestControllerTemplate {
 
 	@Autowired
 	GenericMapCrudService genericMapCrudService;
@@ -67,7 +68,38 @@ public class GenericMapCrudRestControllerTemplate {
 		return new ResponseEntity<Map<String, Object>>(HttpStatus.CREATED);
 	}
 
+	public ResponseEntity<Map<String, Object>> update(String table, Map<String, Object> changes,
+			Map<String, Object> byWhat) {
+		return respondUD(genericMapCrudService.update(table, changes, byWhat));
+	}
+	
+	public ResponseEntity<Map<String, Object>> update(String table, String[] afCols, Map<String, Object> afWhat,
+			String[] byCols, Object[] byVals) {
+		return respondUD(genericMapCrudService.update(table, afCols, afWhat, byCols, byVals));
+	}
+	public ResponseEntity<Map<String, Object>> update(String table, String[] afCols, Map<String, Object> afWhat,
+			String[] byCols, Map<String, Object> byWhat) {
+		return respondUD(genericMapCrudService.update(table, afCols, afWhat, byCols, byWhat));
+	}
 
+	public ResponseEntity<Map<String, Object>> delete(String table, Map<String, Object> byWhat) {
+		return respondUD(genericMapCrudService.delete(table, byWhat));
+	}
+
+	public ResponseEntity<Map<String, Object>> delete(String table, String[] byCols, String[] byVals) {
+		return respondUD(genericMapCrudService.delete(table, byCols, byVals));
+	}
+
+	public ResponseEntity<Map<String, Object>> delete(String table, String[] byCols, Map<String, Object> byWhat) {
+		return respondUD(genericMapCrudService.delete(table, byCols, byWhat));
+	}
+
+	private ResponseEntity<Map<String, Object>> respondUD(int rowNumAffected) {
+		if (rowNumAffected == 0) {
+			return new ResponseEntity<Map<String, Object>>(HttpStatus.GONE);
+		}
+		return new ResponseEntity<Map<String, Object>>(HttpStatus.NO_CONTENT);
+	}
 
 	public int count(String table, Map<String, String> reqestParamMap) {
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);

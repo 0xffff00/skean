@@ -29,6 +29,10 @@ public class Stu{
 	public int getAge() {
 		return age;
 	}
+	public int getAge2(){
+		return -age;
+	}
+	
 	public void setAge(int age) {
 		this.age = age;
 	}
@@ -50,6 +54,8 @@ public class Stu{
 	public void setFriends(Set<Stu> friends) {
 		this.friends = friends;
 	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
