@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -56,6 +57,9 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	// ------ suite -------
 	public PagePhrase suite(QueryParamsSuite qps) {
+		if (qps == null) {
+			return new PagePhrase(this);
+		}
 		return criteria(qps.getCriteria()).orderBy(qps.getSortingField()).page(qps.getPageIndexNonNull(),
 				qps.getPageLengthNonNull());
 	}
@@ -207,18 +211,22 @@ public class FromPhrase extends DefaultRootPhrase {
 		return res;
 	}
 
+	/**
+	 * {@link org.springframework.jdbc.core.JdbcTemplate.queryForObject} not
+	 * supported
+	 * 
+	 * @param elementType
+	 * @return the unique result or null if not found
+	 */
 	public <T> T single(Class<T> elementType) {
-		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		context.getSqlPrinter().printSql(sa);
-		T res= context.getJdbcTemplate().queryForObject(sa.getSql(), elementType);
-		context.getSqlPrinter().printResultBean(res);
-		return res;
+		List<T> results = list(elementType);
+		return DataAccessUtils.requiredSingleResult(results);
 	}
 
 	public Map<String, Object> single() {
 		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
 		context.getSqlPrinter().printSql(sa);
-		Map<String, Object> res= context.getJdbcTemplate().queryForMap(sa.getSql(), sa.getArgs());
+		Map<String, Object> res = context.getJdbcTemplate().queryForMap(sa.getSql(), sa.getArgs());
 		context.getSqlPrinter().printResultBean(res);
 		return res;
 	}
@@ -238,7 +246,7 @@ public class FromPhrase extends DefaultRootPhrase {
 	protected int insert() {
 		SqlAndArgs sa = context.getSqlBuilder().buildInsertSql(this);
 		context.getSqlPrinter().printSql(sa);
-		int rna= context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
+		int rna = context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
 		context.getSqlPrinter().printRowNumAffected(rna);
 		return rna;
 	}
@@ -246,7 +254,7 @@ public class FromPhrase extends DefaultRootPhrase {
 	protected int update() {
 		SqlAndArgs sa = context.getSqlBuilder().buildUpdateSql(this);
 		context.getSqlPrinter().printSql(sa);
-		int rna= context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
+		int rna = context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
 		context.getSqlPrinter().printRowNumAffected(rna);
 		return rna;
 
@@ -255,7 +263,7 @@ public class FromPhrase extends DefaultRootPhrase {
 	protected int delete() {
 		SqlAndArgs sa = context.getSqlBuilder().buildDeleteSql(this);
 		context.getSqlPrinter().printSql(sa);
-		int rna= context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
+		int rna = context.getJdbcTemplate().update(sa.getSql(), new ArgumentPreparedStatementSetter(sa.getArgs()));
 		context.getSqlPrinter().printRowNumAffected(rna);
 		return rna;
 

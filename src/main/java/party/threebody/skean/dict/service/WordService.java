@@ -13,11 +13,12 @@ import party.threebody.skean.dict.model.GenericNonRefRelation;
 import party.threebody.skean.dict.model.GenericRelation;
 import party.threebody.skean.dict.model.Relation;
 import party.threebody.skean.dict.model.Word;
+import party.threebody.skean.mvc.generic.SimpleBeanCrudService;
 import party.threebody.skean.util.TreeNode;
 import party.threebody.skean.util.Trees;
 
 @Service
-public class WordService {
+public class WordService{
 	@Autowired
 	DictDao dictDao;
 

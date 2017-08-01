@@ -1,4 +1,4 @@
-package party.threebody.skean.id
+package party.threebody.skean.id.model
 
 import java.time.LocalTime
 
@@ -12,3 +12,4 @@ class GroupPO {
 	char state
 	LocalTime lop_time
 }
+

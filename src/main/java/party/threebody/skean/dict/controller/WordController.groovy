@@ -8,15 +8,19 @@ import org.springframework.web.bind.annotation.RestController
 
 import party.threebody.skean.dict.model.Word
 import party.threebody.skean.dict.service.WordService
-import party.threebody.skean.mvc.generic.GenericMapCrudRestControllerTemplate
+import party.threebody.skean.mvc.generic.SimpleBeanCrudRestController
+import party.threebody.skean.mvc.generic.SingleBeanCrudService
 
 
 @RestController
 @RequestMapping("/dict/words")
-class WordController extends GenericBeanRestController<Word>{
-	@Autowired GenericMapCrudRestControllerTemplate controllerTemplate
+class WordController extends SimpleBeanCrudRestController<Word,String>{
 	@Autowired WordService wordService
 	
+	@Override
+	public SingleBeanCrudService<Word, String> getSingleBeanCrudService() {
+		wordService
+	}
 
 	
 	@GetMapping('/{text}')
@@ -25,6 +29,10 @@ class WordController extends GenericBeanRestController<Word>{
 		w.setDefinitionTrees(null)
 		w
 	}
+
+
+
+	
 	
 
 

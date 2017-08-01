@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-import party.threebody.skean.id.UserPO
-import party.threebody.skean.id.UserService
+import party.threebody.skean.id.service.UserService
+import party.threebody.skean.id.model.UserPO
 
 
 
