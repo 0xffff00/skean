@@ -1,4 +1,4 @@
-package party.threebody.skean.mvc.generic;
+package party.threebody.skean.mvc.util;
 
 import java.io.IOException;
 
@@ -9,6 +9,9 @@ import party.threebody.skean.SkeanException;
 import party.threebody.skean.core.query.BasicCriterion;
 
 public class CriterionBuildUtils {
+	private CriterionBuildUtils() {
+	}
+
 	private static ObjectMapper objectMapper;
 	static {
 		objectMapper = new ObjectMapper();

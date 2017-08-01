@@ -3,10 +3,10 @@ package party.threebody.skean.id.service;
 import org.springframework.stereotype.Service;
 
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.mvc.generic.SimpleBeanCrudService;
+import party.threebody.skean.mvc.generic.AbstractCrudService;
 
 @Service
-public class RoleService extends SimpleBeanCrudService<Role,String>{
+public class RoleService extends AbstractCrudService<Role,String>{
 
 	@Override
 	protected String getTable() {

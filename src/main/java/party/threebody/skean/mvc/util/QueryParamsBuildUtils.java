@@ -1,4 +1,4 @@
-package party.threebody.skean.mvc.generic;
+package party.threebody.skean.mvc.util;
 
 import java.util.Map;
 
@@ -9,7 +9,10 @@ import party.threebody.skean.core.query.BasicCriterion;
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.core.query.SortingField;
 
-class QueryParamsBuildUtils {
+public class QueryParamsBuildUtils {
+
+	private QueryParamsBuildUtils() {
+	}
 
 	public static QueryParamsSuite buildQueryParamsSuite(String criteria, String orders, Integer pageIndex,
 			Integer pageLength) {
@@ -19,9 +22,9 @@ class QueryParamsBuildUtils {
 		SortingField[] sortingFields = buildSortingFields(orders);
 		return new QueryParamsSuite(criterionArr, sortingFields, pageIndex, pageLength);
 	}
-	
+
 	private static SortingField[] buildSortingFields(String params) {
-		if (StringUtils.isEmpty(params)){
+		if (StringUtils.isEmpty(params)) {
 			return null;
 		}
 		String[] strs = params.split(",");
@@ -32,8 +35,9 @@ class QueryParamsBuildUtils {
 		}
 		return res;
 	}
+
 	private static SortingField buildSortingField(String param) {
-		if (param.isEmpty()){
+		if (param.isEmpty()) {
 			return null;
 		}
 		switch (param.charAt(0)) {

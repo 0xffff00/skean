@@ -1,4 +1,4 @@
-package party.threebody.skean.mvc.generic;
+package party.threebody.skean.util;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;

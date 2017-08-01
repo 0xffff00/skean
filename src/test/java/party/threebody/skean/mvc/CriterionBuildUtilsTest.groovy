@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import party.threebody.skean.mvc.generic.CriterionBuildUtils
+import party.threebody.skean.mvc.util.CriterionBuildUtils
 
 public class CriterionBuildUtilsTest {
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
 
 /**
  * a simple RestController supporting typical CRUD operations of an entity
@@ -27,45 +28,45 @@ import party.threebody.skean.core.query.QueryParamsSuite;
  * @param <PK>
  *            primitive type of the single-column primary key
  */
-public abstract class SimpleBeanCrudRestController<T, PK> {
+public abstract class SimpleCrudRestController<T, PK> {
 	static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
 
-	protected abstract SingleBeanCrudService<T, PK> getSingleBeanCrudService();
+	protected abstract GenericCrudService<T, PK> getCrudService();
 
 	@GetMapping("/{pk}")
 	public ResponseEntity<T> readOne(@PathVariable PK pk) {
-		T entity = getSingleBeanCrudService().readOne(pk);
+		T entity = getCrudService().readOne(pk);
 		return ResponseEntity.ok().body(entity);
 	}
 
 	@GetMapping("")
 	public ResponseEntity<List<T>> readList(@RequestParam Map<String, String> reqestParamMap) {
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);
-		List<T> entities = getSingleBeanCrudService().readList(qps);
+		List<T> entities = getCrudService().readList(qps);
 		int totalCount = 0;
 		if (qps.isPaginationEnabled()) {
-			totalCount = getSingleBeanCrudService().readCount(qps);
+			totalCount = getCrudService().readCount(qps);
 		} else {
 			totalCount = entities.size();
 		}
 		return ResponseEntity.ok().header(HEADER_NAME_TOTAL_COUNT, String.valueOf(totalCount)).body(entities);
 	}
 
-	@PostMapping("")
+	@PostMapping("/")
 	public ResponseEntity<T> create(@RequestBody T entity) {
-		T created = getSingleBeanCrudService().create(entity);
+		T created = getCrudService().create(entity);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 
 	}
 
 	@DeleteMapping("/{pk}")
 	public ResponseEntity<Object> delete(@PathVariable PK pk) {
-		return respondForUD(getSingleBeanCrudService().delete(pk));
+		return respondForUD(getCrudService().delete(pk));
 	}
 
 	@PutMapping("/{pk}")
 	public ResponseEntity<Object> update(@PathVariable PK pk, @RequestBody T entity) {
-		return respondForUD(getSingleBeanCrudService().update(entity, pk));
+		return respondForUD(getCrudService().update(entity, pk));
 	}
 
 	private static ResponseEntity<Object> respondForUD(int rowNumAffected) {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 import party.threebody.skean.jdbc.phrase.FromPhrase;
+import party.threebody.skean.util.ObjectMappers;
 
 /**
  * 
@@ -20,7 +21,7 @@ import party.threebody.skean.jdbc.phrase.FromPhrase;
  *            type of the primary key(s)
  */
 @Service
-public abstract class SimpleBeanCrudService<T, PK> implements SingleBeanCrudService<T, PK> {
+public abstract class AbstractCrudService<T, PK> implements GenericCrudService<T, PK> {
 
 	@Autowired
 	ChainedJdbcTemplate cjt;
