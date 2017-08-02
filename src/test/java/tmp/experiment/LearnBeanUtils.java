@@ -37,6 +37,7 @@ public class LearnBeanUtils {
 		
 		System.out.println("==============reflectionToString===========");
 		System.out.println(ToStringBuilder.reflectionToString(stu));
+		System.out.println(BeanUtils.describe(stu));
 	}
 
 }
