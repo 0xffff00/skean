@@ -13,7 +13,7 @@ import party.threebody.skean.core.query.QueryParamsSuite;
  * @param <PK>
  *            type of the primary key(s)
  */
-public interface GenericCrudService<T, PK> {
+public interface GenericCrudDAO<T, PK> {
 
 	T create(T entity);
 

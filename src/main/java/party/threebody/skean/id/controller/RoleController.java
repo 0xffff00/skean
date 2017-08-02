@@ -4,23 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import party.threebody.skean.id.dao.RoleDAO;
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.id.service.RoleService;
+import party.threebody.skean.mvc.generic.GenericCrudDaoTemplateService;
+import party.threebody.skean.mvc.generic.SimpleCrudRestConfig;
 import party.threebody.skean.mvc.generic.SimpleCrudRestController;
-import party.threebody.skean.mvc.generic.GenericCrudService;
-
 
 @RequestMapping("/id/roles")
 @RestController
-public class RoleController extends SimpleCrudRestController<Role, String>{
+public class RoleController extends SimpleCrudRestController<Role, String> {
 
+//	@Autowired 
+//	RoleDAO roleDAO1;
 	@Autowired
-	RoleService roleService;
-	
+	GenericCrudDaoTemplateService daoTemplateService;
 
-	@Override
-	protected GenericCrudService<Role, String> getCrudService() {
-		return roleService;
+	@Autowired 
+	public RoleController(RoleDAO roleDAO1){
+		setConfig(new SimpleCrudRestConfig<Role, String>(roleDAO1));
 	}
-	
+
 }

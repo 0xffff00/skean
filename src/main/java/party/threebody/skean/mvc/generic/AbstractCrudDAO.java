@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
@@ -20,8 +22,7 @@ import party.threebody.skean.util.ObjectMappers;
  * @param <PK>
  *            type of the primary key(s)
  */
-@Service
-public abstract class AbstractCrudService<T, PK> implements GenericCrudService<T, PK> {
+public abstract class AbstractCrudDAO<T, PK> implements GenericCrudDAO<T, PK> {
 
 	@Autowired
 	ChainedJdbcTemplate cjt;

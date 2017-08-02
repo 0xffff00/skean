@@ -28,40 +28,24 @@ import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
  * @param <PK>
  *            primitive type of the single-column primary key
  */
-public abstract class SimpleCrudRestController<T, PK> {
+public abstract class SimpleCrudRestController3<T, PK> {
 	static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
-	
-	private SimpleCrudRestConfig<T, PK> config;
-	
-	
-	public SimpleCrudRestConfig<T, PK> getConfig() {
-		return config;
-	}
 
-	public void setConfig(SimpleCrudRestConfig<T, PK> config) {
-		this.config = config;
-	}
-
+	protected abstract GenericCrudDAO<T, PK> getCrudService();
 
 	@GetMapping("/{pk}")
 	public ResponseEntity<T> readOne(@PathVariable PK pk) {
-		if (config.getOneReader() == null) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-		T entity = config.getOneReader().apply(pk);
+		T entity = getCrudService().readOne(pk);
 		return ResponseEntity.ok().body(entity);
 	}
 
 	@GetMapping("")
 	public ResponseEntity<List<T>> readList(@RequestParam Map<String, String> reqestParamMap) {
-		if (config.getListReader() == null || config.getCountReader() == null) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);
-		List<T> entities = config.getListReader().apply(qps);
+		List<T> entities = getCrudService().readList(qps);
 		int totalCount = 0;
 		if (qps.isPaginationEnabled()) {
-			totalCount = config.getCountReader().apply(qps);
+			totalCount = getCrudService().readCount(qps);
 		} else {
 			totalCount = entities.size();
 		}
@@ -70,28 +54,19 @@ public abstract class SimpleCrudRestController<T, PK> {
 
 	@PostMapping("/")
 	public ResponseEntity<T> create(@RequestBody T entity) {
-		if (config.getCreator() == null) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-		T created = config.getCreator().apply(entity);
+		T created = getCrudService().create(entity);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 
 	}
 
 	@DeleteMapping("/{pk}")
 	public ResponseEntity<Object> delete(@PathVariable PK pk) {
-		if (config.getDeleter() == null) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-		return respondForUD(config.getDeleter().apply(pk));
+		return respondForUD(getCrudService().delete(pk));
 	}
 
 	@PutMapping("/{pk}")
 	public ResponseEntity<Object> update(@PathVariable PK pk, @RequestBody T entity) {
-		if (config.getUpdater() == null) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-		return respondForUD(config.getUpdater().apply(entity, pk));
+		return respondForUD(getCrudService().update(entity, pk));
 	}
 
 	private static ResponseEntity<Object> respondForUD(int rowNumAffected) {
@@ -101,6 +76,4 @@ public abstract class SimpleCrudRestController<T, PK> {
 		return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
 	}
 
-
-	
 }

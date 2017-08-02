@@ -21,7 +21,7 @@ public class WordService{
 	@Autowired
 	DictDao dictDao;
 
-	Word getWord(String text) {
+	public Word getWord(String text) {
 		Word w = new Word();
 		w.setText(text);
 		w.setInstanceRelations(listInstanceRelations(text));
