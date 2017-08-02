@@ -28,24 +28,36 @@ import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
  * @param <PK>
  *            primitive type of the single-column primary key
  */
-public abstract class SimpleCrudRestController3<T, PK> {
+public abstract class AbstractCrudRestController<T, PK> {
 	static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
+	
+	protected abstract T create(T entity);
 
-	protected abstract GenericCrudDAO<T, PK> getCrudService();
+	protected abstract List<T> readList(QueryParamsSuite qps);
 
+	protected abstract int readCount(QueryParamsSuite qps);
+
+	protected abstract T readOne(PK pk);
+
+	protected abstract int update(T entity, PK pk);
+
+	protected abstract int delete(PK pk);
+
+	
+	
 	@GetMapping("/{pk}")
-	public ResponseEntity<T> readOne(@PathVariable PK pk) {
-		T entity = getCrudService().readOne(pk);
+	public ResponseEntity<T> readOneViaHttp(@PathVariable PK pk) {
+		T entity = readOne(pk);
 		return ResponseEntity.ok().body(entity);
 	}
 
 	@GetMapping("")
-	public ResponseEntity<List<T>> readList(@RequestParam Map<String, String> reqestParamMap) {
+	public ResponseEntity<List<T>> readListViaHttp(@RequestParam Map<String, String> reqestParamMap) {
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);
-		List<T> entities = getCrudService().readList(qps);
+		List<T> entities = readList(qps);
 		int totalCount = 0;
 		if (qps.isPaginationEnabled()) {
-			totalCount = getCrudService().readCount(qps);
+			totalCount = readCount(qps);
 		} else {
 			totalCount = entities.size();
 		}
@@ -53,20 +65,20 @@ public abstract class SimpleCrudRestController3<T, PK> {
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<T> create(@RequestBody T entity) {
-		T created = getCrudService().create(entity);
+	public ResponseEntity<T> createViaHttp(@RequestBody T entity) {
+		T created = create(entity);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 
 	}
 
 	@DeleteMapping("/{pk}")
-	public ResponseEntity<Object> delete(@PathVariable PK pk) {
-		return respondForUD(getCrudService().delete(pk));
+	public ResponseEntity<Object> deleteViaHttp(@PathVariable PK pk) {
+		return respondForUD(delete(pk));
 	}
 
 	@PutMapping("/{pk}")
-	public ResponseEntity<Object> update(@PathVariable PK pk, @RequestBody T entity) {
-		return respondForUD(getCrudService().update(entity, pk));
+	public ResponseEntity<Object> updateViaHttp(@PathVariable PK pk, @RequestBody T entity) {
+		return respondForUD(update(entity, pk));
 	}
 
 	private static ResponseEntity<Object> respondForUD(int rowNumAffected) {
