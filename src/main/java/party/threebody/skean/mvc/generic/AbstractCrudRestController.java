@@ -73,15 +73,15 @@ public abstract class AbstractCrudRestController<T, PK> {
 
 	@DeleteMapping("/{pk}")
 	public ResponseEntity<Object> deleteViaHttp(@PathVariable PK pk) {
-		return respondForUD(delete(pk));
+		return respondRowNumAffected(delete(pk));
 	}
 
 	@PutMapping("/{pk}")
 	public ResponseEntity<Object> updateViaHttp(@PathVariable PK pk, @RequestBody T entity) {
-		return respondForUD(update(entity, pk));
+		return respondRowNumAffected(update(entity, pk));
 	}
 
-	private static ResponseEntity<Object> respondForUD(int rowNumAffected) {
+	protected static ResponseEntity<Object> respondRowNumAffected(int rowNumAffected) {
 		if (rowNumAffected == 0) {
 			return new ResponseEntity<Object>(HttpStatus.GONE);
 		}
