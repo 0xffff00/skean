@@ -1,15 +1,13 @@
 package party.threebody.skean.jdbc.phrase;
 
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
+import party.threebody.skean.jdbc.util.SqlAndArgs;
 
 public class SqlPhrase extends DefaultRootPhrase {
 
@@ -61,36 +59,13 @@ public class SqlPhrase extends DefaultRootPhrase {
 	}
 
 	// ------ fetching --------
+	
 	@Override
-	public List<Map<String, Object>> list() {
-		context.getSqlPrinter().printSql(sql, args);
-		List<Map<String, Object>> res = context.getJdbcTemplate().query(sql, args, context.getColumnMapRowMapper());
-		context.getSqlPrinter().printResultList(res);
-		return res;
+	protected SqlAndArgs buildSelectSqlAndArgs() {
+		return new SqlAndArgs(sql,args);
 	}
-
-	@Override
-	public <T> List<T> list(Class<T> elementType) {
-		context.getSqlPrinter().printSql(sql, args);
-		List<T> res = context.getJdbcTemplate().query(sql, args, new BeanPropertyRowMapper<T>(elementType));
-		context.getSqlPrinter().printResultList(res);
-		return res;
-	}
-
-	@Override
-	public <T> List<T> list(RowMapper<T> rowMapper) {
-		context.getSqlPrinter().printSql(sql, args);
-		List<T> res = context.getJdbcTemplate().query(sql, args, rowMapper);
-		context.getSqlPrinter().printResultList(res);
-		return res;
-	}
-
-	public <T> T single(Class<T> elementType) {
-		context.getSqlPrinter().printSql(sql, args);
-		T res = context.getJdbcTemplate().queryForObject(sql, args, elementType);
-		context.getSqlPrinter().printResultBean(res);
-		return res;
-	}
+	
+	
 
 	// ------ modifying --------
 
@@ -101,5 +76,7 @@ public class SqlPhrase extends DefaultRootPhrase {
 		return rna;
 
 	}
+
+	
 
 }

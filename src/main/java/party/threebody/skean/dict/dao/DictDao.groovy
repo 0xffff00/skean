@@ -1,74 +1,90 @@
 package party.threebody.skean.dict.dao
 
+import java.util.List
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 
-import party.threebody.skean.dict.model.AliasRelation
-import party.threebody.skean.dict.model.DualRelation
-import party.threebody.skean.dict.model.GenericNonRefRelation
-import party.threebody.skean.dict.model.GenericRelation
+import party.threebody.skean.dict.model.AliasRel
+import party.threebody.skean.dict.model.DualRel
+import party.threebody.skean.dict.model.Ge1Rel
+import party.threebody.skean.dict.model.Ge2Rel
+import party.threebody.skean.dict.model.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
+import party.threebody.skean.mvc.generic.AbstractCrudDAO
 
 @Repository
-class DictDao {
+class WordDao extends AbstractCrudDAO<Word,String> {
 
 	@Autowired ChainedJdbcTemplate cjt
 
-	String getAliasRoot(String alias){
-		cjt.from("dct_rel_sp_alias").select('key').by("val").val(alias).limit(1).firstCell()
+	List<String> listTempWords(){
+		def sql=
+		'''		
+SELECT a.w FROM (
+		        SELECT `key` w FROM dct_rel_ge_dat1
+		UNION	SELECT `val` w FROM dct_rel_ge_dat1
+		UNION	SELECT `key` w FROM dct_rel_ge_dat2
+		UNION	SELECT `key` w FROM dct_rel_sp_dual
+		UNION	SELECT `val` w FROM dct_rel_sp_dual
+		UNION	SELECT `key` w FROM dct_rel_sp_alias
+		UNION	SELECT `val` w FROM dct_rel_sp_alias
+		
+) a WHERE a.w NOT IN (SELECT `text`  FROM dct_word)
+		'''
+		cjt.sql(sql).listOfSingleColumn(String.class)
 	}
-	
-	List<AliasRelation> listAliasRelationsByVal(String text){
-		cjt.from("dct_rel_sp_alias").by("val").val(text).list(AliasRelation.class)
+
+	List<AliasRel> listAliasRels(){
+		cjt.from("dct_rel_sp_alias").list(AliasRel.class)
 	}
-	
-	List<AliasRelation> listAliasRelationsByKey(String text){
-		cjt.from("dct_rel_sp_alias").by("key").val(text).list(AliasRelation.class)
-	}
-	
-	int insertAliasRelation(AliasRelation rel){
+
+	int createAliasRel(AliasRel rel){
 		cjt.from("dct_rel_sp_alias").affect('key','attr','lang','vno','val','adv').val(rel).insert()
 	}
-	
-	int updateAliasRelationByKV(AliasRelation rel){
+
+	int updateAliasRelByKV(AliasRel rel){
 		cjt.from("dct_rel_sp_alias")
-		.affect('key','attr','lang','vno','val','adv').by('key','val').val(rel).update()
-	}	
-	
-	int deleteAliasRelationsByKV(String key,String val){
+				.affect('key','attr','lang','vno','val','adv').by('key','val').val(rel).update()
+	}
+
+	int deleteAliasRelsByKV(String key,String val){
 		cjt.from("dct_rel_sp_alias").by('key','val').val(key,val).delete()
 	}
 
 
-	List<DualRelation> listDualRelationsByKey(String text){
-		cjt.from("dct_rel_sp_dual").by("key").val(text).list(DualRelation.class)
-	}
-	List<DualRelation> listDualRelationsByKeyAndAttr(String text,String attr){
-		cjt.from("dct_rel_sp_dual").by("key","attr").val(text,attr).list(DualRelation.class)
-	}
-	
-	List<DualRelation> listDualRelationsByVal(String text){
-		cjt.from("dct_rel_sp_dual").by("val").val(text).list(DualRelation.class)
-	}
-	List<DualRelation> listDualRelationsByValAndAttr(String text,String attr){
-		cjt.from("dct_rel_sp_dual").by("val","attr").val(text,attr).list(DualRelation.class)
+	List<DualRel> listDualRels(){
+		cjt.from("dct_rel_sp_dual").list(DualRel.class)
 	}
 
-		
-	List<GenericRelation> listGenericRelationsByKey(String text){
-		cjt.sql("SELECT * FROM dct_rel_ge_dat1 WHERE `key`=?").arg(text).list(GenericRelation.class)
-	}
-	
-	List<GenericNonRefRelation> listGenericNonRefRelationsByKey(String text){
-		cjt.sql("SELECT * FROM dct_rel_ge_dat2 WHERE `key`=?").arg(text).list(GenericNonRefRelation.class)
+
+	List<Ge1Rel> listGe1Rels(){
+		cjt.from("dct_rel_ge_dat1").list(Ge1Rel.class)
 	}
 
-	List<GenericRelation> listGenericRelationsByVal(String text){
-		cjt.sql("SELECT * FROM dct_rel_ge_dat1 WHERE `val`=?").arg(text).list(GenericRelation.class)
+	List<Ge2Rel> listGe2Rels(){
+		cjt.from("dct_rel_ge_dat2").list(Ge2Rel.class)
+	}
+
+	@Override
+	protected String getTable() {
+		'dct_word'
+	}
+
+	@Override
+	protected Class<Word> getBeanClass() {
+		Word.class
+	}
+
+	@Override
+	protected List<String> getPrimaryKeyColumns() {
+		['text']
+	}
+
+	@Override
+	protected List<String> getAffectedColumns() {
+		['text','desc']
 	}
 	
-	List<GenericRelation> listGenericRelationsByKeyAndAttr2(String text,String attr,String attrx){
-		cjt.sql("SELECT * FROM dct_rel_ge_dat1 WHERE `key`=? AND `attr`=? AND attrx=?")
-		.arg(text,attr,attrx).list(GenericRelation.class)
-	}
+	
 }

@@ -1,172 +1,183 @@
 package party.threebody.skean.dict.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import party.threebody.skean.dict.dao.DictDao;
-import party.threebody.skean.dict.model.DualRelation;
-import party.threebody.skean.dict.model.DualType;
-import party.threebody.skean.dict.model.GenericNonRefRelation;
-import party.threebody.skean.dict.model.GenericRelation;
-import party.threebody.skean.dict.model.Relation;
+import com.google.common.collect.Sets;
+
+import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.dict.dao.WordDao;
+import party.threebody.skean.dict.model.AliasRel;
+import party.threebody.skean.dict.model.DualRel;
+import party.threebody.skean.dict.model.Ge1Rel;
+import party.threebody.skean.dict.model.Ge2Rel;
 import party.threebody.skean.dict.model.Word;
-import party.threebody.skean.util.TreeNode;
-import party.threebody.skean.util.Trees;
 
 @Service
-public class WordService{
+public class WordService {
+	static final Logger logger = LoggerFactory.getLogger(WordService.class);
 	@Autowired
-	DictDao dictDao;
+	WordDao wordDao;
+
+	public Word createWord(Word w) {
+		return wordDao.create(w);
+	}
+
+	public int updateWord(Word w, String text) {
+		return wordDao.update(w, text);
+	}
+
+	public int deleteWord(String text) {
+		return wordDao.delete(text);
+	}
+
+	public List<Word> listWords(QueryParamsSuite qps) {
+		return wordDao.readList(qps);
+	}
+
+	public int countWords(QueryParamsSuite qps) {
+		return wordDao.readCount(qps);
+	}
 
 	public Word getWord(String text) {
-		Word w = new Word();
-		w.setText(text);
-		w.setInstanceRelations(listInstanceRelations(text));
-		w.setDefinitionRelations(listDefinitionRelations(text));
-		w.setSubsetRelations(listSubsetRelations(text));
-		w.setSupersetRelations(listSupersetRelations(text));
-		w.setChildRelations(listChildrenRelations(text));
-		w.setParentRelations(listParentRelations(text));
-		w.setAttributeRelations(listAttributeRelations(text));
-		w.setAttributeNonRefRelations(listAttributeNonRefRelations(text));
-		w.setReferenceRelations(listReferenceRelations(text));
+		return wordDao.readOne(text);
 
-		w.setSubsetTree(buildSubsetTree(text));
-		w.setSupersetTree(buildSupersetTree(text));
-		w.setChildTree(buildChildTree(text));
-		w.setParentTree(buildParentTree(text));
+	}
 
-		w.setSubsets(Trees.flattenDistinct(w.getSubsetTree().getSons()));
-		w.setSupersets(Trees.flattenDistinct(w.getSupersetTree().getSons()));
+	public Word getWordWithRels(String text) {
+		Word w = wordDao.readOne(text);
+		if (w == null) {
+			w = new Word();
+			w.setText(text);
+			// return w;
+		}
+		DAGVisitor<String, AliasRel> dagv1 = new DAGVisitor<>(this::listAliasRels, AliasRel::getKey, AliasRel::getVal);
+		dagv1.visitFrom(text);
+		w.setAliases(dagv1.getVerticesVisited());
+		w.setAliasRels(dagv1.getEdgesVisited());
+		// calc DualRel
+		DAGVisitor<String, DualRel> drDVp = new DAGVisitor<>(this::listDualRels, DualRel::getKey, DualRel::getVal);
+		drDVp.visitFrom(text);
 
-		w.setInstances(listInstances(w.getSubsets()));
-		w.setDefinitions0(listDefinitions0(text));
+		DAGVisitor<String, DualRel> drDVn = new DAGVisitor<>(this::listDualRels, DualRel::getVal, DualRel::getKey);
+		drDVn.visitFrom(text);
+		w.setDualRels(Sets.union(drDVp.getEdgesVisited(), drDVn.getEdgesVisited()));
 
-		w.setDescendants(Trees.flattenDistinct(w.getChildTree().getSons()));
-		w.setAncestors(Trees.flattenDistinct(w.getParentTree().getSons()));
+		// calc Ge1Rel
+		DAGVisitor<String, Ge1Rel> g1DVp = new DAGVisitor<>(this::listGe1Rels, Ge1Rel::getKey, Ge1Rel::getVal);
+		g1DVp.visitFrom(text);
 
-		w.setDefinitionTrees(buildSupersetTrees(w.getDefinitions0()));
-		w.setDefinitions(Trees.flattenDistinct(w.getDefinitionTrees()));
+		DAGVisitor<String, Ge1Rel> g1DVn = new DAGVisitor<>(this::listGe1Rels, Ge1Rel::getVal, Ge1Rel::getKey);
+		g1DVn.visitFrom(text);
+		w.setGe1Rels(Sets.union(g1DVp.getEdgesVisited(), g1DVn.getEdgesVisited()));
 
-		w.setAttributeVals(listAttributeVals(text));
-		w.setReferenceKeys(listReferenceKeys(text));
-		
+		// calc Ge2Rel
+		DAGVisitor<String, Ge2Rel> g2DVp = new DAGVisitor<>(this::listGe2Rels, Ge2Rel::getKey, Ge2Rel::getVal);
+		g2DVp.visitFrom(text);
+		w.setGe2Rels(g2DVp.getEdgesVisited());
+
 		return w;
+	}
 
+	// --------- pure DAO CRUDs ------------
+
+	@Cacheable(value = "aliasRels")
+	List<AliasRel> listAliasRels() {
+		return wordDao.listAliasRels();
+	}
+
+	@CacheEvict(value = "aliasRels")
+	int createAliasRel(AliasRel rel) {
+		return wordDao.createAliasRel(rel);
+	}
+
+	@CacheEvict(value = "aliasRels")
+	int updateAliasRelByKV(AliasRel rel) {
+		return wordDao.updateAliasRelByKV(rel);
+	}
+
+	@CacheEvict(value = "aliasRels")
+	int deleteAliasRelsByKV(String key, String val) {
+		return wordDao.deleteAliasRelsByKV(key, val);
+	}
+
+	@Cacheable(value = "dualRels")
+	List<DualRel> listDualRels() {
+		return wordDao.listDualRels();
+	}
+
+	@Cacheable(value = "Ge1Rels")
+	List<Ge1Rel> listGe1Rels() {
+		return wordDao.listGe1Rels();
+	}
+
+	@Cacheable(value = "Ge2Rels")
+	List<Ge2Rel> listGe2Rels() {
+		return wordDao.listGe2Rels();
 	}
 
 	/**
-	 * list all instances of all subsets in deep
 	 * 
-	 * @param text
-	 * @return
+	 * @author hzk
+	 * @since 2017-08-05
+	 * @param <V>
+	 * @param <E>
 	 */
-	public List<String> listInstances(List<String> allDefinitions) {
-		return allDefinitions.stream().flatMap(def -> listInstances(def).stream()).distinct()
-				.collect(Collectors.toList());
-	}
+	static class DAGVisitor<V, E> {
+		private Function<V, List<E>> edgeVisitor;
+		private Function<E, V> destVertexMapper;
+		private Set<V> verticesVisited;
+		private Set<E> edgesVisited;
 
-	// --------- trees building
-	public TreeNode<String> buildSubsetTree(String text) {
-		return Trees.buildTreeRecursively(text, this::listSubsets);
-	}
+		public DAGVisitor(Supplier<List<E>> allEdgesSupplier, Function<E, V> srcVertexMapper,
+				Function<E, V> destVertexMapper) {
+			this.destVertexMapper = destVertexMapper;
+			this.edgeVisitor = v -> allEdgesSupplier.get().stream().filter(e -> v.equals(srcVertexMapper.apply(e)))
+					.collect(toList());
+		}
 
-	public TreeNode<String> buildSupersetTree(String text) {
-		return Trees.buildTreeRecursively(text, this::listSupersets);
-	}
+		public DAGVisitor(Function<V, List<E>> edgeVisitor, Function<E, V> destVertexMapper) {
+			this.destVertexMapper = destVertexMapper;
+			this.edgeVisitor = edgeVisitor;
+		}
 
-	public TreeNode<String> buildChildTree(String text) {
-		return Trees.buildTreeRecursively(text, this::listChildren);
-	}
+		public void visitFrom(V root) {
+			verticesVisited = new HashSet<>();
+			edgesVisited = new HashSet<>();
+			dfs(root);
+		}
 
-	public TreeNode<String> buildParentTree(String text) {
-		return Trees.buildTreeRecursively(text, this::listParents);
-	}
+		public Set<V> getVerticesVisited() {
+			return verticesVisited;
+		}
 
-	public List<TreeNode<String>> buildSupersetTrees(List<String> texts) {
-		return texts.stream().map(this::buildSupersetTree).collect(Collectors.toList());
-	}
+		public Set<E> getEdgesVisited() {
+			return edgesVisited;
+		}
 
-	// --------- fetching with no depth
-
-	private static List<String> listVals(List<? extends Relation> relations) {
-		return relations.stream().map(r -> r.getVal()).collect(Collectors.toList());
-	}
-
-	private static List<String> listKeys(List<? extends Relation> relations) {
-		return relations.stream().map(r -> r.getKey()).collect(Collectors.toList());
-	}
-
-	public List<String> listInstances(String text) {
-		return listVals(listInstanceRelations(text));
-	}
-
-	public List<String> listDefinitions0(String text) {
-		return listKeys(listDefinitionRelations(text));
-	}
-
-	public List<String> listSubsets(String text) {
-		return listVals(listSubsetRelations(text));
-	}
-
-	public List<String> listSupersets(String text) {
-		return listKeys(listSupersetRelations(text));
-	}
-
-	public List<String> listChildren(String text) {
-		return listVals(listChildrenRelations(text));
-	}
-
-	public List<String> listParents(String text) {
-		return listKeys(listParentRelations(text));
-	}
-
-	public List<String> listAttributeVals(String text) {
-		return listVals(listAttributeRelations(text));
-	}
-
-	public List<String> listReferenceKeys(String text) {
-		return listKeys(listReferenceRelations(text));
-	}
-
-
-	// --------- raw data fetching
-	public List<DualRelation> listInstanceRelations(String text) {
-		return dictDao.listDualRelationsByKeyAndAttr(text, DualType.INST.toString());
-	}
-
-	public List<DualRelation> listDefinitionRelations(String text) {
-		return dictDao.listDualRelationsByValAndAttr(text, DualType.INST.toString());
-	}
-
-	public List<DualRelation> listSubsetRelations(String text) {
-		return dictDao.listDualRelationsByKeyAndAttr(text, DualType.SUBS.toString());
-	}
-
-	public List<DualRelation> listSupersetRelations(String text) {
-		return dictDao.listDualRelationsByValAndAttr(text, DualType.SUBS.toString());
-	}
-
-	public List<DualRelation> listChildrenRelations(String text) {
-		return dictDao.listDualRelationsByKeyAndAttr(text, DualType.GECH.toString());
-	}
-
-	public List<DualRelation> listParentRelations(String text) {
-		return dictDao.listDualRelationsByValAndAttr(text, DualType.GECH.toString());
-	}
-
-	public List<GenericRelation> listAttributeRelations(String text) {
-		return dictDao.listGenericRelationsByKey(text);
-	}
-
-	public List<GenericNonRefRelation> listAttributeNonRefRelations(String text) {
-		return dictDao.listGenericNonRefRelationsByKey(text);
-	}
-
-	public List<GenericRelation> listReferenceRelations(String text) {
-		return dictDao.listGenericRelationsByVal(text);
+		void dfs(V v) {
+			if (v == null || verticesVisited.contains(v)) {
+				return;
+			}
+			verticesVisited.add(v);
+			List<E> edges = edgeVisitor.apply(v);
+			edgesVisited.addAll(edges);
+			logger.debug("dfs({}) -> edges{}", v, edges);
+			if (edges.size() == 0)
+				return;
+			edges.forEach(edge -> dfs(destVertexMapper.apply(edge)));
+		}
 	}
 }

@@ -326,6 +326,12 @@
 				<version>${mybatis.version}</version>
 			</dependency>
 
+			<!-- caching -->
+			<dependency>
+				<groupId>org.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>3.3.1</version>
+			</dependency>
 			<!-- database (connection pool, jdbc drivers) -->
 			<dependency>
 				<groupId>com.zaxxer</groupId>
@@ -434,7 +440,10 @@
 
 
 		<!-- misc -->
-
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 
 		<!-- logging -->
 		<dependency>

@@ -1,15 +1,11 @@
 package party.threebody.skean.jdbc.phrase;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 
 import party.threebody.skean.core.query.Criterion;
 import party.threebody.skean.core.query.QueryParamsSuite;
@@ -185,50 +181,9 @@ public class FromPhrase extends DefaultRootPhrase {
 
 	// ------ fetching --------
 
-	public List<Map<String, Object>> list() {
-		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		context.getSqlPrinter().printSql(sa);
-		List<Map<String, Object>> res = context.getJdbcTemplate().query(sa.getSql(), sa.getArgs(),
-				context.getColumnMapRowMapper());
-		context.getSqlPrinter().printResultList(res);
-		return res;
-	}
-
-	public <T> List<T> list(Class<T> elementType) {
-		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		context.getSqlPrinter().printSql(sa);
-		List<T> res = context.getJdbcTemplate().query(sa.getSql(), sa.getArgs(),
-				new BeanPropertyRowMapper<T>(elementType));
-		context.getSqlPrinter().printResultList(res);
-		return res;
-	}
-
-	public <T> List<T> list(RowMapper<T> rowMapper) {
-		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		context.getSqlPrinter().printSql(sa);
-		List<T> res = context.getJdbcTemplate().query(sa.getSql(), sa.getArgs(), rowMapper);
-		context.getSqlPrinter().printResultList(res);
-		return res;
-	}
-
-	/**
-	 * {@link org.springframework.jdbc.core.JdbcTemplate.queryForObject} not
-	 * supported
-	 * 
-	 * @param elementType
-	 * @return the unique result or null if not found
-	 */
-	public <T> T single(Class<T> elementType) {
-		List<T> results = list(elementType);
-		return DataAccessUtils.requiredSingleResult(results);
-	}
-
-	public Map<String, Object> single() {
-		SqlAndArgs sa = context.getSqlBuilder().buildSelectSql(this);
-		context.getSqlPrinter().printSql(sa);
-		Map<String, Object> res = context.getJdbcTemplate().queryForMap(sa.getSql(), sa.getArgs());
-		context.getSqlPrinter().printResultBean(res);
-		return res;
+	@Override
+	protected SqlAndArgs buildSelectSqlAndArgs() {
+		return context.getSqlBuilder().buildSelectSql(this);
 	}
 
 	// ------ modifying --------

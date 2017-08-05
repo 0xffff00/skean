@@ -11,14 +11,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import party.threebody.s4g.conf.spring.RootConfig;
-import party.threebody.skean.dict.dao.DictDao
+import party.threebody.skean.dict.dao.WordDao
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = RootConfig.class)
 @ActiveProfiles("~memdb")
-public class DictServiceTest {
-	@Autowired DictDao dd
+public class WordServiceTest {
+	@Autowired WordDao dd
 	//@Test
 	void getFormal() {
 //		assertEquals "复旦大学",ds.getFormal("复旦大学") 
@@ -33,7 +33,6 @@ public class DictServiceTest {
 		
 		//println dd.listDualRelationsByVal('复旦大学')
 		//println ds.getWord('高校')
-		ds.t2('高校')
 		
 	}
 	

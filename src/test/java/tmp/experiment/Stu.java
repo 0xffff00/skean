@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Stu{
+	private long _md5;
 	private String name;
 	private int  age;
 	

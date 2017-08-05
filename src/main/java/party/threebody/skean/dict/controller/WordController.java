@@ -18,37 +18,32 @@ class WordController extends AbstractCrudRestController<Word,String>{
 
 	@Override
 	protected Word create(Word entity) {
-		// TODO Auto-generated method stub
-		return null;
+		return wordService.createWord(entity);
 	}
 
 	@Override
 	protected List<Word> readList(QueryParamsSuite qps) {
-		// TODO Auto-generated method stub
-		return null;
+		return wordService.listWords(qps);
 	}
 
 	@Override
 	protected int readCount(QueryParamsSuite qps) {
-		// TODO Auto-generated method stub
-		return 0;
+		return wordService.countWords(qps);
 	}
 
 	@Override
 	protected Word readOne(String pk) {
-		return wordService.getWord(pk);
+		return wordService.getWordWithRels(pk);
 	}
 
 	@Override
 	protected int update(Word entity, String pk) {
-		// TODO Auto-generated method stub
-		return 0;
+		return wordService.updateWord(entity, pk);
 	}
 
 	@Override
 	protected int delete(String pk) {
-		// TODO Auto-generated method stub
-		return 0;
+		return wordService.deleteWord(pk);
 	}
 	
 	

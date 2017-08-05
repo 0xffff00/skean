@@ -3,16 +3,80 @@ package party.threebody.skean.jdbc.phrase;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
+import party.threebody.skean.jdbc.util.SqlAndArgs;
 
 public abstract class DefaultRootPhrase implements RootPhrase {
 
 	boolean enableCount;
 	ChainedJdbcTemplateContext context;
 
-	protected static Object firstMapElemVal(List<Map<String, Object>> list) {
+	// ------ fetching --------
+	public List<Map<String, Object>> list() {
+		return list(context.getColumnMapRowMapper());
+	}
+
+	public <T> List<T> list(Class<T> elementType) {
+		return list(new BeanPropertyRowMapper<T>(elementType));
+	}
+
+	public <T> List<T> list(RowMapper<T> rowMapper) {
+		SqlAndArgs sa = buildSelectSqlAndArgs();
+		return listInternal(sa.getSql(), sa.getArgs(), rowMapper);
+	}
+
+	public <T> List<T> listOfSingleColumn(Class<T> columnType) {
+		return list(SingleColumnRowMapper.newInstance(columnType));
+	}
+
+	protected abstract SqlAndArgs buildSelectSqlAndArgs();
+
+	protected <T> List<T> listInternal(String sql, Object[] args, RowMapper<T> rowMapper) {
+		context.getSqlPrinter().printSql(sql, args);
+		List<T> res = context.getJdbcTemplate().query(sql, args, rowMapper);
+		context.getSqlPrinter().printResultList(res);
+		return res;
+	}
+
+	/**
+	 * {@link org.springframework.jdbc.core.JdbcTemplate.queryForObject} not
+	 * supported.<br>
+	 * 
+	 * 1 row expected.
+	 * 
+	 * @throws IncorrectResultSizeDataAccessException
+	 *             if more than one element has been found in the given
+	 *             Collection
+	 * @throws EmptyResultDataAccessException
+	 *             if no element at all has been found in the given Collection
+	 * @param elementType
+	 * @return the unique result from the unique row
+	 */
+	public <T> T single(Class<T> elementType) {
+		List<T> results = list(elementType);
+		return DataAccessUtils.requiredSingleResult(results);
+	}
+
+	/**
+	 * 1 row expected.
+	 * 
+	 * @return
+	 */
+	public Map<String, Object> single() {
+		SqlAndArgs sa = buildSelectSqlAndArgs();
+		context.getSqlPrinter().printSql(sa);
+		Map<String, Object> res = context.getJdbcTemplate().queryForMap(sa.getSql(), sa.getArgs());
+		context.getSqlPrinter().printResultBean(res);
+		return res;
+	}
+
+	protected static Object firstValueInFirstOfMap(List<Map<String, Object>> list) {
 		if (list == null || list.isEmpty()) {
 			return null;
 		}
@@ -43,7 +107,11 @@ public abstract class DefaultRootPhrase implements RootPhrase {
 
 	@Override
 	public Object firstCell() {
-		return firstMapElemVal(list());
+		List<Map<String, Object>> list = list();
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		return list.get(0).entrySet().iterator().next().getValue();
 	}
 
 	@Override

@@ -47,6 +47,10 @@ public class CriteriaPhrase implements Phrase {
 	public <T> List<T> list(RowMapper<T> rowMapper) {
 		return root.list(rowMapper);
 	}
+	
+	public <T> List<T> listOfSingleColumn(Class<T> columnType){
+		return root.listOfSingleColumn(columnType);
+	}
 
 	public Map<String, Object> first() {
 		return root.first();
