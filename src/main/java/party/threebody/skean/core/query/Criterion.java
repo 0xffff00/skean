@@ -8,5 +8,11 @@ package party.threebody.skean.core.query;
  */
 public interface Criterion {
 
-	
+	void setName(String name);
+
+	String getName();
+
+	void setValue(Object value);
+
+	Object getValue();
 }

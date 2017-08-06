@@ -22,15 +22,15 @@
 				<el-form :inline="true" :model="querier">
 					<el-form-item label="词语">
 						<el-input v-model="querier.criteria[0].value" placeholder="词语"></el-input>
-					</el-form-item>
-					<el-form-item label="语言">
-						<el-select v-model="querier.criteria[1].value">
-							<el-option label="(ALL)" value=""></el-option>
-							<el-option label="zh" value="zh"></el-option>
-							<el-option value="en"></el-option>
+						<el-select v-model="querier.criteria[0].operator">
+							<el-option label="部分匹配" value="contains"></el-option>
+							<el-option label="左匹配" value="startsWith"></el-option>
+							<el-option label="全匹配" value=""></el-option>
+
+
 						</el-select>
 					</el-form-item>
-					
+
 					<el-form-item>
 						<el-button type="primary" @click="submitQuerierForm"><i class="fa fa-search"></i>查询</el-button>
 					</el-form-item>
@@ -47,10 +47,20 @@
 		</div>
 		<div id="optHeadBar">
 			<el-button type="success" @click="openEditorDialog(null)"> <i class="fa fa-plus"></i>新增</el-button>
-			<el-button type="info" @click="listItems"> <i class="fa fa-refresh"></i>刷新</el-button>
+			<el-button type="info" @click="loadItems"> <i class="fa fa-refresh"></i>刷新</el-button>
+
+			<el-badge :value="tempTextImporter.texts.length" class="mark">
+				<el-button type="default" @click="showTempTextImportDialog()"> <i class="fa fa-refresh"></i>同步
+				</el-button>
+			</el-badge>
+
+
+
+
+
 		</div>
 		<el-table :data="items" border @sort-change="sortChanged" v-loading.body="ui.loading">
-			<el-table-column prop="text" label="内容" sortable="custom">	</el-table-column>
+			<el-table-column prop="text" label="内容" sortable="custom"> </el-table-column>
 			<el-table-column prop="desc" label="描述"></el-table-column>
 			<el-table-column label="操作">
 				<template scope="scope">
@@ -71,17 +81,27 @@
 		<el-dialog :title="editor.isNew ? '新增' : '修改'" :visible.sync="editor.ui.visible"
 		 show-close>
 			<el-form :model="editor.item">
-				<el-form-item label="名称" :label-width="editor.ui.labelWidth" required>
+				<el-form-item label="内容" :label-width="editor.ui.labelWidth" required>
 					<el-input v-model="editor.item.text" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="限定词" :label-width="editor.ui.labelWidth">
+				<el-form-item label="描述" :label-width="editor.ui.labelWidth">
 					<el-input v-model="editor.item.desc"></el-input>
 				</el-form-item>
-				
+
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="editor.ui.visible = false">取消</el-button>
 				<el-button type="primary" @click="saveItem" :loading="editor.ui.saving">{{editor.ui.saving?'保存中...':'保存'}}</el-button>
+			</div>
+		</el-dialog>
+
+		<el-dialog title="同步新的词条" :visible.sync="tempTextImporter.ui.visible" show-close>
+			<el-tag v-for="text in tempTextImporter.texts" key="text">
+				{{text}}
+			</el-tag>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="tempTextImporter.ui.visible = false">取消</el-button>
+				<el-button type="primary" @click="importTempTexts" :loading="tempTextImporter.ui.saving">{{tempTextImporter.ui.saving?'保存中...':'保存'}}</el-button>
 			</div>
 		</el-dialog>
 
@@ -102,6 +122,7 @@
 			editor: {
 				isNew: true,
 				item: {},
+				itemOld: {},
 				itemDefault: { text: null, desc: null },
 				ui: {
 					labelWidth: '120px',
@@ -110,7 +131,7 @@
 				}
 			},
 			querier: {
-				orderBy: 'text', pageIndex: 1, pageSize: 10, criteria: [
+				orderBy: 'text', pp: 1, pageIndex: 1, pageSize: 10, criteria: [
 					{ name: 'text', operator: 'contains', value: '' },
 					{ name: 'desc', operator: 'contains', value: '' }
 				],
@@ -119,6 +140,14 @@
 			ui: {
 				loading: false
 			}
+			, tempTextImporter: {
+				texts: [],
+				ui: {
+					visible: false,
+					saving: false
+				}
+			}
+
 		},
 		computed: {
 			querierRestParams() {
@@ -140,8 +169,9 @@
 		},
 		methods: {
 			openEditorDialog(item) {
-				this.editor.isNew = item == null;
+				this.editor.isNew = (item == null);
 				this.editor.item = item || this.editor.itemDefault;
+				this.editor.itemOld = _.cloneDeep(this.editor.item);
 				this.editor.ui.visible = true;
 
 			},
@@ -161,16 +191,17 @@
 							});
 							this.editor.ui.saving = false;
 							this.editor.ui.visible = false;
-							this.listItems();
+							this.loadItems();
 						},
 						resp => {
 							this.$notify.error({
 								title: '删除失败',
+								duration: 0,
 								message: resp.body && resp.body.message
 							});
 							this.editor.ui.saving = false;
 							this.editor.ui.visible = false;
-							this.listItems();
+							this.loadItems();
 						});
 				}).catch(() => {
 					this.$message({
@@ -182,31 +213,34 @@
 			},
 			saveItem() {
 				this.editor.ui.saving = true;
-				let i = this.editor.item;
+				let itemNew = _.pick(this.editor.item, afCols);
+				let itemOld = this.editor.itemOld;
 				if (this.editor.isNew) {
 					Vue.http
-						.post(URL0, i)
+						.post(URL0, itemNew)
 						.then(
 						resp => {
 							this.$notify.info({
-								title: '创建成功'
+								title: '创建成功',
+								message: itemNew.text
 							});
 							this.editor.ui.saving = false;
 							this.editor.ui.visible = false;
-							this.listItems();
+							this.loadItems();
 						},
 						resp => {
 							this.$notify.error({
 								title: '创建失败',
+								duration: 0,
 								message: resp.body && resp.body.message
 							});
 							this.editor.ui.saving = false;
 							this.editor.ui.visible = false;
-							this.listItems();
+							this.loadItems();
 						});
 				} else {
 					this.$http
-						.put(buildSoloUrl(URL0, i), i)
+						.put(buildSoloUrl(URL0, itemOld), itemNew)
 						.then(
 						resp => {
 							this.$notify.success({
@@ -214,16 +248,17 @@
 							});
 							this.editor.ui.saving = false;
 							this.editor.ui.visible = false;
-							this.listItems();
+							this.loadItems();
 						},
 						resp => {
 							this.$notify.error({
 								title: '更新失败',
+								duration: 0,
 								message: resp.body && resp.body.message
 							});
 							this.editor.ui.saving = false;
 							this.editor.ui.visible = false;
-							this.listItems();
+							this.loadItems();
 						});
 
 				}
@@ -233,11 +268,11 @@
 			},
 			pageSizeChanged(size) {
 				this.querier.pageSize = size;
-				this.listItems();
+				this.loadItems();
 			},
 			pageCurrentChanged(current) {
 				this.querier.pageIndex = current;
-				this.listItems();
+				this.loadItems();
 			},
 			sortChanged(e) {
 				if (e.prop) {
@@ -246,10 +281,10 @@
 					delete this.querier.orderBy;
 				}
 
-				this.listItems();
+				this.loadItems();
 
 			},
-			listItems() {
+			loadItems() {
 				Vue.http.get(buildQueryUrl(URL0, crud.querierRestParams))
 					.then(resp => {
 						crud.itemsCount = parseInt(resp.headers.get('X-Total-Count'));
@@ -262,7 +297,41 @@
 				crit.value = '';
 			},
 			submitQuerierForm() {
-				this.listItems();
+				this.loadItems();
+			}
+
+			, loadTemporaryTexts() {
+				Vue.http.get(URL0 + 'temporaryTexts')
+					.then(resp => {
+						crud.tempTextImporter.texts = resp.body;
+
+					})
+			}
+			, showTempTextImportDialog() {
+				this.tempTextImporter.ui.visible = true;
+			}
+			, importTempTexts() {
+				this.tempTextImporter.texts.forEach(text => {
+					Vue.http
+						.post(URL0, { text: text, desc: 'auto imported' })
+						.then(
+						resp => {
+							this.$notify.info({
+								title: '创建成功'
+							});
+							this.loadItems();
+						},
+						resp => {
+							this.$notify.error({
+								title: '创建失败',
+								duration: 0,
+								message: resp.body && resp.body.message
+							});
+						});
+
+
+				})
+
 			}
 		}
 	});
@@ -272,9 +341,10 @@
 
 
 	let CTX = 'http://localhost:8080/skean';
-	let URL0 = CTX+ '/dict/words/';
-	function buildSoloUrl(tuttiUrl,i) {
-		return tuttiUrl + i.text ;
+	let URL0 = CTX + '/dict/words/';
+	let afCols = ['text', 'desc'];
+	function buildSoloUrl(tuttiUrl, i) {
+		return tuttiUrl + i.text;
 
 	}
 	function buildQueryUrl(urlStr, params) {
@@ -285,7 +355,8 @@
 		return url.href;
 	}
 
-	crud.listItems();
+	crud.loadItems();
+	crud.loadTemporaryTexts();
 
 </script>
 

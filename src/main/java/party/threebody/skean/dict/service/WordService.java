@@ -46,7 +46,12 @@ public class WordService {
 	public List<Word> listWords(QueryParamsSuite qps) {
 		return wordDao.readList(qps);
 	}
-
+	
+	public List<String> listTemporaryTexts(){
+		return wordDao.listTemporaryTexts();
+	}
+	
+	
 	public int countWords(QueryParamsSuite qps) {
 		return wordDao.readCount(qps);
 	}

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<!-- 	<link rel="stylesheet" href="el-555.css"> -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+	<style>
+
+	</style>
+	<title>dict-demo2</title>
+</head>
+
+<body>
+	<canvas width="1024" height="768"></canvas>
+</body>
+<script src="lodash.js"></script>
+<script src="vue.js"></script>
+<script src="vue-resource.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript">
+	var canvas = document.querySelector("canvas"),
+		context = canvas.getContext("2d"),
+		width = canvas.width,
+		height = canvas.height;
+
+	var simulation = d3.forceSimulation()
+		.force("link", d3.forceLink().id(function (d) { return d.id; }))
+		.force("charge", d3.forceManyBody())
+		.force("center", d3.forceCenter());
+
+	d3.json("miserables.json", function (error, graph) {
+		if (error) throw error;
+
+		simulation
+			.nodes(graph.nodes)
+			.on("tick", ticked);
+
+		simulation.force("link")
+			.links(graph.links);
+
+		function ticked() {
+			context.clearRect(0, 0, width, height);
+			context.save();
+			context.translate(width / 2, height / 2 + 40);
+
+			context.beginPath();
+			graph.links.forEach(drawLink);
+			context.strokeStyle = "#aaa";
+			context.stroke();
+
+			context.beginPath();
+			graph.nodes.forEach(drawNode);
+			context.fill();
+			context.strokeStyle = "#fff";
+			context.stroke();
+
+			context.restore();
+		}
+	});
+
+	function drawLink(d) {
+		context.moveTo(d.source.x, d.source.y);
+		context.lineTo(d.target.x, d.target.y);
+	}
+
+	function drawNode(d) {
+		context.moveTo(d.x + 3, d.y);
+		context.arc(d.x, d.y, 3, 0, 2 * Math.PI);
+	}
+
+	let CTX = 'http://localhost:8080/skean';
+	let URL0 = CTX + '/dict/words/';
+	let currentURL = new URL(document.URL);
+	let word = currentURL.searchParams.get('w');
+
+	function buildSoloUrl(tuttiUrl, i) {
+		return tuttiUrl + i.text;
+
+	}
+	function buildQueryUrl(urlStr, params) {
+		var url = new URL(urlStr);
+		if (params) {
+			Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+		}
+		return url.href;
+	}
+
+</script>
+
+</html>

@@ -56,7 +56,8 @@ public class QueryParamsBuildUtils {
 		Integer pageLength = getIntValueFromMap(paramsMap, "l", "len", "per_page");
 		String orders = getStrValueFromMap(paramsMap, "o", "orders");
 		String criteria = getStrValueFromMap(paramsMap, "c", "crit", "criteria");
-		return buildQueryParamsSuite(criteria, orders, pageIndex, pageLength);
+		QueryParamsSuite qps = buildQueryParamsSuite(criteria, orders, pageIndex, pageLength);
+		return qps;
 	}
 
 	private static String getStrValueFromMap(Map<String, String> map, String... possibleKeys) {

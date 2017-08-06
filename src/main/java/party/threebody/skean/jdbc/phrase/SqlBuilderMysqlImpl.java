@@ -95,8 +95,8 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 			}
 		}
 
-		// Handle 'page()'
-		if (p.limit > 0) {
+		// Handle 'page()','limit()','offset()'
+		if (!p.enableCount && p.limit > 0) {
 			sql.append(dlmt).append("LIMIT ");
 			if (p.offset > 0) {
 				sql.append(p.offset).append(CM);

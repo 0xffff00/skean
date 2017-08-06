@@ -18,7 +18,7 @@ class WordDao extends AbstractCrudDAO<Word,String> {
 
 	@Autowired ChainedJdbcTemplate cjt
 
-	List<String> listTempWords(){
+	List<String> listTemporaryTexts(){
 		def sql=
 		'''		
 SELECT a.w FROM (
