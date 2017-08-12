@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Sets;
 
 import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.dict.dao.DualRelDao;
+import party.threebody.skean.dict.dao.Ge1RelDao;
+import party.threebody.skean.dict.dao.Ge2RelDao;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.model.AliasRel;
 import party.threebody.skean.dict.model.DualRel;
@@ -30,7 +33,12 @@ public class WordService {
 	static final Logger logger = LoggerFactory.getLogger(WordService.class);
 	@Autowired
 	WordDao wordDao;
-
+	@Autowired
+	DualRelDao dualRelDao;
+	@Autowired
+	Ge1RelDao ge1RelDao;
+	@Autowired
+	Ge2RelDao ge2RelDao;
 	public Word createWord(Word w) {
 		return wordDao.create(w);
 	}
@@ -120,19 +128,31 @@ public class WordService {
 
 	@Cacheable(value = "dualRels")
 	List<DualRel> listDualRels() {
-		return wordDao.listDualRels();
+		return dualRelDao.readList(null);
 	}
 
 	@Cacheable(value = "Ge1Rels")
 	List<Ge1Rel> listGe1Rels() {
-		return wordDao.listGe1Rels();
+		return ge1RelDao.readList(null);
 	}
 
 	@Cacheable(value = "Ge2Rels")
 	List<Ge2Rel> listGe2Rels() {
-		return wordDao.listGe2Rels();
+		return ge2RelDao.readList(null);
 	}
 
+	
+	public DualRel createDualRel(DualRel rel){
+		return dualRelDao.create(rel);
+	}
+	
+	public int deleteDualRel(DualRel rel){
+		return dualRelDao.delete(rel);
+	}
+
+	public int deleteDualRel(String key, String attr, Integer vno, String val){
+		return dualRelDao.delete(key,attr,vno,val);
+	}
 	/**
 	 * 
 	 * @author hzk

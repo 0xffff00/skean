@@ -1,0 +1,442 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<!-- 	<link rel="stylesheet" href="el-555.css"> -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/1.4.2/theme-default/index.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+	<style>
+		#word-manager a{
+			text-decoration : none;
+			color:inherit;
+		}
+		.haha {
+			color: red;
+			background: yellow;
+		}
+
+		.el-tag {
+			margin: 3px;
+		}
+
+		.attrName {
+			font-weight: bold;
+			color: #641;
+		}
+
+		.attrVal {
+			color: #777;
+		}
+
+		.el-input.adder {
+			width: 9em;
+		}
+		
+	</style>
+	<title> - Edit</title>
+</head>
+
+<body>
+	<div id="word-manager">
+		<h2>定义与实例</h2>
+		<div id="dual-rels-inst">
+			<h3>直接类型</h3>
+			<el-tag :key="r" v-for="r in rs0_definitions" :closable="true" type="primary" @close="del$dr(r)">
+				<a :href="get_url_page_word(r.key)">{{r.key}}</a>
+			</el-tag>
+			<el-input name="definition" class="adder" size="mini" placeholder="关联新类型" @keyup.enter.native="add$r">
+			</el-input>
+			<h3>所有超类</h3>
+			<el-tag :key="w" v-for="w in nsr_definitions" type="success"> <a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+
+			<h3>直接实例</h3>
+			<el-tag :key="r" v-for="r in rs0_instances" :closable="true" type="primary" @close="del$dr(r)">
+				<a :href="get_url_page_word(r.val)">{{r.val}}</a>
+			</el-tag>
+			<el-input name="instance" class="adder" size="mini" placeholder="关联新实例" @keyup.enter.native="add$r"></el-input>
+			<h3>所有实例</h3>
+			<el-tag :key="w" v-for="w in nsr_instances" type="success"> <a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+		</div>
+
+		<h2>集合</h2>
+		<div id="dual-rels-subs">
+			<h3>直接子集</h3>
+			<el-tag :key="r" v-for="r in rs0_subsets" :closable="true" type="primary" @close="del$dr(r)">
+				<a :href="get_url_page_word(r.val)">{{r.val}}</a>
+			</el-tag>
+			<el-input name="subset" class="adder" size="mini" placeholder="关联新子集"  @keyup.enter.native="add$r"></el-input>
+			</el-input>
+			<h3>所有子集</h3>
+			<el-tag :key="w" v-for="w in nsr_subsets" type="success"><a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+			<h3>直接超集</h3>
+			<el-tag :key="r" v-for="r in rs0_supersets" :closable="true" type="primary" @close="del$dr(r)">
+				<a :href="get_url_page_word(r.key)">{{r.key}}</a>
+			</el-tag>
+			<el-input name="superset" class="adder" size="mini" placeholder="关联新超集" @keyup.enter.native="add$r"></el-input>
+			<h3>所有超集</h3>
+			<el-tag :key="w" v-for="w in nsr_supersets" type="success"><a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+		</div>
+
+		<h2>相关话题</h2>
+		<div id="dual-rels-gech">
+			<h3>直接子话题</h3>
+			<el-tag :key="w" v-for="w in ns0_subtopics" :closable="true" type="primary" @close="del$dr">{{tag}}</el-tag>
+			<h3>所有子话题</h3>
+			<el-tag :key="w" v-for="w in nsr_subtopics" type="primary">{{w}}</el-tag>
+			<h3>直接父话题</h3>
+			<el-tag :key="w" v-for="w in ns0_supertopics" :closable="true" type="primary" @close="del$dr">{{w}}</el-tag>
+			<h3>所有父话题</h3>
+			<el-tag :key="w" v-for="w in nsr_supertopics" type="primary">{{w}}</el-tag>
+		</div>
+
+
+		<h2>属性和应用</h2>
+		<div id="generic-rels">
+			<h3>属性</h3>
+			<ul>
+				<li v-for="(rels,attr) in rmg_attr1">
+					<span class="attrName">{{attr}}</span> {{translate_pred(rels[0].pred)}}
+					<span v-for="rel in rels">
+						<a :href="get_url_page_word(rel.val)">{{rel.val}}</a>, 
+					</span>
+				</li>
+			</ul>
+			<h3>属性（值）</h3>
+			<ul>
+				<li v-for="(rels,attr) in rmg_attr2">
+					<span class="attrName">{{attr}}</span> {{translate_pred(rels[0].pred)}}
+					<span v-for="rel in rels">
+						<span class="attrVal">{{rel.val}}</span>,
+					</span>
+				</li>
+			</ul>
+
+
+			<h3>引用</h3>
+			<ul>
+				<li v-for="rel in grels_refer">
+					<a :href="get_url_page_word(rel.key)">{{rel.key}}</a> 的 {{rel.attr}} {{translate_pred(rel.pred)
+					}} {{rel.val}}
+				</li>
+			</ul>
+		</div>
+
+		<!-- <div id="dual-rels-subsets">
+			<el-tag :key="tag" v-for="tag in ns0_subsets" :closable="true" :close-transition="false"
+			 @close="deleteDualRels(tag)">
+				{{tag}}
+			</el-tag>
+
+			<el-input class="input-new-tag" v-model="inputValue" ref="saveTagInput" size="mini"
+			 @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
+			</el-input> -->
+		<!-- <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button> -->
+	</div>
+
+	</div>
+
+
+</body>
+
+<script src="lodash.js"></script>
+<script src="skean-util.js"></script>
+<script src="vue.js"></script>
+<script src="vue-resource.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/1.4.2/index.js"></script>
+<script type="text/javascript" for="some-utils">
+	class DAGVisitor {
+		constructor(edges, edgeToVertex0, edgeToVertex1) {
+			this.edges = edges;
+			this.edgeToVertex0 = edgeToVertex0;
+			this.edgeToVertex1 = edgeToVertex1;
+		}
+
+		/*	return a list of vertices visited */
+		static newTraversal(edges, edgeToVertex0, edgeToVertex1, vertexStarted) {
+			let visitor = new DAGVisitor(edges, edgeToVertex0, edgeToVertex1);
+			visitor.visitFrom(vertexStarted);
+			return Array.from(visitor.getVerticesVisited());
+		}
+
+		visitFrom(root) {
+			this.verticesVisited = new Set();
+			this._dfs(root);
+		}
+		getVerticesVisited() {
+			return this.verticesVisited;
+		}
+
+		_dfs(curr) {
+			if (!curr || this.verticesVisited.has(curr)) return;
+			this.verticesVisited.add(curr);
+			let nexts = this.edges.filter(e => this.edgeToVertex0(e) === curr).map(this.edgeToVertex1);
+			nexts.forEach(next => this._dfs(next));
+		}
+	}
+
+</script>
+
+<script type="text/javascript">
+	const WORD = new URL(window.location).searchParams.get("w");
+	const CTX = 'http://localhost:8080/skean';
+	const DL = '&'
+	const urls = {
+		rest: {
+			words: CTX + '/dict/words/',
+			word: w => CTX + '/dict/words/' + w,
+			aliasRels: CTX + '/dict/words/any/aliasRels',
+			dualRels: CTX + '/dict/words/any/dualRels',
+			dualRel: r => CTX + '/dict/words/any/dualRels/' + r.key + DL + r.attr + DL + r.vno + DL + r.val,
+			ge1Rels: CTX + '/dict/words/any/ge1Rels',
+			ge2Rels: CTX + '/dict/words/any/ge1Rels',
+		},
+		page: {
+			word: w => CTX + '/demo2/man-dict2-one.html?w=' + w
+		}
+
+
+	}
+	document.title = WORD + '- 详情 - 编辑'
+
+	var vue = new Vue({
+		el: '#word-manager',
+		data: {
+			item: {
+				text: null,
+				aliasRels: [],
+				dualRels: [],
+				ge1Rels: [],
+				ge2Rels: []
+			},
+			inputValue: null,
+			editor: {
+				adder: {
+					subset: null
+				}
+
+			},
+
+			ui: {
+				inputVisible: false,
+				loading: false
+			}
+
+
+		},
+		computed: {
+			me: function () {
+				return this.item.text;
+			},
+			drels_subs: function () {
+				return this.item.dualRels.filter(r => r.attr === 'SUBS')
+			},
+			drels_inst: function () {
+				return this.item.dualRels.filter(r => r.attr === 'INST')
+			},
+			drels_gech: function () {
+				return this.item.dualRels.filter(r => r.attr === 'GECH')
+			},
+			grels_attr1: function () {
+				return this.item.ge1Rels.filter(r => r.key === this.me)
+			},
+			grels_attr2: function () {
+				return this.item.ge2Rels.filter(r => r.key === this.me)
+			},
+			grels_refer: function () {
+				return this.item.ge1Rels.filter(r => r.val === this.me)
+			},
+
+			/* rs0: arr of rels shallow
+				ns0: arr of nodes shallow; nsr: arr of nodes recursive */
+			//--------- subsets & supersets
+			rs0_subsets: function () {
+				return this.drels_subs.filter(e => e.key === this.me);
+			},
+			nsr_subsets: function () {
+				return DAGVisitor.newTraversal(this.drels_subs, e => e.key, e => e.val, this.me)
+					.filter(n => n !== this.me)
+			},
+			rs0_supersets: function () {
+				return this.drels_subs.filter(e => e.val === this.me);
+			},
+			nsr_supersets: function () {
+				return DAGVisitor.newTraversal(this.drels_subs, e => e.val, e => e.key, this.me)
+					.filter(n => n !== this.me)
+			},
+			//--------subtopics & supertopics
+			ns0_subtopics: function () {
+				return this.drels_gech.filter(e => e.key === this.me).map(e => e.val);
+			},
+			nsr_subtopics: function () {
+				return DAGVisitor.newTraversal(this.drels_gech, e => e.key, e => e.val, this.me)
+					.filter(n => n !== this.me)
+			},
+			ns0_supertopics: function () {
+				return this.drels_gech.filter(e => e.val === this.me).map(e => e.key);
+			},
+			nsr_supertopics: function () {
+				return DAGVisitor.newTraversal(this.drels_gech, e => e.val, e => e.key, this.me)
+					.filter(n => n !== this.me)
+			},
+
+
+			//--------definitions & instances
+			rs0_definitions: function () {
+				return this.drels_inst.filter(e => e.val === this.me);
+			},
+			ns0_definitions: function () {
+				return this.drels_inst.filter(e => e.val === this.me).map(e => e.key);
+			},
+			nsr_definitions: function () {
+				let arrs = this.ns0_definitions.map(def0 =>
+					DAGVisitor.newTraversal(this.drels_subs, e => e.val, e => e.key, def0))
+				return arrs.reduce((S, A) => _.union(S, A), [])	//lodash's array union
+			},
+			rs0_instances: function () {
+				return this.drels_inst.filter(e => e.key === this.me);
+			},
+			ns0_instances: function () {
+				return this.drels_inst.filter(e => e.key === this.me).map(e => e.val);
+			},
+			nsr_instances: function () {
+				let subsets=_.union(Array.from(this.nsr_subsets),[this.me]);
+				let arrs =subsets.map(subdef =>
+					this.drels_inst.filter(e => e.key === subdef).map(e => e.val))
+				return arrs.reduce((S, A) => _.union(S, A), [])
+			},
+
+			ns0_attr1: function () {
+				return this.grels_attr1.filter(e => e.key === this.me).map(e => e.val);
+			},
+
+			/* rmg: rel map grouped */
+			rmg_attr1: function () {
+				return _.mapValues(
+					_.groupBy(this.grels_attr1, this.rel_attr_mapper),
+					rels => _.sortBy(rels, ['attr', 'attrx', 'vno'])
+				)
+			},
+			rmg_attr2: function () {
+				return _.mapValues(
+					_.groupBy(this.grels_attr2, this.rel_attr_mapper),
+					rels => _.sortBy(rels, ['attr', 'attrx', 'vno'])
+				)
+			},
+
+			ns0_attributes2: function () {
+				return this.item.ge2Rels.filter(e => e.key === this.me).map(e => e.val);
+			},
+			ns0_references: function () {
+				return this.item.ge1Rels.filter(e => e.val === this.me).map(e => e.key);
+			},
+
+
+
+
+
+		},
+		methods: {
+			add$r(evt) {	//add rel
+				let _vv = evt.target.value;
+
+				if (!_vv) {
+					return;
+				}
+				let _me = this.me;
+				let name = evt.target.name;
+				let _r = {}
+				switch (name) {
+					case 'subset': _r = { key: _me, attr: 'SUBS', val: _vv }; break;
+					case 'superset': _r = { key: _vv, attr: 'SUBS', val: _me }; break;
+					case 'instance': _r = { key: _me, attr: 'INST', val: _vv }; break;
+					case 'definition': _r = { key: _vv, attr: 'INST', val: _me }; break;
+					case 'subtopic': _r = { key: _me, attr: 'GECH', val: _vv }; break;
+					case 'supertopic': _r = { key: _vv, attr: 'GECH', val: _me }; break;
+				}
+				let old_vnos = this.item.dualRels.filter(r => r.key === _r.key && r.attr === _r.attr).map(r => r.vno);
+				_r.vno = old_vnos.length ? _.max(old_vnos.map(x=>+x)) + 1 : 0;
+				this.$http.post(urls.rest.dualRels, _r)
+					.then(
+					resp => {
+						this.$notify.success({
+							title: '添加' + name + '成功',
+							message: this.rel_to_str(_r)
+						});
+						evt.target.value = ''
+						this.loadItem();
+					},
+					resp => {
+						this.$notify.error({
+							title: '添加' + name + '失败',
+							duration: 0,
+							message: resp.body.message
+						});
+						this.loadItem();
+					});
+
+			},
+			del$dr(rel) {	//del dualRel
+				this.$http.delete(urls.rest.dualRel(rel))
+					.then(
+					resp => {
+						this.$notify.success({
+							title: '移除关联成功',
+							message: this.rel_to_str(rel)
+						});
+						this.loadItem();
+					},
+					resp => {
+						this.$notify.error({
+							title: '移除关联失败',
+							duration: 0,
+							message: this.rel_to_str(rel) + '. ' + resp.body.message
+						});
+						this.loadItem();
+					});
+			},
+			rel_attr_mapper(rel1) {
+				return rel1.attr + (rel1.attrx ? '(' + rel1.attrx + ')' : '');
+			},
+			get_url_page_word(word) {
+				return urls.page.word(word)
+			},
+			html_a_wrapper_by_url_page_word(word) {
+				return urls.page.word(word)
+			},
+			rel_to_str(rel) {
+				return rel.key + '[' + rel.attr + '] -->' + rel.val;
+			},
+			translate_pred(pred) {
+				switch (pred) {
+					case 'IS': return '是';
+					case 'ARE': return '仅有';
+					case 'HAS': return '有'
+						return '='
+				}
+			},
+
+			loadItem() {
+				if (!WORD) {
+					return;
+				}
+				Vue.http.get(urls.rest.word(WORD))
+					.then(resp => {
+						vue.item = resp.body;
+						vue.ui.loading = false;
+					})
+			}
+
+		}
+	});
+
+
+
+
+
+
+	vue.loadItem();
+
+</script>
+
+</html>

@@ -46,7 +46,8 @@ class Rel{
 	String val
 	String attr
 	String vno
-
+	String adv
+	
 	@Override
 	public int hashCode() {
 		Objects.hashCode(key) ^ Objects.hashCode(val) ^ Objects.hashCode(attr) ^ Objects.hashCode(vno)
@@ -71,9 +72,8 @@ class Rel{
 }
 
 class GeRel extends Rel{
-
+	String attrx
 	String pred
-	String adv
 	Integer time1
 	Integer time2
 

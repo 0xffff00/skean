@@ -18,7 +18,7 @@ import party.threebody.skean.util.ObjectMappers;
  * @param <T>
  *            type of the entity bean
  * @param <PK>
- *            type of the primary key(s)
+ *            type of the primary key(s), usually a String, String[] or Map
  */
 public abstract class AbstractCrudDAO<T, PK> implements GenericCrudDAO<T, PK> {
 
@@ -31,6 +31,10 @@ public abstract class AbstractCrudDAO<T, PK> implements GenericCrudDAO<T, PK> {
 
 	protected abstract List<String> getPrimaryKeyColumns();
 
+	/**
+	 * if return null, build actual AffectedColumns by properties of the bean
+	 * @return
+	 */
 	protected abstract List<String> getAffectedColumns();
 
 	private FromPhrase fromTable() {

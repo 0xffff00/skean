@@ -52,20 +52,6 @@ SELECT a.w FROM (
 		cjt.from("dct_rel_sp_alias").by('key','val').val(key,val).delete()
 	}
 
-
-	List<DualRel> listDualRels(){
-		cjt.from("dct_rel_sp_dual").list(DualRel.class)
-	}
-
-
-	List<Ge1Rel> listGe1Rels(){
-		cjt.from("dct_rel_ge_dat1").list(Ge1Rel.class)
-	}
-
-	List<Ge2Rel> listGe2Rels(){
-		cjt.from("dct_rel_ge_dat2").list(Ge2Rel.class)
-	}
-
 	@Override
 	protected String getTable() {
 		'dct_word'
