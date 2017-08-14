@@ -30,13 +30,19 @@ class Ge1RelDao extends AbstractCrudDAO<Ge1Rel,Ge1Rel> {
 
 	@Override
 	protected List<String> getPrimaryKeyColumns() {
-		['key','attr','attrx','pred','vno','val']
+		['key', 'attr', 'vno']
 	}
 
 	@Override
 	protected List<String> getAffectedColumns() {
 		null
 	}
-	
-	
+
+	int delete(String key, String attr, Integer vno){
+		cjt.from(getTable()).by('key','attr','vno').val(key,attr,vno).delete()
+	}
+
+	int delete(String key, String attr){
+		cjt.from(getTable()).by('key','attr').val(key,attr).delete()
+	}
 }

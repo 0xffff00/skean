@@ -39,6 +39,7 @@ public class WordService {
 	Ge1RelDao ge1RelDao;
 	@Autowired
 	Ge2RelDao ge2RelDao;
+
 	public Word createWord(Word w) {
 		return wordDao.create(w);
 	}
@@ -54,12 +55,11 @@ public class WordService {
 	public List<Word> listWords(QueryParamsSuite qps) {
 		return wordDao.readList(qps);
 	}
-	
-	public List<String> listTemporaryTexts(){
+
+	public List<String> listTemporaryTexts() {
 		return wordDao.listTemporaryTexts();
 	}
-	
-	
+
 	public int countWords(QueryParamsSuite qps) {
 		return wordDao.readCount(qps);
 	}
@@ -78,30 +78,37 @@ public class WordService {
 		}
 		DAGVisitor<String, AliasRel> dagv1 = new DAGVisitor<>(this::listAliasRels, AliasRel::getKey, AliasRel::getVal);
 		dagv1.visitFrom(text);
-		w.setAliases(dagv1.getVerticesVisited());
 		w.setAliasRels(dagv1.getEdgesVisited());
-		// calc DualRel
+		
+		w.setDualRels(listDualRelsOfWord(text));
+		w.setGe1Rels(listGe1RelsOfWord(text));
+		w.setGe2Rels(listGe2RelsOfWord(text));
+
+		return w;
+	}
+	
+	public Set<DualRel> listDualRelsOfWord(String text){
 		DAGVisitor<String, DualRel> drDVp = new DAGVisitor<>(this::listDualRels, DualRel::getKey, DualRel::getVal);
 		drDVp.visitFrom(text);
 
 		DAGVisitor<String, DualRel> drDVn = new DAGVisitor<>(this::listDualRels, DualRel::getVal, DualRel::getKey);
 		drDVn.visitFrom(text);
-		w.setDualRels(Sets.union(drDVp.getEdgesVisited(), drDVn.getEdgesVisited()));
-
-		// calc Ge1Rel
+		return Sets.union(drDVp.getEdgesVisited(), drDVn.getEdgesVisited());
+	}
+	
+	public Set<Ge1Rel> listGe1RelsOfWord(String text){
 		DAGVisitor<String, Ge1Rel> g1DVp = new DAGVisitor<>(this::listGe1Rels, Ge1Rel::getKey, Ge1Rel::getVal);
 		g1DVp.visitFrom(text);
 
 		DAGVisitor<String, Ge1Rel> g1DVn = new DAGVisitor<>(this::listGe1Rels, Ge1Rel::getVal, Ge1Rel::getKey);
 		g1DVn.visitFrom(text);
-		w.setGe1Rels(Sets.union(g1DVp.getEdgesVisited(), g1DVn.getEdgesVisited()));
-
-		// calc Ge2Rel
+		return Sets.union(g1DVp.getEdgesVisited(), g1DVn.getEdgesVisited());
+	}
+	
+	public Set<Ge2Rel> listGe2RelsOfWord(String text){
 		DAGVisitor<String, Ge2Rel> g2DVp = new DAGVisitor<>(this::listGe2Rels, Ge2Rel::getKey, Ge2Rel::getVal);
 		g2DVp.visitFrom(text);
-		w.setGe2Rels(g2DVp.getEdgesVisited());
-
-		return w;
+		return g2DVp.getEdgesVisited();
 	}
 
 	// --------- pure DAO CRUDs ------------
@@ -127,32 +134,48 @@ public class WordService {
 	}
 
 	@Cacheable(value = "dualRels")
-	List<DualRel> listDualRels() {
+	public List<DualRel> listDualRels() {
 		return dualRelDao.readList(null);
 	}
 
 	@Cacheable(value = "Ge1Rels")
-	List<Ge1Rel> listGe1Rels() {
+	public List<Ge1Rel> listGe1Rels() {
 		return ge1RelDao.readList(null);
 	}
 
 	@Cacheable(value = "Ge2Rels")
-	List<Ge2Rel> listGe2Rels() {
+	public List<Ge2Rel> listGe2Rels() {
 		return ge2RelDao.readList(null);
 	}
 
-	
-	public DualRel createDualRel(DualRel rel){
+	public DualRel createDualRel(DualRel rel) {
 		return dualRelDao.create(rel);
 	}
-	
-	public int deleteDualRel(DualRel rel){
-		return dualRelDao.delete(rel);
+
+	public int deleteDualRel(String key, String attr, Integer vno) {
+		return dualRelDao.delete(key, attr, vno);
 	}
 
-	public int deleteDualRel(String key, String attr, Integer vno, String val){
-		return dualRelDao.delete(key,attr,vno,val);
+	public Ge1Rel createGe1Rel(Ge1Rel rel) {
+		return ge1RelDao.create(rel);
 	}
+
+	public int deleteGe1Rel(String key, String attr, Integer vno) {
+		return ge1RelDao.delete(key, attr, vno);
+	}
+	
+	public int deleteGe1RelsByKA(String key, String attr ) {
+		return ge1RelDao.delete(key, attr);
+	}
+
+	public Ge2Rel createGe2Rel(Ge2Rel rel) {
+		return ge2RelDao.create(rel);
+	}
+
+	public int deleteGe2Rel(String key, String attr, Integer vno) {
+		return ge2RelDao.delete(key, attr, vno);
+	}
+
 	/**
 	 * 
 	 * @author hzk

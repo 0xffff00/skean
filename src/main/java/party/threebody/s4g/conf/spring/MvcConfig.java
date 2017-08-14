@@ -7,10 +7,12 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.util.UrlPathHelper;
 
 @Configuration
 @EnableWebMvc
@@ -41,7 +43,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 		configurer.favorPathExtension(true)
 				/* 不检查Accept请求头 */
 				.ignoreAcceptHeader(true).parameterName("mediaType")
-				/* 设置默认的media yype */
+				/* 设置默认的media type */
 				.defaultContentType(MediaType.APPLICATION_JSON)
 				/* 请求以.html结尾的会被当成MediaType.TEXT_HTML */
 				.mediaType("html", MediaType.TEXT_HTML)
@@ -58,5 +60,10 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 		.exposedHeaders("X-Total-Count");
 	}
 	
-	
+	@Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        UrlPathHelper urlPathHelper = new UrlPathHelper();
+        urlPathHelper.setRemoveSemicolonContent(false);
+        configurer.setUrlPathHelper(urlPathHelper);
+    }
 }

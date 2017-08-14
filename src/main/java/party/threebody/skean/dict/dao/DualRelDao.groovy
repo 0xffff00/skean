@@ -33,7 +33,7 @@ class DualRelDao extends AbstractCrudDAO<DualRel,DualRel> {
 
 	@Override
 	protected List<String> getPrimaryKeyColumns() {
-		['key','attr','vno','val']
+		['key', 'attr', 'vno']
 	}
 
 	@Override
@@ -41,8 +41,7 @@ class DualRelDao extends AbstractCrudDAO<DualRel,DualRel> {
 		null
 	}
 
-	int delete( String key, String attr, Integer vno, String val){
-		cjt.from('dct_rel_sp_dual').by('key','attr','vno','val').val(key,attr,vno,val).delete()
+	int delete( String key, String attr, Integer vno){
+		cjt.from(getTable()).by('key','attr','vno').val(key,attr,vno,val).delete()
 	}
-	
 }

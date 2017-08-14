@@ -7,10 +7,11 @@
 	<link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/1.4.2/theme-default/index.css">
 	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
 	<style>
-		#word-manager a{
-			text-decoration : none;
-			color:inherit;
+		#word-manager a {
+			text-decoration: none;
+			color: inherit;
 		}
+
 		.haha {
 			color: red;
 			background: yellow;
@@ -32,62 +33,77 @@
 		.el-input.adder {
 			width: 9em;
 		}
-		
 	</style>
 	<title> - Edit</title>
 </head>
 
 <body>
 	<div id="word-manager">
+		<h1>{{item.text}} - 详情</h1>
+		<h2>别名</h2>
+		<div id="alias-rels">
+			<el-tag :key="r" v-for="r in item.aliasRels" :closable="true" type="primary" :close-transition="true" @close="del$ar(r)">
+				<a :href="url$w(r.val)">{{r.val}}</a>
+			</el-tag>
+			<el-input class="adder" size="mini" placeholder="添加新别名" @keyup.enter.native="add$ar">
+			</el-input>
+		</div>
 		<h2>定义与实例</h2>
 		<div id="dual-rels-inst">
 			<h3>直接类型</h3>
-			<el-tag :key="r" v-for="r in rs0_definitions" :closable="true" type="primary" @close="del$dr(r)">
-				<a :href="get_url_page_word(r.key)">{{r.key}}</a>
+			<el-tag :key="r" v-for="r in rs0_definitions" :closable="true" type="primary" :close-transition="true" @close="del$dr(r)">
+				<a :href="url$w(r.key)">{{r.key}}</a>
 			</el-tag>
-			<el-input name="definition" class="adder" size="mini" placeholder="关联新类型" @keyup.enter.native="add$r">
+			<el-input name="definition" class="adder" size="mini" placeholder="关联新类型" @keyup.enter.native="add$dr">
 			</el-input>
 			<h3>所有超类</h3>
-			<el-tag :key="w" v-for="w in nsr_definitions" type="success"> <a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+			<el-tag :key="w" v-for="w in nsr_definitions" type="success"> <a :href="url$w(w)">{{w}}</a></el-tag>
 
 			<h3>直接实例</h3>
-			<el-tag :key="r" v-for="r in rs0_instances" :closable="true" type="primary" @close="del$dr(r)">
-				<a :href="get_url_page_word(r.val)">{{r.val}}</a>
+			<el-tag :key="r" v-for="r in rs0_instances" :closable="true" type="primary" :close-transition="true" @close="del$dr(r)">
+				<a :href="url$w(r.val)">{{r.val}}</a>
 			</el-tag>
-			<el-input name="instance" class="adder" size="mini" placeholder="关联新实例" @keyup.enter.native="add$r"></el-input>
+			<el-input name="instance" class="adder" size="mini" placeholder="关联新实例" @keyup.enter.native="add$dr"></el-input>
 			<h3>所有实例</h3>
-			<el-tag :key="w" v-for="w in nsr_instances" type="success"> <a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+			<el-tag :key="w" v-for="w in nsr_instances" type="success"> <a :href="url$w(w)">{{w}}</a></el-tag>
 		</div>
 
 		<h2>集合</h2>
 		<div id="dual-rels-subs">
 			<h3>直接子集</h3>
-			<el-tag :key="r" v-for="r in rs0_subsets" :closable="true" type="primary" @close="del$dr(r)">
-				<a :href="get_url_page_word(r.val)">{{r.val}}</a>
+			<el-tag :key="r" v-for="r in rs0_subsets" :closable="true" type="primary" :close-transition="true" @close="del$dr(r)">
+				<a :href="url$w(r.val)">{{r.val}}</a>
 			</el-tag>
-			<el-input name="subset" class="adder" size="mini" placeholder="关联新子集"  @keyup.enter.native="add$r"></el-input>
+			<el-input name="subset" class="adder" size="mini" placeholder="关联新子集" @keyup.enter.native="add$dr"></el-input>
 			</el-input>
 			<h3>所有子集</h3>
-			<el-tag :key="w" v-for="w in nsr_subsets" type="success"><a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+			<el-tag :key="w" v-for="w in nsr_subsets" type="success"><a :href="url$w(w)">{{w}}</a></el-tag>
 			<h3>直接超集</h3>
-			<el-tag :key="r" v-for="r in rs0_supersets" :closable="true" type="primary" @close="del$dr(r)">
-				<a :href="get_url_page_word(r.key)">{{r.key}}</a>
+			<el-tag :key="r" v-for="r in rs0_supersets" :closable="true" type="primary" :close-transition="true" @close="del$dr(r)">
+				<a :href="url$w(r.key)">{{r.key}}</a>
 			</el-tag>
-			<el-input name="superset" class="adder" size="mini" placeholder="关联新超集" @keyup.enter.native="add$r"></el-input>
+			<el-input name="superset" class="adder" size="mini" placeholder="关联新超集" @keyup.enter.native="add$dr"></el-input>
 			<h3>所有超集</h3>
-			<el-tag :key="w" v-for="w in nsr_supersets" type="success"><a :href="get_url_page_word(w)">{{w}}</a></el-tag>
+			<el-tag :key="w" v-for="w in nsr_supersets" type="success"><a :href="url$w(w)">{{w}}</a></el-tag>
 		</div>
 
 		<h2>相关话题</h2>
 		<div id="dual-rels-gech">
 			<h3>直接子话题</h3>
-			<el-tag :key="w" v-for="w in ns0_subtopics" :closable="true" type="primary" @close="del$dr">{{tag}}</el-tag>
+			<el-tag :key="r" v-for="r in rs0_subtopics" :closable="true" type="primary" :close-transition="true" @close="del$dr(r)">
+				<a :href="url$w(r.val)">{{r.val}}</a>
+			</el-tag>
+			<el-input name="subtopic" class="adder" size="mini" placeholder="关联新子话题" @keyup.enter.native="add$dr"></el-input>
+			</el-input>
 			<h3>所有子话题</h3>
-			<el-tag :key="w" v-for="w in nsr_subtopics" type="primary">{{w}}</el-tag>
+			<el-tag :key="w" v-for="w in nsr_subtopics" type="success"><a :href="url$w(w)">{{w}}</a></el-tag>
 			<h3>直接父话题</h3>
-			<el-tag :key="w" v-for="w in ns0_supertopics" :closable="true" type="primary" @close="del$dr">{{w}}</el-tag>
+			<el-tag :key="r" v-for="r in rs0_supertopics" :closable="true" type="primary" :close-transition="true" @close="del$dr(r)">
+				<a :href="url$w(r.key)">{{r.key}}</a></el-tag>
+			<el-input name="supertopic" class="adder" size="mini" placeholder="关联新父话题" @keyup.enter.native="add$dr"></el-input>
+			</el-input>
 			<h3>所有父话题</h3>
-			<el-tag :key="w" v-for="w in nsr_supertopics" type="primary">{{w}}</el-tag>
+			<el-tag :key="w" v-for="w in nsr_supertopics" type="success"><a :href="url$w(w)">{{w}}</a></el-tag>
 		</div>
 
 
@@ -96,10 +112,34 @@
 			<h3>属性</h3>
 			<ul>
 				<li v-for="(rels,attr) in rmg_attr1">
+					<el-button type="danger" size="mini" @click="del$g1(attr)"><i class="fa fa-times"></i></el-button>
 					<span class="attrName">{{attr}}</span> {{translate_pred(rels[0].pred)}}
-					<span v-for="rel in rels">
-						<a :href="get_url_page_word(rel.val)">{{rel.val}}</a>, 
-					</span>
+					<el-tag :key="r" v-for="r in rels" :closable="true" type="primary" :close-transition="true" @close="del$gr1v(r)">
+						<a :href="url$w(r.val)">{{r.val}}</a>
+					</el-tag>
+					<el-input class="adder" size="mini" placeholder="关联新属性值"
+					 @keyup.enter.native="add$gr1v(rels,$event)"></el-input>
+					
+				</li>
+				<li>
+				<el-form :inline="true" :model="editor.adder.ge1Rel">
+				<el-form-item>
+						<el-input v-model="editor.adder.ge1Rel.key" placeholder="属性名" size="mini" style="width:140px;"></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-select v-model="editor.adder.ge1Rel.pred" placeholder="谓词" size="mini" style="width:80px;">
+							<el-option label="是" value="IS"></el-option>
+							<el-option label="有" value="HAS"></el-option>
+							<el-option label="仅有" value="ARE"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item>
+						<el-input v-model="editor.adder.ge1Rel.vals" placeholder="属性值，若填多个以空格隔开" size="mini" style="width:280px;"></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button  type="success" size="mini" @click="add$gr1(1)"><i class="fa fa-plus"></i></el-button>
+					</el-form-item>
+				</el-form>
 				</li>
 			</ul>
 			<h3>属性（值）</h3>
@@ -107,7 +147,7 @@
 				<li v-for="(rels,attr) in rmg_attr2">
 					<span class="attrName">{{attr}}</span> {{translate_pred(rels[0].pred)}}
 					<span v-for="rel in rels">
-						<span class="attrVal">{{rel.val}}</span>,
+						<span class="attrVal">{{rel.val}}{{rel.valmu}}</span>,
 					</span>
 				</li>
 			</ul>
@@ -115,15 +155,15 @@
 
 			<h3>引用</h3>
 			<ul>
-				<li v-for="rel in grels_refer">
-					<a :href="get_url_page_word(rel.key)">{{rel.key}}</a> 的 {{rel.attr}} {{translate_pred(rel.pred)
+				<li v-for="rel in grelsrelefer">
+					<a :href="url$w(rel.key)">{{rel.key}}</a> 的 {{rel.attr}} {{translate_pred(rel.pred)
 					}} {{rel.val}}
 				</li>
 			</ul>
 		</div>
 
 		<!-- <div id="dual-rels-subsets">
-			<el-tag :key="tag" v-for="tag in ns0_subsets" :closable="true" :close-transition="false"
+			<el-tag :key="tag" v-for="tag in ns0_subsets" :closable="true" ::close-transition="true"
 			 @close="deleteDualRels(tag)">
 				{{tag}}
 			</el-tag>
@@ -178,23 +218,35 @@
 </script>
 
 <script type="text/javascript">
-	const WORD = new URL(window.location).searchParams.get("w");
+	const currURL = new URL(window.location);
+	const WORD = currURL.searchParams.get("w");
+	const currURLnoParams = currURL.origin + currURL.pathname;
 	const CTX = 'http://localhost:8080/skean';
 	const DL = '&'
 	const urls = {
 		rest: {
 			words: CTX + '/dict/words/',
 			word: w => CTX + '/dict/words/' + w,
-			aliasRels: CTX + '/dict/words/any/aliasRels',
-			dualRels: CTX + '/dict/words/any/dualRels',
-			dualRel: r => CTX + '/dict/words/any/dualRels/' + r.key + DL + r.attr + DL + r.vno + DL + r.val,
-			ge1Rels: CTX + '/dict/words/any/ge1Rels',
-			ge2Rels: CTX + '/dict/words/any/ge1Rels',
+			aliasRels: CTX + '/dict/words/alias-rels',
+			dualRels: CTX + '/dict/words/dual-rels',
+			dualRel: r => CTX + '/dict/words/dual-rels' + urls.utils.toMatrixVars(r,['key','attr','vno']) ,
+			ge1Rels: CTX + '/dict/words/ge1-rels',
+			ge1Rel: r => CTX + '/dict/words/ge1-rels' + urls.utils.toMatrixVars(r,['key','attr','vno']) ,
+			ge2Rels: CTX + '/dict/words/ge2-rels',
+			ge2Rel: r => CTX + '/dict/words/ge2-rels' + urls.utils.toMatrixVars(r,['key','attr','vno']),
 		},
 		page: {
-			word: w => CTX + '/demo2/man-dict2-one.html?w=' + w
+			word: w => currURLnoParams + '?w=' + w
+		},
+		utils:{
+			toMatrixVars(varMap,keys){
+				return keys.map(k=>';'+k+'='+urls.utils._toVal(varMap[k])).join('')
+			},
+			_toVal(obj){	//to comma-delimited vals string or simple val
+				if (_.isArray(obj))	return obj.join(',')				
+				return obj;
+			}
 		}
-
 
 	}
 	document.title = WORD + '- 详情 - 编辑'
@@ -212,7 +264,7 @@
 			inputValue: null,
 			editor: {
 				adder: {
-					subset: null
+					ge1Rel: {}
 				}
 
 			},
@@ -243,7 +295,7 @@
 			grels_attr2: function () {
 				return this.item.ge2Rels.filter(r => r.key === this.me)
 			},
-			grels_refer: function () {
+			grelsrelefer: function () {
 				return this.item.ge1Rels.filter(r => r.val === this.me)
 			},
 
@@ -265,12 +317,18 @@
 					.filter(n => n !== this.me)
 			},
 			//--------subtopics & supertopics
+			rs0_subtopics: function () {
+				return this.drels_gech.filter(e => e.key === this.me);
+			},
 			ns0_subtopics: function () {
 				return this.drels_gech.filter(e => e.key === this.me).map(e => e.val);
 			},
 			nsr_subtopics: function () {
 				return DAGVisitor.newTraversal(this.drels_gech, e => e.key, e => e.val, this.me)
 					.filter(n => n !== this.me)
+			},
+			rs0_supertopics: function () {
+				return this.drels_gech.filter(e => e.val === this.me);
 			},
 			ns0_supertopics: function () {
 				return this.drels_gech.filter(e => e.val === this.me).map(e => e.key);
@@ -300,8 +358,8 @@
 				return this.drels_inst.filter(e => e.key === this.me).map(e => e.val);
 			},
 			nsr_instances: function () {
-				let subsets=_.union(Array.from(this.nsr_subsets),[this.me]);
-				let arrs =subsets.map(subdef =>
+				let subsets = _.union(Array.from(this.nsr_subsets), [this.me]);
+				let arrs = subsets.map(subdef =>
 					this.drels_inst.filter(e => e.key === subdef).map(e => e.val))
 				return arrs.reduce((S, A) => _.union(S, A), [])
 			},
@@ -327,7 +385,7 @@
 			ns0_attributes2: function () {
 				return this.item.ge2Rels.filter(e => e.key === this.me).map(e => e.val);
 			},
-			ns0_references: function () {
+			ns0releferences: function () {
 				return this.item.ge1Rels.filter(e => e.val === this.me).map(e => e.key);
 			},
 
@@ -337,31 +395,52 @@
 
 		},
 		methods: {
-			add$r(evt) {	//add rel
+			add$ar(evt) {	//add alias rel
 				let _vv = evt.target.value;
+				if (!_vv) return;
+				let rel = { key: this.item.text, val: _vv };
+				this.$http.post(urls.rest.aliasRels, rel)
+					.then(
+					resp => {
+						this.$notify.success({
+							title: '添加' + '别名' + '成功',
+							message: this.rel_to_str(rel)
+						});
+						evt.target.value = ''
+						this.loadItem();
+					},
+					resp => {
+						this.$notify.error({
+							title: '添加' + '别名' + '失败',
+							duration: 0,
+							message: resp.body.message
+						});
+						this.loadItem();
+					});
 
-				if (!_vv) {
-					return;
-				}
+			},
+			add$dr(evt) {	//add dual rel
+				let _vv = evt.target.value;
+				if (!_vv) return;
 				let _me = this.me;
 				let name = evt.target.name;
-				let _r = {}
+				let rel = {}
 				switch (name) {
-					case 'subset': _r = { key: _me, attr: 'SUBS', val: _vv }; break;
-					case 'superset': _r = { key: _vv, attr: 'SUBS', val: _me }; break;
-					case 'instance': _r = { key: _me, attr: 'INST', val: _vv }; break;
-					case 'definition': _r = { key: _vv, attr: 'INST', val: _me }; break;
-					case 'subtopic': _r = { key: _me, attr: 'GECH', val: _vv }; break;
-					case 'supertopic': _r = { key: _vv, attr: 'GECH', val: _me }; break;
+					case 'subset': rel = { key: _me, attr: 'SUBS', val: _vv }; break;
+					case 'superset': rel = { key: _vv, attr: 'SUBS', val: _me }; break;
+					case 'instance': rel = { key: _me, attr: 'INST', val: _vv }; break;
+					case 'definition': rel = { key: _vv, attr: 'INST', val: _me }; break;
+					case 'subtopic': rel = { key: _me, attr: 'GECH', val: _vv }; break;
+					case 'supertopic': rel = { key: _vv, attr: 'GECH', val: _me }; break;
 				}
-				let old_vnos = this.item.dualRels.filter(r => r.key === _r.key && r.attr === _r.attr).map(r => r.vno);
-				_r.vno = old_vnos.length ? _.max(old_vnos.map(x=>+x)) + 1 : 0;
-				this.$http.post(urls.rest.dualRels, _r)
+				let old_vnos = this.item.dualRels.filter(r => r.key === rel.key && r.attr === rel.attr).map(r => r.vno);
+				rel.vno = old_vnos.length ? _.max(old_vnos.map(x => +x)) + 1 : 0;
+				this.$http.post(urls.rest.dualRels, rel)
 					.then(
 					resp => {
 						this.$notify.success({
 							title: '添加' + name + '成功',
-							message: this.rel_to_str(_r)
+							message: this.rel_to_str(rel)
 						});
 						evt.target.value = ''
 						this.loadItem();
@@ -395,10 +474,75 @@
 						this.loadItem();
 					});
 			},
+			add$gr1v(relsOld,evt){	// append ge1Rel val
+				let valNew=evt.target.value;
+				let vno=_.max(relsOld.map(r=>+r.vno))+1;
+				let pred=relsOld[0].pred;
+				let key=relsOld[0].key;
+				let attr=relsOld[0].attr;
+				let rel={key:key,pred:pred,attr:attr,attrx:null,vno:vno,val:valNew};
+				this.$http.post(urls.rest.ge1Rels,rel)
+					.then(
+					resp => {
+						this.$notify.success({
+							title: '关联新属性值成功',
+							message: this.rel_to_str(rel)
+						});
+						this.loadItem();
+						evt.target.value='';
+					},
+					resp => {
+						this.$notify.error({
+							title: '关联新属性值失败',
+							duration: 0,
+							message: this.rel_to_str(rel) + '. ' + resp.body.message
+						});
+						this.loadItem();
+					});
+				
+			},
+			del$gr1v(rel) {	//del ge1Rel val
+				this.$http.delete(urls.rest.ge1Rel(rel))
+					.then(
+					resp => {
+						this.$notify.success({
+							title: '移除属性值成功',
+							message: this.rel_to_str(rel)
+						});
+						this.loadItem();
+					},
+					resp => {
+						this.$notify.error({
+							title: '移除属性值失败',
+							duration: 0,
+							message: this.rel_to_str(rel) + '. ' + resp.body.message
+						});
+						this.loadItem();
+					});
+			},
+			del$gr1(attr) {	//del ge1Rel vals by attr
+				this.$http.delete(urls.rest.ge1Rels+'?key='+WORD+'&attr='+attr)
+					.then(
+					resp => {
+						this.$notify.success({
+							title: '移除属性值成功',
+							message: this.rel_to_str(rel)
+						});
+						this.loadItem();
+					},
+					resp => {
+						this.$notify.error({
+							title: '移除属性值失败',
+							duration: 0,
+							message: this.rel_to_str(rel) + '. ' + resp.body.message
+						});
+						this.loadItem();
+					});
+			},
 			rel_attr_mapper(rel1) {
 				return rel1.attr + (rel1.attrx ? '(' + rel1.attrx + ')' : '');
 			},
-			get_url_page_word(word) {
+			url$w(word) {
 				return urls.page.word(word)
 			},
 			html_a_wrapper_by_url_page_word(word) {

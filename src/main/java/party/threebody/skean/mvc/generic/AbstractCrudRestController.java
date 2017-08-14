@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import party.threebody.skean.core.query.QueryParamsSuite;
-import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
 
 /**
  * a simple RestController supporting typical CRUD operations of an entity
@@ -29,8 +28,7 @@ import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
  *            primitive type of the single-column primary key
  */
 public abstract class AbstractCrudRestController<T, PK> {
-	static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
-	
+
 	protected abstract T create(T entity);
 
 	protected abstract List<T> readList(QueryParamsSuite qps);
@@ -43,8 +41,6 @@ public abstract class AbstractCrudRestController<T, PK> {
 
 	protected abstract int delete(PK pk);
 
-	
-	
 	@GetMapping("/{pk}")
 	public ResponseEntity<T> readOneViaHttp(@PathVariable PK pk) {
 		T entity = readOne(pk);
@@ -53,15 +49,7 @@ public abstract class AbstractCrudRestController<T, PK> {
 
 	@GetMapping("")
 	public ResponseEntity<List<T>> readListViaHttp(@RequestParam Map<String, String> reqestParamMap) {
-		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);
-		List<T> entities = readList(qps);
-		int totalCount = 0;
-		if (qps.isPaginationEnabled()) {
-			totalCount = readCount(qps);
-		} else {
-			totalCount = entities.size();
-		}
-		return ResponseEntity.ok().header(HEADER_NAME_TOTAL_COUNT, String.valueOf(totalCount)).body(entities);
+		return ControllerUtils.respondReadList(reqestParamMap, this::readList, this::readCount);
 	}
 
 	@PostMapping("/")
@@ -73,19 +61,12 @@ public abstract class AbstractCrudRestController<T, PK> {
 
 	@DeleteMapping("/{pk}")
 	public ResponseEntity<Object> deleteViaHttp(@PathVariable PK pk) {
-		return respondRowNumAffected(delete(pk));
+		return ControllerUtils.respondRowNumAffected(delete(pk));
 	}
 
 	@PutMapping("/{pk}")
 	public ResponseEntity<Object> updateViaHttp(@PathVariable PK pk, @RequestBody T entity) {
-		return respondRowNumAffected(update(entity, pk));
-	}
-
-	protected static ResponseEntity<Object> respondRowNumAffected(int rowNumAffected) {
-		if (rowNumAffected == 0) {
-			return new ResponseEntity<Object>(HttpStatus.GONE);
-		}
-		return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
+		return ControllerUtils.respondRowNumAffected(update(entity, pk));
 	}
 
 }

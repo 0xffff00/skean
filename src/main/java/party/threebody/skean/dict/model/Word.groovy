@@ -12,18 +12,19 @@ import party.threebody.skean.util.Dates
 class Word extends WordDO{
 
 
-	Set<String> instancesDeep		//recursive
-	Set<String> definitions			//self <--(INST)-- defs <--(SUBS)-- all super defs
+	//	Set<String> instancesDeep		//recursive
+	//	Set<String> definitions			//self <--(INST)-- defs <--(SUBS)-- all super defs
 
-	Set<String> supersetsDeep		//recursive
-	Set<String> subsetsDeep			//recursive
-	Set<String> aliases				//recursive
+	//	Set<String> supersetsDeep		//recursive
+	//	Set<String> subsetsDeep			//recursive
+	//	Set<String> aliases				//recursive
+
 	//4 Rels involved. Each rel list represents a DAG which current node can be from or to
 	Set<AliasRel> aliasRels
 	Set<DualRel> dualRels
 	Set<Ge1Rel> ge1Rels
 	Set<Ge2Rel> ge2Rels
-	
+
 	boolean isTemp
 
 }
@@ -47,7 +48,7 @@ class Rel{
 	String attr
 	String vno
 	String adv
-	
+
 	@Override
 	public int hashCode() {
 		Objects.hashCode(key) ^ Objects.hashCode(val) ^ Objects.hashCode(attr) ^ Objects.hashCode(vno)
@@ -100,7 +101,7 @@ class Ge2Rel extends GeRel {
 
 	String valstr
 	Integer valnum
-
+	String valmu
 
 	String getVal(){
 		valstr?:valnum
