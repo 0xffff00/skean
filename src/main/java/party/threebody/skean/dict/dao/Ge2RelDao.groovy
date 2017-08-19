@@ -35,9 +35,12 @@ class Ge2RelDao extends AbstractCrudDAO<Ge2Rel,String[]> {
 
 	@Override
 	protected List<String> getAffectedColumns() {
-		null
+		['key','attr','vno','adv','attrx','pred','time1','time2','valstr','valnum','valmu']
 	}
-	int delete( String key, String attr, Integer vno){
+	int delete(String key, String attr, Integer vno){
 		cjt.from(getTable()).by('key','attr','vno').val(key,attr,vno).delete()
+	}
+	int delete(String key, String attr){
+		cjt.from(getTable()).by('key','attr').val(key,attr).delete()
 	}
 }

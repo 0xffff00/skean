@@ -3,7 +3,6 @@ package party.threebody.skean.dict.controller;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,39 +17,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.dict.model.DualRel;
 import party.threebody.skean.dict.model.Ge1Rel;
 import party.threebody.skean.dict.model.Ge2Rel;
 import party.threebody.skean.dict.model.Word;
 import party.threebody.skean.dict.service.WordService;
-import party.threebody.skean.mvc.generic.AbstractCrudRestController;
 import party.threebody.skean.mvc.generic.ControllerUtils;
 
 @RestController
-@RequestMapping("/dict/words")
-public class WordController {
+@RequestMapping("/dict")
+public class DictController {
 	@Autowired
 	WordService wordService;
-
-	
-
-	/**
-	 * TODO refactor to matrix parameter: ';cate=temporaryTexts'
-	 * 
-	 * @return
-	 */
-	@GetMapping("/temporaryTexts")
-	public List<String> listTemporaryTexts() {
-		return wordService.listTemporaryTexts();
-	}
-
-	@GetMapping("/{word}/dual-rels")
-	public Collection<DualRel> listDualRelsOfWord(@PathVariable String word) {
-		return wordService.listDualRelsOfWord(word);
-	}
 
 	@GetMapping("/dual-rels")
 	public Collection<DualRel> listDualRels() {
@@ -63,16 +42,11 @@ public class WordController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	@DeleteMapping("/dual-rels")
+	@DeleteMapping("/dual-rels/{rel}")
 	public ResponseEntity<Object> deleteDualRel(@MatrixVariable String key, @MatrixVariable String attr,
 			@MatrixVariable Integer vno) {
 		int rna = wordService.deleteDualRel(key, attr, vno);
 		return ControllerUtils.respondRowNumAffected(rna);
-	}
-
-	@GetMapping("/g/g")
-	public String g(@MatrixVariable String key) {
-		return key;
 	}
 
 	@GetMapping("/ge1-rels")
@@ -86,15 +60,21 @@ public class WordController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	@DeleteMapping("/ge1-rels")
+	@DeleteMapping("/ge1-rels/{rel}")
 	public ResponseEntity<Object> deleteGe1Rel(@MatrixVariable String key, @MatrixVariable String attr,
-			@MatrixVariable Integer vno) {
+			@MatrixVariable(required = false) Integer vno) {
 		int rna = 0;
 		if (vno == null) {
-			rna = wordService.deleteGe1RelsByKA(key, attr);
+			rna = wordService.deleteGe1Rels(key, attr);
+		}else{
+			rna = wordService.deleteGe1Rel(key, attr, vno);
 		}
-		rna = wordService.deleteGe1Rel(key, attr, vno);
 		return ControllerUtils.respondRowNumAffected(rna);
+	}
+
+	@GetMapping("/ge2-rels")
+	public Collection<Ge2Rel> listGe2Rels() {
+		return wordService.listGe2Rels();
 	}
 
 	@PostMapping("/ge2-rels")
@@ -103,38 +83,48 @@ public class WordController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 
-	@DeleteMapping("/ge2-els/{key}&{attr}&{vno}")
-	public ResponseEntity<Object> deleteGe2Rel(@PathVariable String key, @PathVariable String attr,
-			@PathVariable Integer vno) {
-		int rna = wordService.deleteGe2Rel(key, attr, vno);
+	@DeleteMapping("/ge2-rels/{rel}")
+	public ResponseEntity<Object> deleteGe2Rel(@MatrixVariable String key, @MatrixVariable String attr,
+			@MatrixVariable(required = false)  Integer vno) {
+		int rna = 0;
+		if (vno == null) {
+			rna = wordService.deleteGe2Rels(key, attr);
+		}else{
+			rna = wordService.deleteGe2Rel(key, attr, vno);
+		}
 		return ControllerUtils.respondRowNumAffected(rna);
 	}
-	
-	@PostMapping("")
-	public ResponseEntity<Word> create(Word entity) {
+
+	@PostMapping("/words")
+	public ResponseEntity<Word> createWord(Word entity) {
 		Word created = wordService.createWord(entity);
-		return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri()).body(created);
+		return ResponseEntity.created(null).body(created);
 
 	}
 
-	@GetMapping("")
+	@GetMapping("/words")
 	public ResponseEntity<List<Word>> listWords(@RequestParam Map<String, String> reqestParamMap) {
-		return ControllerUtils.respondReadList(reqestParamMap, wordService::listWords, wordService::countWords);
+		return ControllerUtils.respondListAndCount(reqestParamMap, wordService::listWords, wordService::countWords);
 	}
 
-	@GetMapping("{text}")
+	@GetMapping("/words/{text}")
 	public Word getWord(@PathVariable String text) {
 		return wordService.getWordWithRels(text);
 	}
 
-	@PutMapping("{text}")
-	protected ResponseEntity<Object> update(@RequestBody Word entity, @PathVariable String text) {
+	@PutMapping("/words/{text}")
+	public ResponseEntity<Object> updateWord(@PathVariable String text, @RequestBody Word entity) {
 		return ControllerUtils.respondRowNumAffected(wordService.updateWord(entity, text));
 	}
 
-	@DeleteMapping("{text}")
-	protected ResponseEntity<Object> delete(@PathVariable String text) {
+	@DeleteMapping("/words/{text}")
+	public ResponseEntity<Object> deleteWord(@PathVariable String text) {
 		return ControllerUtils.respondRowNumAffected(wordService.deleteWord(text));
+	}
+
+	@GetMapping("/words/temporaryTexts")
+	public List<String> listTemporaryTexts() {
+		return wordService.listTemporaryTexts();
 	}
 
 }

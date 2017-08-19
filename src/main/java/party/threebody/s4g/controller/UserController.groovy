@@ -12,7 +12,7 @@ import party.threebody.skean.id.model.UserPO
 
 
 
-@RestController
+//@RestController
 //@RequestMapping(produces="application/json; charset=UTF-8")
 public class UserController {
 

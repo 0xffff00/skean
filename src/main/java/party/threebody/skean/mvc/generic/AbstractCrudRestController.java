@@ -49,7 +49,7 @@ public abstract class AbstractCrudRestController<T, PK> {
 
 	@GetMapping("")
 	public ResponseEntity<List<T>> readListViaHttp(@RequestParam Map<String, String> reqestParamMap) {
-		return ControllerUtils.respondReadList(reqestParamMap, this::readList, this::readCount);
+		return ControllerUtils.respondListAndCount(reqestParamMap, this::readList, this::readCount);
 	}
 
 	@PostMapping("/")

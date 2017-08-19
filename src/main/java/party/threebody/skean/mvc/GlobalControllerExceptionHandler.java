@@ -51,7 +51,7 @@ public class GlobalControllerExceptionHandler {
 	}
 
 	protected ResponseEntity<ApiErrorBody> handleApiError(Exception e, HttpStatus httpStatus) {
-		getLogger().error("An exception raised.", e);
+		getLogger().error("An exception raised upon a HTTP API (status=" + httpStatus + ").", e);
 		ApiErrorBody errBody = new ApiErrorBody(0, e.getLocalizedMessage(), null);
 		return new ResponseEntity<ApiErrorBody>(errBody, httpStatus);
 	}

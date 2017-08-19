@@ -53,17 +53,19 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-		.allowedOrigins("*")
-		.allowedMethods("*")
-		.allowedHeaders("*")
-		.exposedHeaders("X-Total-Count");
+		registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*")
+				.exposedHeaders("X-Total-Count");
 	}
-	
+
 	@Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        UrlPathHelper urlPathHelper = new UrlPathHelper();
-        urlPathHelper.setRemoveSemicolonContent(false);
-        configurer.setUrlPathHelper(urlPathHelper);
-    }
+	public void configurePathMatch(PathMatchConfigurer configurer) {
+		// enable matrix variable support
+		if (configurer.getUrlPathHelper() == null) {
+			UrlPathHelper urlPathHelper = new UrlPathHelper();
+			urlPathHelper.setRemoveSemicolonContent(false);
+			configurer.setUrlPathHelper(urlPathHelper);
+		} else {
+			configurer.getUrlPathHelper().setRemoveSemicolonContent(false);
+		}
+	}
 }

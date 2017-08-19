@@ -45,4 +45,8 @@ class Ge1RelDao extends AbstractCrudDAO<Ge1Rel,Ge1Rel> {
 	int delete(String key, String attr){
 		cjt.from(getTable()).by('key','attr').val(key,attr).delete()
 	}
+	
+	int maxVno(String key,String attr){
+		cjt.sql('SELECT max(vno) FROM dct_rel_ge_dat1 WHERE `key`=? AND attr=?').arg(key,attr).firstCell()?:0
+	}
 }

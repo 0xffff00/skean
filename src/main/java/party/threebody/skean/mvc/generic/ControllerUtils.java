@@ -19,7 +19,7 @@ public class ControllerUtils {
 
 	}
 
-	public static <E> ResponseEntity<List<E>> respondReadList(Map<String, String> reqestParamMap,
+	public static <E> ResponseEntity<List<E>> respondListAndCount(Map<String, String> reqestParamMap,
 			Function<QueryParamsSuite, List<E>> listReader, Function<QueryParamsSuite, Integer> countReader) {
 
 		QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuite(reqestParamMap);

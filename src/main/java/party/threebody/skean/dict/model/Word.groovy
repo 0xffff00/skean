@@ -43,10 +43,12 @@ class WordDO {
 	}
 }
 class Rel{
+	
+	public static int VNO_BATCH = -1
 	String key
 	String val
 	String attr
-	String vno
+	Integer vno
 	String adv
 
 	@Override
@@ -95,6 +97,8 @@ class AliasRel extends SpRel{
 
 
 class Ge1Rel extends GeRel{
+
+	
 }
 
 class Ge2Rel extends GeRel {

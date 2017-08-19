@@ -2,12 +2,15 @@ package party.threebody.skean.dict.service;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 import party.threebody.skean.core.query.QueryParamsSuite;
@@ -26,7 +30,9 @@ import party.threebody.skean.dict.model.AliasRel;
 import party.threebody.skean.dict.model.DualRel;
 import party.threebody.skean.dict.model.Ge1Rel;
 import party.threebody.skean.dict.model.Ge2Rel;
+import party.threebody.skean.dict.model.Rel;
 import party.threebody.skean.dict.model.Word;
+import party.threebody.skean.util.ObjectMappers;
 
 @Service
 public class WordService {
@@ -79,15 +85,15 @@ public class WordService {
 		DAGVisitor<String, AliasRel> dagv1 = new DAGVisitor<>(this::listAliasRels, AliasRel::getKey, AliasRel::getVal);
 		dagv1.visitFrom(text);
 		w.setAliasRels(dagv1.getEdgesVisited());
-		
+
 		w.setDualRels(listDualRelsOfWord(text));
 		w.setGe1Rels(listGe1RelsOfWord(text));
 		w.setGe2Rels(listGe2RelsOfWord(text));
 
 		return w;
 	}
-	
-	public Set<DualRel> listDualRelsOfWord(String text){
+
+	public Set<DualRel> listDualRelsOfWord(String text) {
 		DAGVisitor<String, DualRel> drDVp = new DAGVisitor<>(this::listDualRels, DualRel::getKey, DualRel::getVal);
 		drDVp.visitFrom(text);
 
@@ -95,8 +101,8 @@ public class WordService {
 		drDVn.visitFrom(text);
 		return Sets.union(drDVp.getEdgesVisited(), drDVn.getEdgesVisited());
 	}
-	
-	public Set<Ge1Rel> listGe1RelsOfWord(String text){
+
+	public Set<Ge1Rel> listGe1RelsOfWord(String text) {
 		DAGVisitor<String, Ge1Rel> g1DVp = new DAGVisitor<>(this::listGe1Rels, Ge1Rel::getKey, Ge1Rel::getVal);
 		g1DVp.visitFrom(text);
 
@@ -104,8 +110,8 @@ public class WordService {
 		g1DVn.visitFrom(text);
 		return Sets.union(g1DVp.getEdgesVisited(), g1DVn.getEdgesVisited());
 	}
-	
-	public Set<Ge2Rel> listGe2RelsOfWord(String text){
+
+	public Set<Ge2Rel> listGe2RelsOfWord(String text) {
 		DAGVisitor<String, Ge2Rel> g2DVp = new DAGVisitor<>(this::listGe2Rels, Ge2Rel::getKey, Ge2Rel::getVal);
 		g2DVp.visitFrom(text);
 		return g2DVp.getEdgesVisited();
@@ -157,14 +163,30 @@ public class WordService {
 	}
 
 	public Ge1Rel createGe1Rel(Ge1Rel rel) {
-		return ge1RelDao.create(rel);
+		if (rel.getVno() == Rel.VNO_BATCH) {
+			int vno0 = getGe1RelMaxVno(rel.getKey(), rel.getAttr());
+			String[] vals = rel.getVal().split("\\s+");
+			for (String val : vals) {
+				rel.setVal(val);
+				rel.setVno(++vno0);
+				ge1RelDao.create(rel);
+			}
+			return rel;
+		} else {
+			return ge1RelDao.create(rel);
+		}
+
+	}
+
+	private int getGe1RelMaxVno(String key, String attr) {
+		return ge1RelDao.maxVno(key, attr);
 	}
 
 	public int deleteGe1Rel(String key, String attr, Integer vno) {
 		return ge1RelDao.delete(key, attr, vno);
 	}
-	
-	public int deleteGe1RelsByKA(String key, String attr ) {
+
+	public int deleteGe1Rels(String key, String attr) {
 		return ge1RelDao.delete(key, attr);
 	}
 
@@ -175,7 +197,10 @@ public class WordService {
 	public int deleteGe2Rel(String key, String attr, Integer vno) {
 		return ge2RelDao.delete(key, attr, vno);
 	}
-
+	
+	public int deleteGe2Rels(String key, String attr) {
+		return ge2RelDao.delete(key, attr);
+	}
 	/**
 	 * 
 	 * @author hzk
