@@ -1,7 +1,9 @@
 package party.threebody.s4g.conf.spring;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -19,6 +21,7 @@ import org.springframework.web.util.UrlPathHelper;
 @Import({ DataConfig.class, SecurityConfig.class })
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
+	@Autowired Environment env;
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry r) {
 		r.addResourceHandler("/resources/**").addResourceLocations("/resources/");

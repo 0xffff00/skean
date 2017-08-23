@@ -42,6 +42,6 @@ class DualRelDao extends AbstractCrudDAO<DualRel,DualRel> {
 	}
 
 	int delete( String key, String attr, Integer vno){
-		cjt.from(getTable()).by('key','attr','vno').val(key,attr,vno,val).delete()
+		cjt.from(getTable()).by('key','attr','vno').val(key,attr,vno).delete()
 	}
 }

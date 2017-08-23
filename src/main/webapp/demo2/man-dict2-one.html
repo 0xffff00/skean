@@ -566,7 +566,13 @@
 				let pred = relsOld[0].pred;
 				let key = relsOld[0].key;
 				let attr = relsOld[0].attr;
-				let rel = { key: key, pred: pred, attr: attr, attrx: null, vno: vno, val: valNew };
+				
+				let rel = { key: key, pred: pred, attr: attr, attrx: null, vno: vno };
+				if (!_.isNaN(+valNew)){
+					rel.valnum=valNew,rel.valstr=null;
+				}else{
+					rel.valstr=valNew,rel.valnum=null;
+				}
 				this._ajax_rel({
 					reqMethod: 'post',
 					reqUrl: urls.rest.ge2Rels,
@@ -586,8 +592,8 @@
 			},
 			add$gr2() {	// add ge2Rel
 				let rel = this.editor.adder.ge2Rel;
-				rel.key = WORD, rel.vno = -1; 
-				if (_.isNumber(rel.vals)){
+				rel.key = WORD, rel.vno = 0; 
+				if (!_.isNaN(+rel.vals)){
 					rel.valnum=rel.vals,rel.valstr=null;
 				}else{
 					rel.valstr=rel.vals,rel.valnum=null;
