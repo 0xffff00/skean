@@ -8,13 +8,13 @@ class HerdFile {
 	String catalog
 	String relPath
 	int fileSize
-	LocalDateTime syncTime 
+	LocalDateTime syncTime
+	public HerdFile(){}
+
 	public HerdFile(String hash, String catalog, String relPath, int fileSize) {
 		this.hash = hash;
 		this.catalog = catalog;
 		this.relPath = relPath;
 		this.fileSize = fileSize;
 	}
-	
-	
 }
