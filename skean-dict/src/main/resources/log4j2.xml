@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" shutdownHook="disable">
+	<Properties>
+		<Property name="aaa">bbb</Property>
+	</Properties>
+
+
+	<Appenders>
+		<Console name="con1" target="SYSTEM_OUT">
+			<!-- <PatternLayout pattern="%m MDC%X%n" /> -->
+			<!-- <PatternLayout pattern="%C{1}.%M %m %ex%n" /> -->
+			<PatternLayout pattern="%highlight{%d{HH:mm:ss} %-5p %c{1}: %msg%n}%ex" />
+		</Console>
+		<Console name="con2" target="SYSTEM_OUT">
+			<PatternLayout pattern="%-5p %l %m %ex%n" />
+		</Console>
+
+		<Console name="con3" target="SYSTEM_OUT">  <!-- slow but more info -->
+			<PatternLayout
+				pattern="%highlight{%d{HH:mm:ss.SSS} %-5level %logger{36}.%M() @%L - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=black, DEBUG=green bold, TRACE=blue}" />
+		</Console>
+
+		<File name="file1" fileName="target/logs/1.log">
+			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+		</File>
+		<Async name="async1">
+			<AppenderRef ref="file1" />
+		</Async>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="com.mysetv.broadcast.BroadcastLoop" level="trace"
+			additivity="false">
+
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="con1" />
+		</Root>
+	</Loggers>
+
+</Configuration>

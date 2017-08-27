@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<!-- 	<link rel="stylesheet" href="el-555.css"> -->
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+	<style>
+		.haha {
+			color: red;
+			background: yellow;
+		}
+	</style>
+	<title>dict-demo2</title>
+</head>
+
+<body>
+	<div id="s4g-body">
+		<div id="criterionPane">
+			<div>
+				<el-form :inline="true" :model="querier">
+					<el-form-item label="词语">
+						<el-input v-model="querier.criteria[0].value" placeholder="词语"></el-input>
+					</el-form-item>
+					<el-form-item label="语言">
+						<el-select v-model="querier.criteria[1].value">
+							<el-option label="(ALL)" value=""></el-option>
+							<el-option label="zh" value="zh"></el-option>
+							<el-option value="en"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="类型">
+						<el-input v-model="querier.criteria[2].value" placeholder="类型"></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button type="primary" @click="submitQuerierForm"><i class="fa fa-search"></i>查询</el-button>
+					</el-form-item>
+				</el-form>
+			</div>
+			<div>
+
+				<el-tag v-for="crit in querier.criteria" v-if="crit.value" :key="crit.name" :closable="true"
+				 @close="removeCriterion(crit)" type="primary">
+					{{crit.name}}{{crit.operator}}{{crit.value}}
+				</el-tag>
+
+			</div>
+		</div>
+		<div id="optHeadBar">
+			<el-button type="success" @click="openEditorDialog(null)"> <i class="fa fa-plus"></i>新增</el-button>
+			<el-button type="info" @click="listItems"> <i class="fa fa-refresh"></i>刷新</el-button>
+		</div>
+		<el-table :data="items" border @sort-change="sortChanged" v-loading.body="ui.loading">
+			<el-table-column prop="word" label="单词" sortable="custom">
+			</el-table-column>
+			<el-table-column prop="qual" label="限定词">
+			</el-table-column>
+			<el-table-column prop="lang" label="语言"> </el-table-column>
+			<el-table-column prop="type" label="类型"> </el-table-column>
+			<el-table-column label="操作">
+				<template scope="scope">
+					<el-button size="small" @click="openEditorDialog(scope.row)">
+						<i class="fa fa-pencil"></i></el-button>
+					<el-button size="small" type="danger" @click="deleteItem(scope.row)">
+						<i class="fa fa-trash-o"></i></el-button>
+				</template>
+			</el-table-column>
+		</el-table>
+
+		<el-pagination @size-change="pageSizeChanged" @current-change="pageCurrentChanged"
+		 :current-page="1" :page-sizes="[10, 15,20,30, 50, 100]" :page-size="querier.pageSize"
+		 layout="total, sizes, prev, pager, next, jumper" :total="itemsCount">
+		</el-pagination>
+
+
+		<el-dialog :title="editor.isNew ? '新增' : '修改'" :visible.sync="editor.ui.visible"
+		 show-close>
+			<el-form :model="editor.item">
+				<el-form-item label="名称" :label-width="editor.ui.labelWidth" required>
+					<el-input v-model="editor.item.word" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="限定词" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.qual"></el-input>
+				</el-form-item>
+				<el-form-item label="语言" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.lang"></el-input>
+				</el-form-item>
+				<el-form-item label="类型" :label-width="editor.ui.labelWidth">
+					<el-input v-model="editor.item.type"></el-input>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="editor.ui.visible = false">取消</el-button>
+				<el-button type="primary" @click="saveItem" :loading="editor.ui.saving">{{editor.ui.saving?'保存中...':'保存'}}</el-button>
+			</div>
+		</el-dialog>
+
+	</div>
+
+</body>
+
+<script src="lodash.js"></script>
+<script src="vue.js"></script>
+<script src="vue-resource.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script type="text/javascript">
+	var crud = new Vue({
+		el: '#s4g-body',
+		data: {
+			items: null,
+			itemsCount: 0,
+			editor: {
+				isNew: true,
+				item: {},
+				itemDefault: { word: null, qual: '', lang: 'zh', type: null },
+				ui: {
+					labelWidth: '120px',
+					visible: false,
+					saving: false
+				}
+			},
+			querier: {
+				orderBy: 'word', pageIndex: 1, pageSize: 10, criteria: [
+					{ name: 'word', operator: '~', value: '' },
+					{ name: 'lang', operator: '=', value: '' },
+					{ name: 'type', operator: '=', value: '' },
+				],
+				form: { word: '', lang: '', type: '' }
+			},
+			ui: {
+				loading: false
+			}
+		},
+		computed: {
+			querierRestParams() {
+				let q = this.querier;
+				let rp = {};
+				if (q.pageSize) {
+					rp.p = q.pageIndex, rp.l = q.pageSize;
+				}
+				if (q.orderBy) {
+					rp.o = q.orderBy;
+				}
+				let crits = q.criteria.filter(e => e.value).map(e => ({ n: e.name, o: e.operator, v: e.value }));
+				if (crits && crits.length) {
+					rp.c = JSON.stringify(crits);
+				}
+
+				return rp;
+			}
+		},
+		methods: {
+			openEditorDialog(item) {
+				this.editor.isNew = item == null;
+				this.editor.item = item || this.editor.itemDefault;
+				this.editor.ui.visible = true;
+
+			},
+			deleteItem(item) {
+
+				this.$confirm('此操作将永久删除该条目, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					this.$http
+						.delete(buildSoloUrl(CTX + URL0, item.word, item.qual))
+						.then(
+						resp => {
+							this.$notify.success({
+								title: '删除成功'
+							});
+							this.editor.ui.saving = false;
+							this.editor.ui.visible = false;
+							this.listItems();
+						},
+						resp => {
+							this.$notify.error({
+								title: '删除失败',
+								message: resp.body && resp.body.message
+							});
+							this.editor.ui.saving = false;
+							this.editor.ui.visible = false;
+							this.listItems();
+						});
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});
+				});
+
+			},
+			saveItem() {
+				this.editor.ui.saving = true;
+				let i = this.editor.item;
+				if (this.editor.isNew) {
+					Vue.http
+						.post(CTX + URL0, i)
+						.then(
+						resp => {
+							this.$notify.info({
+								title: '创建成功'
+							});
+							this.editor.ui.saving = false;
+							this.editor.ui.visible = false;
+							this.listItems();
+						},
+						resp => {
+							this.$notify.error({
+								title: '创建失败',
+								message: resp.body && resp.body.message
+							});
+							this.editor.ui.saving = false;
+							this.editor.ui.visible = false;
+							this.listItems();
+						});
+				} else {
+					this.$http
+						.put(buildSoloUrl(CTX + URL0, i.word, i.qual), i)
+						.then(
+						resp => {
+							this.$notify.success({
+								title: '更新成功'
+							});
+							this.editor.ui.saving = false;
+							this.editor.ui.visible = false;
+							this.listItems();
+						},
+						resp => {
+							this.$notify.error({
+								title: '更新失败',
+								message: resp.body && resp.body.message
+							});
+							this.editor.ui.saving = false;
+							this.editor.ui.visible = false;
+							this.listItems();
+						});
+
+				}
+
+
+
+			},
+			pageSizeChanged(size) {
+				this.querier.pageSize = size;
+				this.listItems();
+			},
+			pageCurrentChanged(current) {
+				this.querier.pageIndex = current;
+				this.listItems();
+			},
+			sortChanged(e) {
+				if (e.prop) {
+					this.querier.orderBy = (e.order == 'descending' ? '-' : '') + e.prop;
+				} else {
+					delete this.querier.orderBy;
+				}
+
+				this.listItems();
+
+			},
+			listItems() {
+				Vue.http.get(buildQueryUrl(CTX + URL0, crud.querierRestParams))
+					.then(resp => {
+						crud.itemsCount = parseInt(resp.headers.get('X-Total-Count'));
+						crud.items = resp.body;
+						crud.ui.loading = false;
+
+					})
+			},
+			removeCriterion(crit) {
+				crit.value = '';
+			},
+			submitQuerierForm() {
+				this.listItems();
+			}
+		}
+	});
+
+
+
+
+
+	let CTX = 'http://localhost:8080/skean';
+	let URL0 = '/dict/nouns/';
+	function buildSoloUrl(tuttiUrl, word, qual) {
+		return tuttiUrl + word + '(' + qual + ')';
+
+	}
+	function buildQueryUrl(urlStr, params) {
+		var url = new URL(urlStr);
+		if (params) {
+			Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+		}
+		return url.href;
+	}
+
+	crud.listItems();
+
+</script>
+
+</html>

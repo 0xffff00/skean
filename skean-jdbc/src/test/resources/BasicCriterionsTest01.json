@@ -1,0 +1,12 @@
+[
+  {"name":"a","val":3},{"name":"a1","val":null},
+  {"name":"a1","opt":"!=","val":null},
+  {"name":"a2","opt":">","val":"111"},
+  {"name":"b0","opt":"in","val":null},
+  {"name":"bx","opt":"in","val":""},
+  {"name":"b1","opt":"in","val":[]},
+  {"name":"b2","opt":"in","val":[null]},
+  {"name":"b3","opt":"in","val":["h1","h2","h3",6.5]},
+  {"name":"a4","opt":"<","val":"22d","type":"str"},
+  {"name":"f_","val":"sdsd","fake":1}
+]

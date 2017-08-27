@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/1.4.2/theme-default/index.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+	<style>
+		#pics-container {
+			color: red;
+			background: yellow;
+		}
+		#pics-container img{
+			width:18%;
+		}
+	</style>
+	<title>dict-demo2</title>
+</head>
+
+<body>
+	<div id="s4g-body">
+		<div id="pics-container">
+				<i v-for="f in filesWithUrl">
+<!-- 					{{f.url.href}} -->
+					<img v-if="  'pic' == f.type" :src="f.url.href">
+					<video v-else width="320" height="240" controls="controls">
+  <source :src="f.url.href" />
+</video>
+				</i>	
+		</div>
+		<el-pagination @size-change="pageSizeChanged" @current-change="pageCurrentChanged"
+		 :current-page="1" :page-sizes="[5,10, 15,20,30, 50, 100]" :page-size="querier.pageSize"
+		 layout="total, sizes, prev, pager, next, jumper" :total="filesCount">
+		</el-pagination>
+	</div>
+
+</body>
+
+<script src="lodash.js"></script>
+<script src="vue.js"></script>
+<script src="vue-resource.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/1.4.2/index.js"></script>
+<script type="text/javascript">
+	const currURL = new URL(window.location);
+	const WORD = currURL.searchParams.get("w");
+	const currURLnoParams = currURL.origin + currURL.pathname;
+	const CTX = 'http://localhost:8080/herd';
+	const DL = '&'
+	const urls = {
+		rest: {
+			files: params => urls.utils.buildQueryUrl(CTX + '/files', params),
+			catalogs: CTX + '/catalogs'
+
+
+		},
+		utils: {
+			buildQueryUrl(urlStr, params) {
+				var url = new URL(urlStr);
+				if (params) {
+					Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+				}
+				return url.href;
+			}
+		}
+	}
+
+
+	var vue = new Vue({
+		el: '#s4g-body',
+		data: {
+
+			catalogs: [],
+			files: [],
+			filesCount: 0,
+			querier: {
+				orderBy: 'hash', pageIndex: 1, pageSize: 10, criteria: [
+					{ name: 'text', operator: 'contains', value: '' },
+					{ name: 'desc', operator: 'contains', value: '' }
+				],
+				form: { text: '', desc: '' }
+			},
+			ui: {
+				loading: false
+			}
+
+
+		},
+		computed: {
+			querierRestParams() {
+				let q = this.querier;
+				let rp = {};
+				if (q.pageSize) {
+					rp.p = q.pageIndex, rp.l = q.pageSize;
+				}
+				if (q.orderBy) {
+					rp.o = q.orderBy;
+				}
+				// let crits = q.criteria.filter(e => e.value).map(e => ({ n: e.name, o: e.operator, v: e.value }));
+				// if (crits && crits.length) {
+				// 	rp.c = JSON.stringify(crits);
+				// }
+
+				return rp;
+			},
+			filesWithUrl() {
+				return this.files.map(f1 => {
+					//let f1=_.clone(f);
+					f1.url = new URL(f1.relPath, this.catalogs.find(cata => cata.name === f1.catalog).urlPrefix)
+					let isPic=_.some(['jpg','gif','jpeg','png','tiff'],x=>f1.relPath.toLowerCase().endsWith(x));
+					let isVideo= _.some(['mp4'],x=>f1.relPath.toLowerCase().endsWith(x));
+					if (isPic){
+						f1.type='pic';
+					}else if (isVideo){
+						f1.type='video/mp4'
+					}else{
+						f1.type='other'
+					}
+					return f1;
+				})
+			}
+		},
+		methods: {
+
+			pageSizeChanged(size) {
+				this.querier.pageSize = size;
+				this.loadItems();
+			},
+			pageCurrentChanged(current) {
+				this.querier.pageIndex = current;
+				this.loadItems();
+			},
+			sortChanged(e) {
+				if (e.prop) {
+					this.querier.orderBy = (e.order == 'descending' ? '-' : '') + e.prop;
+				} else {
+					delete this.querier.orderBy;
+				}
+
+				this.loadItems();
+
+			},
+			loadItems() {
+				Vue.http.get(urls.rest.files(vue.querierRestParams))
+					.then(resp => {
+						vue.filesCount = parseInt(resp.headers.get('X-Total-Count'));
+						vue.files = resp.body;
+						vue.ui.loading = false;
+
+					})
+			},
+			removeCriterion(crit) {
+				crit.value = '';
+			},
+			submitQuerierForm() {
+				this.loadItems();
+			}
+
+
+		}
+	});
+
+	Vue.http.get(urls.rest.catalogs)
+		.then(resp => {
+			vue.catalogs = resp.body
+			vue.catalogs.forEach(cata => {
+				if (!cata.urlPrefix.endsWith('/')){
+					cata.urlPrefix+='/'
+				}
+			});
+			vue.ui.loading = false;
+			vue.loadItems();
+		})
+
+</script>
+
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+	<style>
+		.haha {
+			color: red;
+			background: yellow;
+		}
+	</style>
+	<title>learn2</title>
+</head>
+
+<body>
+	<div id="d1">
+		<c1 :p1="3"></c1>
+		<c1 p1="3"></c1>
+	</div>
+	
+</body>
+
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script type="text/javascript">
+	Vue.component('c1', {
+		props: ['p1'],
+		data: function () {
+			return {
+				x: this.p1
+			}
+		},
+		template: '<i>{{ x+4 }};p1={{this.p1}}</i>'
+	});
+	new Vue({
+		el: '#d1'
+	})
+	
+function fetch1() {
+		fetch(buildUrl(CTX + '/dict/nouns/'))
+			.then(r => {
+				crud.items = r.json();
+				X = r.headers
+				console.log(r.headers.get('X-Total-Count'))
+				//crud.itemsCount = r.headers;
+				r.headers.forEach(function (val, key) { console.log(key + ' -> ' + val); });
+				
+			})
+	}
+		function reqGetList1() {
+		crud.ui.loading = true;
+		fetch(buildUrl(CTX + URL0, crud.queryParams))
+			.then(resp => {
+				crud.itemsCount = parseInt(resp.headers.get('X-Total-Count'));
+				resp.json().then(d => {
+					crud.items = d;
+					crud.ui.loading = false;
+				});
+			});
+	}
+</script>
+
+</html>

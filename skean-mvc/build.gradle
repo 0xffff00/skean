@@ -1,0 +1,14 @@
+apply plugin: 'java'
+dependencies {
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+
+
+
+    compile "org.springframework:spring-web:${versions.spring}"
+    compile "org.springframework:spring-webmvc:${versions.spring}"
+    compile group: 'org.ehcache', name: 'ehcache', version: '3.3.1'
+
+
+    compile project(':skean-core')
+    compile project(':skean-jdbc')
+}

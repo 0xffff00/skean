@@ -1,0 +1,104 @@
+repositories {
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    }
+    mavenCentral()
+}
+
+ext {
+
+}
+
+configure(subprojects) { project ->
+    ext.versions = [
+            java                  : '1.8',
+            groovy                : '2.4.11',
+
+            //apache commons
+            'commons-lang'        : '2.6',
+            'commons-lang3'       : '3.5',
+            'commons-collections' : '3.2.2',
+            'commons-collections4': '4.1',
+            'commons-io'          : '2.5',
+            'commons-logging'     : '1.2',
+            'commons-beanutils'   : '1.9.3',
+            'commons-codec'       : '1.10',
+            'commons-net'         : '3.6',
+
+            //logging
+            'log4j'               : '1.2.17',
+            'log4j2'              : '2.8.2',
+            'logback'             : '1.2.3',
+            'slf4j'               : '1.7.25',
+
+            //spring
+            'spring'              : '4.3.7.RELEASE',
+            'spring-security'     : '4.2.2.RELEASE',
+
+            //others
+            'guava'               : '21.0',
+            'jackson'             : '2.8.8',
+            'ehcache'             : '3.3.1',
+            'junit'               : '4.12'
+    ]
+
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenCentral()
+    }
+
+
+    dependencies {
+//        compile group: 'commons-lang', name: 'commons-lang', version: versions.'commons-lang'
+//        compile group: 'org.apache.commons', name: 'commons-lang3', version: ext.versions.'commons-lang3'
+//        compile group: 'commons-collections', name: 'commons-collections', version: ext.versions.'commons-collections'
+//        compile group: 'org.apache.commons', name: 'commons-collections4', version: ext.versions.'commons-collections4'
+//        compile group: 'commons-io', name: 'commons-io', version: ext.versions.'commons-io'
+//        compile group: 'commons-beanutils', name: 'commons-beanutils', version: ext.versions.'commons-beanutils'
+//        optional group: 'commons-logging', name: 'commons-logging', version: ext.versions.'commons-logging'
+//        optional group: 'commons-beanutils', name: 'commons-beanutils', version: ext.versions.'commons-beanutils'
+//        optional group: 'commons-codec', name: 'commons-codec', version: ext.versions.'commons-codec'
+//        optional group: 'commons-net', name: 'commons-net', version: ext.versions.'commons-net'
+//        optional group: 'com.google.guava', name: 'guava', version: ext.versions.'guava'
+
+//        optional "org.slf4j:slf4j-api:${versions.slf4j}"
+//        optional "org.slf4j:slf4j-log4j12:${versions.slf4j}"
+//        optional "org.slf4j:jcl-over-slf4j:${versions.slf4j}"
+//        optional "log4j:log4j:${versions.log4j}"
+//        optional "org.apache.logging.log4j:log4j-core:${versions.log4j2}"
+//        optional "org.apache.logging.log4j:log4j-binding:${versions.log4j2}"
+//        optional "org.apache.logging.log4j:log4j-web:${versions.log4j2}"
+//        optional "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j2}"
+//        optional "org.apache.logging.log4j:log4j-jcl:${versions.log4j2}"
+//        optional "org.apache.logging.log4j:log4j-1.2-api:${versions.log4j2}"
+
+//        optional "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}"
+//        optional "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}"
+
+
+    }
+
+    apply plugin: "java"
+    apply plugin: 'idea'
+    compileJava {
+        sourceCompatibility = versions.java
+        targetCompatibility = versions.java
+        options.encoding = 'UTF-8'
+    }
+
+    compileTestJava {
+        [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+        sourceCompatibility = versions.java
+        targetCompatibility = versions.java
+        options.encoding = 'UTF-8'
+        options.compilerArgs += "-parameters"
+    }
+
+
+    // 编码改为 UTF-8, 否则编译源码的时候会出错
+    //[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+}
+
+
+
+

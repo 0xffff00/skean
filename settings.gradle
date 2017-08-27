@@ -1,0 +1,9 @@
+rootProject.name = 'skean'
+
+include 'skean-core'
+include 'skean-jdbc'
+include 'skean-mvc'
+include 'skean-id'
+include 'skean-dict'
+include 'herd'
+

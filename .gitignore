@@ -13,6 +13,13 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 #---------maven ignore---------
 
+#-----gradle------
+.gradle
+
+#-----outputs-----
+out/
+classes/
+build/
 #---------java ignore---------
 # Log file
 *.log
@@ -40,6 +47,7 @@ hs_err_pid*
 *.iml
 *.ipr
 .idea/
+
 
 # ---- Eclipse
 .classpath

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="muse-ui/muse-ui.css">
+<link rel="stylesheet" href="muse-ui/muse-ui-theme-carbon.css">
+<script type="text/javascript" src="vue.js"></script>
+<script type="text/javascript" src="muse-ui/muse-ui.js"></script>
+<title>learn slot</title>
+</head>
+
+<body>
+	<div id="tb"></div>
+</body>
+<template id="app-layout">
+<div class="container">
+	<header> <slot name="header"></slot></header>
+	<main> <slot></slot></main>
+	<footer> <slot name="footer"></slot></footer>
+</div>
+</template>
+<script type="text/javascript" src="jquery-3.2.1.js"></script>
+
+<script type="text/javascript">
+
+
+var tb=new Vue({
+	el: '#tb',	
+	data:{
+		d:null,
+		nouns: [{word:'cxv'},{claz:'cvcw'}],
+		fixedHeader: true,
+		fixedFooter: true,
+		selectable: true,
+		multiSelectable: true,
+		enableSelectAll: false,
+		showCheckbox: true
+	},
+	template:'#mu-table'
+})
+	function fetch1(){
+		fetch('http://localhost:8080/webs4g-basic/dict/nouns/')
+		.then(r => r.json())
+		.then(data => tb.nouns = data)
+	}
+	fetch1();
+	
+
+</script>
+
+</html>

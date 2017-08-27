@@ -1,0 +1,7 @@
+apply plugin: 'java'
+dependencies {
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+
+    compile "org.springframework:spring-jdbc:${versions.spring}"
+    compile project(':skean-core')
+}

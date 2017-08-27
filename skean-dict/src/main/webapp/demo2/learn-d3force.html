@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        canvas{border: 2px dotted #362;}
+    </style>
+    <title>dict-demo2</title>
+</head>
+
+<body>
+    <canvas width="800" height="600"></canvas>
+</body>
+<script src="lodash.js"></script>
+<script src="vue.js"></script>
+<script src="vue-resource.js"></script>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script type="text/javascript">
+    var nodes = [
+        { "id": "蛤蛤", "group": 1 },
+        { "id": "Napoleon", "group": 1 },
+        { "id": "Mlle.Baptistine", "group": 1 },
+        { "id": "Mme.Magloire", "group": 1 },
+        { "id": "CountessdeLo", "group": 1 },
+        { "id": "Geborand", "group": 1 },
+        { "id": "Champtercier", "group": 1 },
+        { "id": "Cravatte", "group": 1 },
+        { "id": "Trump", "group": 1 }
+         
+    ];
+
+    var links = [
+        { "source": 0, "target": 1 }, 
+        { "source": 1, "target": 2 },
+        { "source": 2, "target": 3 },
+        { "source": 0, "target": 2 },
+        { "source": 0, "target": 1 },
+        { "source": 4, "target": 6 },
+        { "source": 4, "target": 5 },
+        { "source": 7, "target": 6 },
+    ];
+
+    let canvas = document.querySelector("canvas"),
+        CTX = canvas.getContext("2d"),
+        W = canvas.width,
+        H = canvas.height;
+
+    var simulation = d3.forceSimulation(nodes)
+        .force("charge", d3.forceManyBody().strength(-20))	 
+        
+        .force("link", d3.forceLink(links).id(i=>i.index).distance(40).iterations(1))	  //连线作用力
+        .force("center", d3.forceCenter(W/2,H/2))	  //重力
+         //.force("g1", d3.forceCenter(W/2,H))	 
+
+    //generate random colors
+    nodes.forEach(o=>{
+        o.color=[rand(240),rand(210),rand(230)];       
+    });
+
+    simulation
+        .on("tick", ticked);
+
+    function ticked() {
+        CTX.clearRect(0, 0,W, H);
+
+        CTX.beginPath();
+        links.forEach(drawLink);
+        CTX.strokeStyle = "#666";
+         CTX.stroke();
+         CTX.closePath();
+
+        
+        nodes.forEach(drawNode);
+       
+    }
+
+
+    function drawLink(d) {
+        CTX.moveTo(d.source.x, d.source.y);       
+        CTX.lineTo(d.target.x, d.target.y);
+         //draw Arrow
+        canvasDrawArrow(CTX,d.source.x, d.source.y,d.target.x, d.target.y);
+       
+    }
+    function rgbStr(arr,a){
+        return 'rgb('+arr[0]+','+arr[1]+','+arr[2]+(a?(','+a):'')+')';
+    }
+      function rgbaStr(arr,a){
+        return 'rgb('+arr[0]+','+arr[1]+','+arr[2]+','+a+')';
+    }
+    function rand(max){
+        return Math.floor(Math.random()*max);
+    }
+    function drawNode(d) {
+        CTX.moveTo(d.x + 7, d.y);
+       CTX.beginPath();
+        CTX.fillStyle=rgbStr(d.color); 
+        CTX.strokeStyle=rgbaStr(d.color,0.6); 
+        CTX.arc(d.x, d.y, 7, 0, 2 * Math.PI);
+         CTX.fill()
+           CTX.stroke();
+         CTX.closePath();
+         //draw Text
+        CTX.font="10px 微软雅黑"
+        CTX.fillText(d.id,d.x+10,d.y-5)
+        CTX.fillStyle='#fff' 
+        CTX.fillText(d.index,d.x-3,d.y+5)
+       
+          
+      
+    }
+
+    d3.select(canvas)
+        .call(d3.drag()
+            .container(canvas)
+            .subject(dragsubject)
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    function dragsubject() {
+        return simulation.find(d3.event.x, d3.event.y);
+    }
+    function dragstarted() {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d3.event.subject.fx = d3.event.subject.x;
+        d3.event.subject.fy = d3.event.subject.y;
+    }
+
+    function dragged() {
+        d3.event.subject.fx = d3.event.x;
+        d3.event.subject.fy = d3.event.y;
+    }
+
+    function dragended() {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d3.event.subject.fx = null;
+        d3.event.subject.fy = null;
+    }
+
+    function canvasDrawArrow(context, fromx, fromy, tox, toy) {
+    var headlen = 10.0;
+    var back = 4.0;
+    var angle1 = Math.PI / 13.0;
+    var angle2 = Math.atan2(toy - fromy, tox - fromx);
+    var diff1 = angle2 - angle1;
+    var diff2 = angle2 + angle1;
+    var xx = getBack(back, fromx, fromy, tox, toy);
+    var yy = getBack(back, fromy, fromx, toy, tox);
+
+    context.moveTo(fromx, fromy);
+    context.lineTo(tox, toy);
+
+    context.moveTo(xx, yy);
+    context.lineTo(xx - headlen * Math.cos(diff1), yy - headlen * Math.sin(diff1));
+
+    context.moveTo(xx, yy);
+    context.lineTo(xx - headlen * Math.cos(diff2), yy - headlen * Math.sin(diff2));
+}
+
+function getBack(len, x1, y1, x2, y2) {
+    return x2 - (len * (x2 - x1) / (Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2))));
+}
+</script>
+
+</html>

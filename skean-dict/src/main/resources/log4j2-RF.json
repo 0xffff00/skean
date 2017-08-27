@@ -1,0 +1,33 @@
+{
+    "configuration": {
+        "status": "error",
+        "name": "JSONConfigDemo",
+        "packages": "com.howtodoinjava",
+        "ThresholdFilter": {
+            "level": "debug"
+        },
+        "appenders": {
+            "Console": {
+                "name": "STDOUT",
+                "PatternLayout": {
+                    "pattern": "%highlight{%d{HH:mm:ss} %-5level %c{1}: %msg%n}%throwable"
+                }
+            }
+        },
+        "loggers": {
+            "root": {
+                "level": "debug",
+                "AppenderRef": {
+                    "ref": "STDOUT"
+                }
+            },
+         "logger": [
+         		{ "name":"org.aspectj","level": "info" ,"additivity":"false","AppenderRef": { "ref": "Console" ,"level":"info"}},
+            	{ "name": "org.springframework.aop", "level": "info","additivity":"false","AppenderRef": { "ref": "Console" ,"level":"info"} },
+      { "name": "org.springframework.beans","level": "info","additivity":"false","AppenderRef": { "ref": "Console" ,"level":"info"} },
+        { "name": "org.springframework.web","level": "info","additivity":"false","AppenderRef": { "ref": "Console" ,"level":"info"} } ,
+         { "name": "com.zaxxer","level": "info","additivity":"false","AppenderRef": { "ref": "Console" ,"level":"info"} } 
+            ]
+        }
+    }
+}
