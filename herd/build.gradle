@@ -5,16 +5,28 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'war'
 
+repositories {
+    maven { url "https://repository.apache.org/content/repositories/snapshots/" }
+    mavenCentral()
+
+}
+compileGroovy.options.encoding='UTF-8'
+compileTestGroovy.options.encoding='UTF-8'
+
 dependencies {
+
 
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: versions.groovy
 
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.6.3'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
 
-    compileGroovy.options.encoding='UTF-8'
-    compileTestGroovy.options.encoding='UTF-8'
+    compile 'com.drewnoakes:metadata-extractor:2.10.1'
+    compile group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
 
+
+
+    compile 'org.apache.commons:commons-imaging:1.0-SNAPSHOT'
 
 
     compile project(':skean-mvc')

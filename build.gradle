@@ -95,6 +95,8 @@ configure(subprojects) { project ->
     }
 
 
+//    compileGroovy?.options.encoding = 'UTF-8'
+//    compileTestGroovy?.options.encoding = 'UTF-8'
     // 编码改为 UTF-8, 否则编译源码的时候会出错
     //[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 }
