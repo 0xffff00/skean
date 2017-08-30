@@ -40,6 +40,7 @@ public class AffectCount {
     }
 
     public AffectCount(int numCreated, int numUpdated, int numDeleted, int numFailed, long millisUsed) {
+
         super();
         this.numCreated = numCreated;
         this.numUpdated = numUpdated;

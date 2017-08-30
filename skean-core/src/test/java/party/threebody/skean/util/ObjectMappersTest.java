@@ -25,6 +25,9 @@ public class ObjectMappersTest {
 		}
 	}
 
+	/**
+	 *
+	 */
 	@Test
 	public void testOM_SNAKE(){
 		Car car1=new Car();

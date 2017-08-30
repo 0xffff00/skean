@@ -1,5 +1,11 @@
 package tmp.learning;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -11,9 +17,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class LearnImageIO {
+
+    private int sdfdsf;
+    private static int sfsdfsd;
 
     public static void main(String[] args) {
         //compress jpg
@@ -24,9 +32,11 @@ public class LearnImageIO {
             Files.walk(picsDir).filter(Files::isRegularFile).filter(p -> !p.toString().contains(".q"))
                     .forEach(p -> {
                         System.out.println(p);
+
                         try {
-                            compressJPG(p, destDir.resolve(p.getFileName().toString() + ".q5.jpg"));
-                        } catch (IOException e) {
+                            readExif(p);
+                            compressJPG(p, destDir.resolve("pictmp").resolve(p.getFileName().toString() + ".q5.jpg"));
+                        } catch (IOException|ImageProcessingException e) {
                             e.printStackTrace();
                         }
                     });
@@ -54,13 +64,31 @@ public class LearnImageIO {
         jpgWriter.dispose();
 
     }
-/**
- *  https://stackoverflow.com/questions/24745147/java-resize-image-without-losing-quality(sonight.jpg)
- *
- */
 
-    static void scaleJPG(){
+    /**
+     * https://stackoverflow.com/questions/24745147/java-resize-image-without-losing-quality(sonight.jpg)
+     */
+
+    static void scaleJPG() {
+
 
     }
+
+    static void readExif(Path src) throws ImageProcessingException, IOException {
+        Metadata metadata = ImageMetadataReader.readMetadata(src.toFile());
+
+        for (Directory directory : metadata.getDirectories()) {
+            for (Tag tag : directory.getTags()) {
+                System.out.format("[%s] - %s = %s",
+                        directory.getName(), tag.getTagName(), tag.getDescription());
+            }
+            if (directory.hasErrors()) {
+                for (String error : directory.getErrors()) {
+                    System.err.format("ERROR: %s", error);
+                }
+            }
+        }
+    }
+
 
 }
