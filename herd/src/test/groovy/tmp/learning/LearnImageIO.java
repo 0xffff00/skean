@@ -4,41 +4,71 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
-import com.drew.metadata.jpeg.JpegDirectory;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
+import org.apache.commons.lang.math.NumberUtils;
+import party.threebody.herd.domain.ImageInfo;
+import party.threebody.herd.util.ImageMetaUtils;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 
 public class LearnImageIO {
 
-    private int sdfdsf;
-    private static int sfsdfsd;
-
     public static void main(String[] args) {
         //compress jpg
+        Path root = Paths.get("D:\\dat0\\git0\\sk78\\skean\\herd\\src\\test\\resources");
+        Path picsDir = root.resolve("pics1");
+        Path destDir = root.resolve("pics1");
         try {
-            Path root = Paths.get("D:\\dat0\\git0\\sk78\\skean\\herd\\src\\test\\resources");
-            Path picsDir = root.resolve("pics1");
-            Path destDir = root.resolve("pics1");
-            Files.walk(picsDir).filter(Files::isRegularFile).filter(p -> !p.toString().contains(".q"))
+
+            Files.walk(picsDir).filter(Files::isRegularFile).filter(p -> !p.toString().contains("pictmp"))
                     .forEach(p -> {
                         System.out.println(p);
 
                         try {
-                            readExif(p);
-                            compressJPG(p, destDir.resolve("pictmp").resolve(p.getFileName().toString() + ".q5.jpg"));
+                            ImageInfo imageInfo = ImageMetaUtils.parseExifInfo(p);
+                            int w = imageInfo.getWidth();
+                            int h = imageInfo.getHeight();
+                            int maxw=4000;
+                            int maxh=maxw*3/4;
+                            double q = 0.6;
+                            double r = calcRatio(w, h, maxw, maxh);
+                            long fsize = Files.size(p);
+                            BufferedImage bufferedImage = scaleJPG(Files.newInputStream(p), r);
+                            String fname=String.format("%s.f%sq%s.jpg",p.getFileName(),maxw,(int)(q*10));
+                            Path pDest = destDir.resolve("pictmp").resolve(fname);
+                            ImageOutputStream ios = new FileImageOutputStream(pDest.toFile());
+                            compressJPG(bufferedImage, ios, q);
+
+                        } catch (IOException | ImageProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+            Files.walk(picsDir).filter(Files::isRegularFile)
+                    .sorted((x,y)->x.getFileName().compareTo(y.getFileName()))
+                    .forEach(p -> {
+                        try {
+                            ImageInfo imageInfo = ImageMetaUtils.parseExifInfo(p);
+                            int w = imageInfo.getWidth();
+                            int h = imageInfo.getHeight();
+                            long fsize = Files.size(p);
+                            double density = fsize * 100 / (double) (w * h);
+                            System.out.printf("den=%06.4f %s\n", density, p.toString());
+
                         } catch (IOException | ImageProcessingException e) {
                             e.printStackTrace();
                         }
@@ -53,32 +83,49 @@ public class LearnImageIO {
     /**
      * https://stackoverflow.com/questions/17108234/setting-jpg-compression-level-with-imageio-in-java
      */
-    static void compressJPG(Path src, Path dest) throws IOException {
-        BufferedImage srcImage = ImageIO.read(src.toFile());
-        File destFile = dest.toFile();
-        Files.createDirectories(dest.getParent());
+    static void compressJPG(BufferedImage src, Path dest) throws IOException {
+
+
+    }
+
+    static void compressJPG(BufferedImage srcImage, ImageOutputStream dest, double q) throws IOException {
         final ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
         final ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
-
         jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        jpgWriteParam.setCompressionQuality(0.5f);
-        jpgWriter.setOutput(new FileImageOutputStream(destFile));
+        jpgWriteParam.setCompressionQuality((float) q);
+        jpgWriter.setOutput(dest);
         IIOImage iioImage = new IIOImage(srcImage, null, null);
         jpgWriter.write(null, iioImage, jpgWriteParam);
         jpgWriter.dispose();
+    }
 
+    static double calcRatio(int w, int h, int maxw, int maxh) {
+        return NumberUtils.min(maxw / (double) w, maxh / (double) h, 1.0);
     }
 
     /**
      * https://stackoverflow.com/questions/24745147/java-resize-image-without-losing-quality(sonight.jpg)
      */
 
-    static void scaleJPG(Path src) {
-
+    static BufferedImage scaleJPG(InputStream src, double ratio) {
+        if (ratio>0.9999){
+            try {
+                return ImageIO.read(src);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            return Thumbnails.of(src).scalingMode(ScalingMode.PROGRESSIVE_BILINEAR)
+                    .scale(ratio).asBufferedImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
 
     }
 
-    static void readExif(Path src) throws ImageProcessingException, IOException {
+    static void readAndPrintExif(Path src) throws ImageProcessingException, IOException {
         Metadata metadata = ImageMetadataReader.readMetadata(src.toFile());
         System.out.print(">>>>>>>>>>>>>>>>>>>>>>>>>>>" + src);
         for (Directory directory : metadata.getDirectories()) {

@@ -40,7 +40,6 @@ public class JavaBeansTest {
         Integer ox1=null;
         //assertTrue(s1 instanceof String);
         assertTrue(s2 instanceof String);
-        assertTrue(ox1 instanceof Number);
 
     }
 

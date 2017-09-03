@@ -19,11 +19,16 @@ import party.threebody.herd.domain.ImageInfo;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ImageMetaUtils {
 
     static final Logger logger = LoggerFactory.getLogger(ImageMetaUtils.class);
 
+    public static ImageInfo parseExifInfo(Path src) throws ImageProcessingException, IOException {
+        return parseExifInfo(Files.newInputStream(src));
+    }
 
     public static ImageInfo parseExifInfo(InputStream src) throws ImageProcessingException, IOException {
         BufferedInputStream bis = new BufferedInputStream(src);
@@ -72,19 +77,11 @@ public class ImageMetaUtils {
         }
 
 
-        for (Directory directory : metadata.getDirectories()) {
-            for (Tag tag : directory.getTags()) {
-                //System.out.println(tag);
-                System.out.format("[%s] - %s = %s\n", directory.getName(), tag.getTagName(), tag.getDescription());
-            }
-            if (directory.hasErrors()) {
-                for (String error : directory.getErrors()) {
-                    System.err.format("ERROR: %s", error);
-                }
-            }
-        }
+
         return imageInfo;
     }
+
+
 
     private static void fillTagValue(ImageInfo imageInfo, ExifDirectoryBase exifDirectory, int exifTagType) {
         String tagValStr = exifDirectory.getString(exifTagType);
