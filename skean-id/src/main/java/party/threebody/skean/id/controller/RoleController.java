@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import party.threebody.skean.id.dao.RoleDAO;
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.mvc.generic.GenericCrudDAO;
+import party.threebody.skean.mvc.dao.SinglePKCrudDAO;
 import party.threebody.skean.mvc.generic.SimpleDaoCrudRestController;
 
 @RequestMapping("/id/roles")
@@ -16,7 +16,7 @@ public class RoleController extends SimpleDaoCrudRestController<Role, String> {
 	RoleDAO roleDAO;
 
 	@Override
-	protected GenericCrudDAO<Role, String> getCrudDAO() {
+	protected SinglePKCrudDAO<Role, String> getCrudDAO() {
 		return roleDAO;
 	}
 

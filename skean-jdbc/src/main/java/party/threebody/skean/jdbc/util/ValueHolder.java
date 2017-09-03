@@ -1,5 +1,6 @@
 package party.threebody.skean.jdbc.util;
 
+import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class ValueHolder {
 			if (v0 instanceof Collection) {
 				valColl((Collection<Object>) v0);
 			}
-			if ((v0 instanceof Number) || (v0 instanceof String)) {
+			if (JavaBeans.isSimpleTypeOf(v0)) {
 				valArr(vals);
 			}
 			valObj(v0);

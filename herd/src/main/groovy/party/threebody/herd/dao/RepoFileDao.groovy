@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.RepoFile
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.mvc.generic.AbstractCrudDAO
+import party.threebody.skean.mvc.dao.SinglePKCrudDAO
 
 @Repository
-class RepoFileDao extends AbstractCrudDAO<RepoFile, String> {
+class RepoFileDao extends SinglePKCrudDAO<RepoFile, String> {
 
     @Autowired
     ChainedJdbcTemplate cjt
@@ -23,8 +23,8 @@ class RepoFileDao extends AbstractCrudDAO<RepoFile, String> {
     }
 
     @Override
-    protected List<String> getPrimaryKeyColumns() {
-        ['hash']
+    protected String getPrimaryKeyColumn() {
+        'hash'
     }
 
     @Override
@@ -39,4 +39,14 @@ class RepoFileDao extends AbstractCrudDAO<RepoFile, String> {
                 'desc'    : bean.desc, 'size': bean.size, 'sync_time': bean.syncTime]
 
     }
+
+    List<RepoFile> listByRepoName(String repoName) {
+        cjt.from(getTable()).by('repo_name').val(repoName).list()
+    }
+
+    int deleteAll(){
+        cjt.sql('DELETE FROM hd_repo_file').execute()
+    }
+
+
 }

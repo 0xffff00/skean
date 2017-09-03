@@ -8,13 +8,8 @@ dependencies {
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.6.3'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
 
-    compileGroovy {
-        options.encoding = 'UTF-8'
-    }
-
-    compileTestGroovy {
-        options.encoding = 'UTF-8'
-    }
+    compileGroovy.options.encoding='UTF-8'
+    compileTestGroovy.options.encoding='UTF-8'
 
     compile project(':skean-mvc')
 }

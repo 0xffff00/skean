@@ -2,13 +2,12 @@ package party.threebody.skean.id.dao;
 
 import org.springframework.stereotype.Repository;
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.mvc.generic.AbstractCrudDAO;
+import party.threebody.skean.mvc.dao.SinglePKCrudDAO;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Repository
-public class RoleDAO extends AbstractCrudDAO<Role, String> {
+public class RoleDAO extends SinglePKCrudDAO<Role, String> {
 
 	@Override
 	protected String getTable() {
@@ -21,8 +20,8 @@ public class RoleDAO extends AbstractCrudDAO<Role, String> {
 	}
 
 	@Override
-	protected List<String> getPrimaryKeyColumns() {
-		return Arrays.asList("name");
+	protected String getPrimaryKeyColumn() {
+		return "name";
 	}
 
 	@Override

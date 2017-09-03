@@ -2,6 +2,7 @@ package party.threebody.skean.mvc.generic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.mvc.dao.SinglePKCrudDAO;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  */
 public abstract class SimpleDaoCrudRestController<T, PK> extends AbstractCrudRestController<T, PK> {
 
-	protected abstract GenericCrudDAO<T, PK> getCrudDAO();
+	protected abstract SinglePKCrudDAO<T, PK> getCrudDAO();
 
 	@Autowired
 	GenericCrudDaoTemplateService crudDaoTemplateService;

@@ -69,7 +69,7 @@ public class SqlPhrase extends DefaultRootPhrase {
 
 	// ------ modifying --------
 
-	protected int update() {
+	public int execute() {
 		context.getSqlPrinter().printSql(sql, args);
 		int rna = context.getJdbcTemplate().update(sql, new ArgumentPreparedStatementSetter(args));
 		context.getSqlPrinter().printRowNumAffected(rna);

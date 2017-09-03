@@ -4,7 +4,9 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
+import com.drew.metadata.jpeg.JpegDirectory;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 public class LearnImageIO {
 
@@ -36,7 +39,7 @@ public class LearnImageIO {
                         try {
                             readExif(p);
                             compressJPG(p, destDir.resolve("pictmp").resolve(p.getFileName().toString() + ".q5.jpg"));
-                        } catch (IOException|ImageProcessingException e) {
+                        } catch (IOException | ImageProcessingException e) {
                             e.printStackTrace();
                         }
                     });
@@ -53,6 +56,7 @@ public class LearnImageIO {
     static void compressJPG(Path src, Path dest) throws IOException {
         BufferedImage srcImage = ImageIO.read(src.toFile());
         File destFile = dest.toFile();
+        Files.createDirectories(dest.getParent());
         final ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
         final ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
 
@@ -69,18 +73,18 @@ public class LearnImageIO {
      * https://stackoverflow.com/questions/24745147/java-resize-image-without-losing-quality(sonight.jpg)
      */
 
-    static void scaleJPG() {
+    static void scaleJPG(Path src) {
 
 
     }
 
     static void readExif(Path src) throws ImageProcessingException, IOException {
         Metadata metadata = ImageMetadataReader.readMetadata(src.toFile());
-
+        System.out.print(">>>>>>>>>>>>>>>>>>>>>>>>>>>" + src);
         for (Directory directory : metadata.getDirectories()) {
             for (Tag tag : directory.getTags()) {
-                System.out.format("[%s] - %s = %s",
-                        directory.getName(), tag.getTagName(), tag.getDescription());
+                //System.out.println(tag);
+                System.out.format("[%s] - %s = %s\n", directory.getName(), tag.getTagName(), tag.getDescription());
             }
             if (directory.hasErrors()) {
                 for (String error : directory.getErrors()) {

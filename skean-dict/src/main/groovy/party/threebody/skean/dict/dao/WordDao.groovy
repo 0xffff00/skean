@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.AliasRel
 import party.threebody.skean.dict.domain.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.mvc.generic.AbstractCrudDAO
+import party.threebody.skean.mvc.dao.SinglePKCrudDAO
 
 @Repository
-class WordDao extends AbstractCrudDAO<Word,String> {
+class WordDao extends SinglePKCrudDAO<Word,String> {
 
 	@Autowired ChainedJdbcTemplate cjt
 
@@ -57,8 +57,8 @@ SELECT a.w FROM (
 	}
 
 	@Override
-	protected List<String> getPrimaryKeyColumns() {
-		['text']
+	protected String getPrimaryKeyColumn() {
+		'text'
 	}
 
 	@Override

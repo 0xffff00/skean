@@ -1,5 +1,6 @@
 package party.threebody.skean.jdbc.phrase;
 
+import java.util.List;
 import java.util.Map;
 
 import party.threebody.skean.core.query.BasicCriterion;
@@ -20,6 +21,10 @@ public class AffectValPhrase implements Phrase {
 
 	// ------ filtering --------
 	public ByPhrase by(String... cols) {
+		return root.by(cols);
+	}
+
+	public ByPhrase by(List<String> cols){
 		return root.by(cols);
 	}
 

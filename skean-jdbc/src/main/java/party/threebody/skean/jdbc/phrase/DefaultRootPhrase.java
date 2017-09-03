@@ -49,10 +49,7 @@ public abstract class DefaultRootPhrase implements RootPhrase {
 	 * supported.<br>
 	 * 
 	 * 1 row expected.
-	 * 
-	 * @throws IncorrectResultSizeDataAccessException
-	 *             if more than one element has been found in the given
-	 *             Collection
+	 *
 	 * @throws EmptyResultDataAccessException
 	 *             if no element at all has been found in the given Collection
 	 * @param elementType

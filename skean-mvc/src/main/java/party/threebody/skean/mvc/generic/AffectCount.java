@@ -1,6 +1,10 @@
 package party.threebody.skean.mvc.generic;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import party.threebody.skean.util.Strings;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * an immutable class.
@@ -53,6 +57,11 @@ public class AffectCount {
         return new AffectCount(numCreated, numUpdated, numDeleted, numFailed, System.currentTimeMillis() - millisStarting);
     }
 
+    public AffectCount tillNow(LocalDateTime timeStarting) {
+        long millisUsed = ChronoUnit.MILLIS.between(timeStarting, LocalDateTime.now());
+        return new AffectCount(numCreated, numUpdated, numDeleted, numFailed, millisUsed);
+    }
+
     public AffectCount withMillisUsed(long millisUsed) {
         return new AffectCount(numCreated, numUpdated, numDeleted, numFailed, millisUsed);
     }
@@ -76,7 +85,7 @@ public class AffectCount {
     }
 
     public String toString(String nameOfItem, String nameOfItems) {
-        return String.join(", ",
+        return Strings.joinIgnoreEmpty(", ",
                 genNumText0(numCreated, "created", nameOfItem, nameOfItems),
                 genNumText0(numUpdated, "updated", nameOfItem, nameOfItems),
                 genNumText0(numDeleted, "deleted", nameOfItem, nameOfItems),
@@ -87,11 +96,11 @@ public class AffectCount {
     }
 
     private static String genNumText0(int num, String whatHappened, String nameOfItem, String nameOfItems) {
-        return (num == 0) ? null : genNumText0(num, whatHappened, nameOfItem, nameOfItems);
+        return (num == 0) ? null : genNumText(num, whatHappened, nameOfItem, nameOfItems);
     }
 
     private static String genNumText(int num, String whatHappened, String nameOfItem, String nameOfItems) {
-        return (num < 2) ? num + " " + nameOfItem + whatHappened: num + " " + nameOfItems + " " + whatHappened;
+        return  num + " " + (num < 2 ?nameOfItem:nameOfItems)+" " + whatHappened;
     }
 
     public int getNumCreated() {

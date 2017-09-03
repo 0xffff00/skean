@@ -15,7 +15,7 @@ import party.threebody.skean.jdbc.util.ArrayAndMapUtils;
 import party.threebody.skean.jdbc.util.ClauseAndArgs;
 import party.threebody.skean.jdbc.util.ClausesAndArgs;
 import party.threebody.skean.jdbc.util.CriteriaUtils;
-import party.threebody.skean.jdbc.util.ReflectionUtils;
+import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.jdbc.util.SqlAndArgs;
 import party.threebody.skean.jdbc.util.SqlSecurityUtils;
 
@@ -173,7 +173,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				return ArrayAndMapUtils.getValsArr(p.afVal.getMap(), p.afCols);
 			}
 			if (p.afVal.getObj() != null) {
-				return ReflectionUtils.getProperties(p.afVal.getObj(), p.afCols);
+				return JavaBeans.getProperties(p.afVal.getObj(), p.afCols);
 			}
 			throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
 		}
@@ -192,7 +192,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 				return ArrayAndMapUtils.getValsArr(p.val.getMap(), p.afCols);
 			}
 			if (p.val.getObj() != null) {
-				return ReflectionUtils.getProperties(p.val.getObj(), p.afCols);
+				return JavaBeans.getProperties(p.val.getObj(), p.afCols);
 			}
 		}
 		throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
@@ -237,7 +237,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 			return ArrayAndMapUtils.getValsArr(p.val.getMap(), p.byCols);
 		}
 		if (p.val.getObj() != null) {
-			return ReflectionUtils.getProperties(p.val.getObj(), p.byCols);
+			return JavaBeans.getProperties(p.val.getObj(), p.byCols);
 		}
 		throw new ChainedJdbcTemplateException("build args of 'WHERE' clause failed. ");
 	}
@@ -254,8 +254,8 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 		sql0.append("INSERT INTO ");
 		sql0.append(nq).append(p.table).append(nq);
 		if (p.afCols == null) {
-			if (p.val.getMap() != null) { // auto generate colsAffected
-				Set<String> colSet = new HashSet<String>(p.val.getMap().keySet());
+			if (p.afVal.getMap() != null) { // auto generate colsAffected
+				Set<String> colSet = new HashSet<>(p.afVal.getMap().keySet());
 				p.afCols = colSet.toArray(new String[colSet.size()]);
 			} else {
 				throw new ChainedJdbcTemplateException(

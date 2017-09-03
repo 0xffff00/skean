@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.DualRel
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.mvc.generic.AbstractCrudDAO
+import party.threebody.skean.mvc.dao.SinglePKCrudDAO
+import party.threebody.skean.mvc.dao.TriplePKCrudDAO
 
 @Repository
-class DualRelDao extends AbstractCrudDAO<DualRel,DualRel> {
+class DualRelDao extends TriplePKCrudDAO<DualRel,String,String,Integer> {
 
 	@Autowired ChainedJdbcTemplate cjt
 
@@ -31,7 +32,4 @@ class DualRelDao extends AbstractCrudDAO<DualRel,DualRel> {
 		null
 	}
 
-	int delete( String key, String attr, Integer vno){
-		cjt.from(getTable()).by('key','attr','vno').val(key,attr,vno).delete()
-	}
 }

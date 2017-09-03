@@ -1,6 +1,6 @@
 package party.threebody.herd.domain
 
-import java.time.LocalDateTime;
+import java.time.LocalDateTime
 
 class Repo {
 	String name
@@ -9,6 +9,7 @@ class Repo {
 	String type
 	String desc
 	LocalDateTime saveTime
+	String state
 }
 
 class RepoFile{
@@ -18,23 +19,33 @@ class RepoFile{
 	String type
 	String subtype
 	String desc
-	int size
+	Integer size
 	LocalDateTime syncTime
 
+	//DTO fields
+	List<String> paths
 
+	void setTypeAndSubtype(TypeAndSubType tast){
+		type=tast.type
+		subtype=tast.subtype
+	}
 
 }
-class PicFile{
+class RepoFilePath{
 	String hash
-	int height
-	int width
+	String path
+	String type
+	String repoName
+
+	RepoFilePath(String hash, String path, String type, String repoName) {
+		this.hash = hash
+		this.path = path
+		this.type = type
+		this.repoName = repoName
+	}
 }
-class PhotoInfo{
-	String hash
-	int height
-	int width
-	LocalDateTime shootTime
-	String gpsLon	//NS
-	String gpsLat	//EW
-	String gpsAlt	//height above the sea
+
+class TypeAndSubType {
+	String type
+	String subtype
 }
