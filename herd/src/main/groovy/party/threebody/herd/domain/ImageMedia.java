@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class ImageInfo {
+public class ImageMedia {
     protected String hash;
     protected String type;
     protected int height;

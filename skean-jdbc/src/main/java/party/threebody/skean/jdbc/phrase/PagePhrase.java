@@ -1,9 +1,9 @@
 package party.threebody.skean.jdbc.phrase;
 
+import org.springframework.jdbc.core.RowMapper;
+
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.jdbc.core.RowMapper;
 
 public class PagePhrase implements Phrase {
 
@@ -46,6 +46,11 @@ public class PagePhrase implements Phrase {
 
 	public int count() {
 		return root.count();
+	}
+
+	// ------ modifying --------
+	public int delete(){
+		return root.delete();
 	}
 
 }

@@ -4,17 +4,15 @@ import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
-import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.jpeg.JpegDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import party.threebody.herd.domain.ImageInfo;
+import party.threebody.herd.domain.ImageMedia;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -26,100 +24,100 @@ public class ImageMetaUtils {
 
     static final Logger logger = LoggerFactory.getLogger(ImageMetaUtils.class);
 
-    public static ImageInfo parseExifInfo(Path src) throws ImageProcessingException, IOException {
+    public static ImageMedia parseExifInfo(Path src) throws ImageProcessingException, IOException {
         return parseExifInfo(Files.newInputStream(src));
     }
 
-    public static ImageInfo parseExifInfo(InputStream src) throws ImageProcessingException, IOException {
+    public static ImageMedia parseExifInfo(InputStream src) throws ImageProcessingException, IOException {
         BufferedInputStream bis = new BufferedInputStream(src);
         Metadata metadata = null;
-        ImageInfo imageInfo = new ImageInfo();
+        ImageMedia imageMedia = new ImageMedia();
 
         FileType fileType = FileTypeDetector.detectFileType(bis);
-        imageInfo.setType(fileType.toString().toLowerCase());
+        imageMedia.setType(fileType.toString().toLowerCase());
         metadata = ImageMetadataReader.readMetadata(bis);
 
 
         JpegDirectory jpegDirectory = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         if (jpegDirectory != null) {   // is a jpeg
             try {
-                imageInfo.fillHeight(jpegDirectory.getImageHeight());
-                imageInfo.fillWidth(jpegDirectory.getImageWidth());
+                imageMedia.fillHeight(jpegDirectory.getImageHeight());
+                imageMedia.fillWidth(jpegDirectory.getImageWidth());
             } catch (MetadataException e) {
                 //no op
             }
-            imageInfo.fillExifBitDepth(jpegDirectory.getInteger(JpegDirectory.TAG_DATA_PRECISION));
+            imageMedia.fillExifBitDepth(jpegDirectory.getInteger(JpegDirectory.TAG_DATA_PRECISION));
         }
 
 
         ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         if (exifIFD0Directory != null) {
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_MAKE);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_MODEL);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_COLOR_SPACE);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_EXPOSURE_TIME);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_WHITE_BALANCE);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_APERTURE);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_DATETIME);
-            fillTagValue(imageInfo, exifIFD0Directory, ExifDirectoryBase.TAG_DATETIME_ORIGINAL);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_MAKE);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_MODEL);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_COLOR_SPACE);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_EXPOSURE_TIME);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_WHITE_BALANCE);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_APERTURE);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_DATETIME);
+            fillTagValue(imageMedia, exifIFD0Directory, ExifDirectoryBase.TAG_DATETIME_ORIGINAL);
         }
 
         ExifSubIFDDirectory exifSubIFDDirectory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
         if (exifSubIFDDirectory != null) {
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_MAKE);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_MODEL);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_COLOR_SPACE);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_WHITE_BALANCE);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_APERTURE);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_DATETIME);
-            fillTagValue(imageInfo, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_MAKE);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_MODEL);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_COLOR_SPACE);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_WHITE_BALANCE);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_APERTURE);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_DATETIME);
+            fillTagValue(imageMedia, exifSubIFDDirectory, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
         }
 
 
 
-        return imageInfo;
+        return imageMedia;
     }
 
 
 
-    private static void fillTagValue(ImageInfo imageInfo, ExifDirectoryBase exifDirectory, int exifTagType) {
+    private static void fillTagValue(ImageMedia imageMedia, ExifDirectoryBase exifDirectory, int exifTagType) {
         String tagValStr = exifDirectory.getString(exifTagType);
         switch (exifTagType) {
             case ExifDirectoryBase.TAG_MAKE:
-                imageInfo.fillExifMake(tagValStr);
+                imageMedia.fillExifMake(tagValStr);
                 break;
             case ExifDirectoryBase.TAG_MODEL:
-                imageInfo.fillExifModel(tagValStr);
+                imageMedia.fillExifModel(tagValStr);
                 break;
             case ExifDirectoryBase.TAG_COLOR_SPACE:
-                imageInfo.fillExifColorSpace(tagValStr);
+                imageMedia.fillExifColorSpace(tagValStr);
                 break;
             case ExifDirectoryBase.TAG_EXPOSURE_TIME:
-                imageInfo.fillExifExposureTime(tagValStr);
+                imageMedia.fillExifExposureTime(tagValStr);
                 break;
             case ExifDirectoryBase.TAG_WHITE_BALANCE:
-                imageInfo.fillExifWhiteBalance(tagValStr);
+                imageMedia.fillExifWhiteBalance(tagValStr);
                 break;
             case ExifDirectoryBase.TAG_APERTURE:
-                imageInfo.fillExifAperture(tagValStr);
+                imageMedia.fillExifAperture(tagValStr);
                 break;
             case ExifDirectoryBase.TAG_DATETIME:
             case ExifDirectoryBase.TAG_DATETIME_ORIGINAL:
             case ExifDirectoryBase.TAG_DATETIME_DIGITIZED:
-                imageInfo.fillExifDateTime(exifDirectory.getDate(exifTagType));
+                imageMedia.fillExifDateTime(exifDirectory.getDate(exifTagType));
                 break;
 
             case ExifDirectoryBase.TAG_IMAGE_HEIGHT:
                 try {
-                    imageInfo.fillHeight(exifDirectory.getInt(exifTagType));
+                    imageMedia.fillHeight(exifDirectory.getInt(exifTagType));
                 } catch (MetadataException e) {
                     //NO-OP
                 }
                 break;
             case ExifDirectoryBase.TAG_IMAGE_WIDTH:
                 try {
-                    imageInfo.fillWidth(exifDirectory.getInt(exifTagType));
+                    imageMedia.fillWidth(exifDirectory.getInt(exifTagType));
                 } catch (MetadataException e) {
                     //NO-OP
                 }

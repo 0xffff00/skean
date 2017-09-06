@@ -99,4 +99,8 @@ public abstract class AbstractCrudDAO<T> {
     public int deleteByExample(T example) {
         return fromTableByPkCols().valObj(example).delete();
     }
+
+    public int deleteSome(QueryParamsSuite qps){
+        return fromTable().suite(qps).delete();
+    }
 }

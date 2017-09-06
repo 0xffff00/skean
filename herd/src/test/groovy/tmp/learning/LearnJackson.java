@@ -30,7 +30,7 @@ public class LearnJackson {
 		 // objMapper.setDefaultTyping("").writerWithDefaultPrettyPrinter().writeValue(System.out, t1);
 	}
 	
-	@Test
+	//@Test
 	public void learnPolymorphismDeserialization() throws JsonParseException, JsonMappingException, IOException {
 		
 		Zoo zoo = objMapper.readValue(JsonData.getZoo1(), Zoo.class);

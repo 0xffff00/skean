@@ -8,7 +8,7 @@ import com.drew.metadata.Tag;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
 import org.apache.commons.lang.math.NumberUtils;
-import party.threebody.herd.domain.ImageInfo;
+import party.threebody.herd.domain.ImageMedia;
 import party.threebody.herd.util.ImageMetaUtils;
 
 import javax.imageio.IIOImage;
@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -39,9 +38,9 @@ public class LearnImageIO {
                         System.out.println(p);
 
                         try {
-                            ImageInfo imageInfo = ImageMetaUtils.parseExifInfo(p);
-                            int w = imageInfo.getWidth();
-                            int h = imageInfo.getHeight();
+                            ImageMedia imageMedia = ImageMetaUtils.parseExifInfo(p);
+                            int w = imageMedia.getWidth();
+                            int h = imageMedia.getHeight();
                             int maxw=4000;
                             int maxh=maxw*3/4;
                             double q = 0.6;
@@ -62,9 +61,9 @@ public class LearnImageIO {
                     .sorted((x,y)->x.getFileName().compareTo(y.getFileName()))
                     .forEach(p -> {
                         try {
-                            ImageInfo imageInfo = ImageMetaUtils.parseExifInfo(p);
-                            int w = imageInfo.getWidth();
-                            int h = imageInfo.getHeight();
+                            ImageMedia imageMedia = ImageMetaUtils.parseExifInfo(p);
+                            int w = imageMedia.getWidth();
+                            int h = imageMedia.getHeight();
                             long fsize = Files.size(p);
                             double density = fsize * 100 / (double) (w * h);
                             System.out.printf("den=%06.4f %s\n", density, p.toString());

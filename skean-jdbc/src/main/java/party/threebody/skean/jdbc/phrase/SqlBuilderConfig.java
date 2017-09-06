@@ -6,7 +6,7 @@ public class SqlBuilderConfig {
 	private String clauseDlmt;
 	private String ln;
 	private boolean enableBackquote;
-	private String enableModifyAllRows;
+	private boolean enableModifyAllRows;
 	private int maxCharsOfInlineSelCols;
 
 	private void init(){
@@ -60,10 +60,7 @@ public class SqlBuilderConfig {
 	}
 
 	public boolean isModifyAllRowsEnabled() {
-		if (enableModifyAllRows!=null && enableModifyAllRows.equalsIgnoreCase("true")){
-			return true;
-		}
-		return false;
+		return enableModifyAllRows;
 	}
 	public void setEnableBackquote(String s) {
 		this.enableBackquote = "true".equalsIgnoreCase(s);
@@ -71,8 +68,10 @@ public class SqlBuilderConfig {
 	public void setEnableBackquote(boolean enableBackquote) {
 		this.enableBackquote = enableBackquote;
 	}
-	
 	public void setEnableModifyAllRows(String enableModifyAllRows) {
+		this.enableModifyAllRows ="true".equalsIgnoreCase(enableModifyAllRows); ;
+	}
+	public void setEnableModifyAllRows(boolean enableModifyAllRows) {
 		this.enableModifyAllRows = enableModifyAllRows;
 	}
 	public int getMaxCharsOfInlineSelCols() {

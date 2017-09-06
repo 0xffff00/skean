@@ -45,7 +45,7 @@ public abstract class DefaultRootPhrase implements RootPhrase {
 	}
 
 	/**
-	 * {@link org.springframework.jdbc.core.JdbcTemplate.queryForObject} not
+	 * {@link org.springframework.jdbc.core.JdbcTemplate#queryForObject} not
 	 * supported.<br>
 	 * 
 	 * 1 row expected.
