@@ -32,6 +32,7 @@ public class ImageProcessUtils {
     /**
      * compress to a JPG, using quality parameter. EXIF will be loss.
      * according Java API, jpgWriter.setOutput can only set an OutputStream
+     * @deprecated use coobird API
      */
     protected static void compressToJPG(BufferedImage srcImage, ImageOutputStream dest, double quality) throws IOException {
 
@@ -44,6 +45,10 @@ public class ImageProcessUtils {
         jpgWriter.write(null, iioImage, jpgWriteParam);
         jpgWriter.dispose();
     }
+
+
+
+
 
 
     /**

@@ -1,5 +1,8 @@
 package party.threebody.herd.util;
 
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import party.threebody.skean.util.DateTimeFormatters;
@@ -26,7 +29,7 @@ public class ImageConverter {
     private boolean priorToMin; //when min and max constraints conflicts (min>max), prior to min constraint
 
     private double compressQuality;
-    private double minBppEnablingCompression;  // min BPP(bit per pixel) threshold that make compression enabled
+    private double bppThresToTryNoCompress;  // min BPP(bit per pixel) threshold that make compression enabled
 
     private double fixedScaling;
     private boolean scalingPreferSimpleFraction;
@@ -36,7 +39,7 @@ public class ImageConverter {
     private ImageConverter() {
         this.compressQuality = 0.6;
         this.scalingPreferSimpleFraction = true;
-        this.minBppEnablingCompression = 0;
+        this.bppThresToTryNoCompress = 0;
         this.priorToMin = false;
         this.name = DateTimeFormatters.PURENUM_YEAR2SEC.format(LocalDateTime.now());
     }
@@ -80,8 +83,9 @@ public class ImageConverter {
         return this;
     }
 
-    public ImageConverter compressWhenBppExceeds(double bpp) {
-        minBppEnablingCompression = bpp;
+
+    public ImageConverter noCompressIfBppBelow(double bpp) {
+        bppThresToTryNoCompress = bpp;
         return this;
     }
 
@@ -158,24 +162,31 @@ public class ImageConverter {
     }
 
 
-    public void convertAndWriteToJpgFile(File srcImage, File destImage) throws IOException {
-        try (ImageOutputStream destOutStream = new FileImageOutputStream(destImage)) {
-            long bitLen = srcImage.getTotalSpace();
-            BufferedImage bufferedImage = ImageIO.read(srcImage);
-            int w = bufferedImage.getWidth(), h = bufferedImage.getHeight();
-            double bpp = bitLen / (double) w / (double) h;
-            boolean enableCompression = bpp >= minBppEnablingCompression;
-            double scaling = calculateScaling(w, h);
-            logger.info("scaling image ({}x{}) => ({}x{}) by scaling at {}.", w, h, w * scaling, h * scaling, scaling);
-            BufferedImage imageScaled = ImageProcessUtils.scaleImage(bufferedImage, scaling);
-            if (enableCompression) {
-                logger.info("compressing image and saving to {}...", destImage.getPath());
-                ImageProcessUtils.compressToJPG(imageScaled, destOutStream, compressQuality);
-            } else {
-                logger.info("copying image without compression to {}...", destImage.getPath());
-                ImageIO.write(imageScaled, MediaType.JPEG.getSuffix(), destOutStream);
-            }
+
+     public void convertToJPG(File srcImage, File destImage) throws IOException {
+        long bitLen = srcImage.getTotalSpace();
+        BufferedImage bufferedImage = ImageIO.read(srcImage);
+        int w = bufferedImage.getWidth(), h = bufferedImage.getHeight();
+        double bpp = bitLen / (double) w / (double) h;
+         double scaling = calculateScaling(w, h);
+        if (scaling==1 && bpp< bppThresToTryNoCompress){
+            //direct copy instead of scaling & compressing
+            FileUtils.copyFile(srcImage,destImage);
+            logger.info("convertToJPG OK: {} ({}x{}) just direct copy.",
+                    srcImage.getName(),w, h);
+        }else{
+            Thumbnails.of(srcImage)
+                    .scalingMode(ScalingMode.PROGRESSIVE_BILINEAR)
+                    .scale(scaling)
+                    .outputQuality(compressQuality)
+                    .toFile(destImage);
+            int sizePercentToSrc = (int)Math.round(srcImage.getTotalSpace()/(double)bitLen*100);
+            logger.info("convertToJPG OK: {} ({}x{}) => ({}x{}),q={}. {}% size.",
+                    srcImage.getName(),w, h, w * scaling, h * scaling, compressQuality,sizePercentToSrc);
         }
+
     }
+
+
 
 }

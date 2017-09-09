@@ -10,8 +10,9 @@
 			color: red;
 			background: yellow;
 		}
-		#pics-container img{
-			width:18%;
+
+		#pics-container img {
+			width: 18%;
 		}
 	</style>
 	<title>dict-demo2</title>
@@ -20,13 +21,13 @@
 <body>
 	<div id="s4g-body">
 		<div id="pics-container">
-				<i v-for="f in filesWithUrl">
+			<i v-for="m in medias">
 <!-- 					{{f.url.href}} -->
-					<img v-if="  'pic' == f.type" :src="f.url.href">
-					<video v-else width="320" height="240" controls="controls">
+					<img :src="getUrlByHash(m.hash)">
+					<!-- <video v-else width="320" height="240" controls="controls">
   <source :src="f.url.href" />
-</video>
-				</i>	
+</video> -->
+				</i>
 		</div>
 		<el-pagination @size-change="pageSizeChanged" @current-change="pageCurrentChanged"
 		 :current-page="1" :page-sizes="[5,10, 15,20,30, 50, 100]" :page-size="querier.pageSize"
@@ -48,6 +49,8 @@
 	const DL = '&'
 	const urls = {
 		rest: {
+			medias: params => urls.utils.buildQueryUrl(CTX + '/herd/medias', params),
+			repos: CTX + '/herd/repos',
 			files: params => urls.utils.buildQueryUrl(CTX + '/files', params),
 			catalogs: CTX + '/catalogs'
 
@@ -71,7 +74,8 @@
 
 			catalogs: [],
 			files: [],
-			filesCount: 0,
+			medias: [],
+			mediaCount: 0,
 			querier: {
 				orderBy: 'hash', pageIndex: 1, pageSize: 10, criteria: [
 					{ name: 'text', operator: 'contains', value: '' },
@@ -106,14 +110,14 @@
 				return this.files.map(f1 => {
 					//let f1=_.clone(f);
 					f1.url = new URL(f1.relPath, this.catalogs.find(cata => cata.name === f1.catalog).urlPrefix)
-					let isPic=_.some(['jpg','gif','jpeg','png','tiff'],x=>f1.relPath.toLowerCase().endsWith(x));
-					let isVideo= _.some(['mp4'],x=>f1.relPath.toLowerCase().endsWith(x));
-					if (isPic){
-						f1.type='pic';
-					}else if (isVideo){
-						f1.type='video/mp4'
-					}else{
-						f1.type='other'
+					let isPic = _.some(['jpg', 'gif', 'jpeg', 'png', 'tiff'], x => f1.relPath.toLowerCase().endsWith(x));
+					let isVideo = _.some(['mp4'], x => f1.relPath.toLowerCase().endsWith(x));
+					if (isPic) {
+						f1.type = 'pic';
+					} else if (isVideo) {
+						f1.type = 'video/mp4'
+					} else {
+						f1.type = 'other'
 					}
 					return f1;
 				})
@@ -140,10 +144,10 @@
 
 			},
 			loadItems() {
-				Vue.http.get(urls.rest.files(vue.querierRestParams))
+				Vue.http.get(urls.rest.medias(vue.querierRestParams))
 					.then(resp => {
-						vue.filesCount = parseInt(resp.headers.get('X-Total-Count'));
-						vue.files = resp.body;
+						vue.mediaCount = parseInt(resp.headers.get('X-Total-Count'));
+						vue.medias = resp.body;
 						vue.ui.loading = false;
 
 					})
@@ -153,20 +157,20 @@
 			},
 			submitQuerierForm() {
 				this.loadItems();
+			},
+
+			getUrlByHash(hash){
+				return CTX+'/herd/pic2/'+hash+".jpg?cache=1Kq5"
 			}
 
 
 		}
 	});
 
-	Vue.http.get(urls.rest.catalogs)
+	Vue.http.get(urls.rest.repos)
 		.then(resp => {
-			vue.catalogs = resp.body
-			vue.catalogs.forEach(cata => {
-				if (!cata.urlPrefix.endsWith('/')){
-					cata.urlPrefix+='/'
-				}
-			});
+			vue.repos = resp.body
+			
 			vue.ui.loading = false;
 			vue.loadItems();
 		})

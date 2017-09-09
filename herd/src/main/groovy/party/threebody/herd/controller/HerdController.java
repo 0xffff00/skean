@@ -88,12 +88,14 @@ public class HerdController {
 
             case "convert2jpg.1Kq5":
                 ImageConverter JPGC_1Kq5 = ImageConverter.toJPG().name("1Kq5")
-                        .edgeNoLessThan(720).edgeNoMoreThan(720 * 4).compressQuality(0.5);
+                        .edgeNoLessThan(720).edgeNoMoreThan(720 * 4)
+                        .compressQuality(0.5).noCompressIfBppBelow(0.12);
                 afc = herdService.convertToJpgByMedias(medias, LocalDateTime.now(), JPGC_1Kq5);
                 break;
             case "convert2jpg.2Kq7":
                 ImageConverter JPGC_2Kq7 = ImageConverter.toJPG().name("2Kq7")
-                        .edgeNoLessThan(1440).edgeNoMoreThan(1440 * 4).compressQuality(0.7);
+                        .edgeNoLessThan(1440).edgeNoMoreThan(1440 * 4)
+                        .compressQuality(0.7).noCompressIfBppBelow(0.12);
                 afc = herdService.convertToJpgByMedias(medias, LocalDateTime.now(), JPGC_2Kq7);
                 break;
             default:
@@ -104,12 +106,18 @@ public class HerdController {
 
     @ResponseBody
     @GetMapping(value = "/pic2/{hash}.jpg", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> testphoto(@PathVariable String hash) {
+    public ResponseEntity<byte[]> testphoto(@PathVariable String hash,
+                                            @RequestParam(name = "cache", required = false) String cacheCategory) {
         try {
-            byte[] res = herdService.getMediaFileContent(hash);
-            return ResponseEntity.ok().body(res);
+            byte[] res = herdService.getMediaFileContent(hash, cacheCategory);
+            if (res!=null){
+                return ResponseEntity.ok().body(res);
+            }else{
+                return ResponseEntity.notFound().build();
+            }
+
         } catch (IOException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         }
 
     }

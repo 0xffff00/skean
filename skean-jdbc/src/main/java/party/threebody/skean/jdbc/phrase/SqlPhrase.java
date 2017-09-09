@@ -1,5 +1,7 @@
 package party.threebody.skean.jdbc.phrase;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -49,15 +51,20 @@ public class SqlPhrase extends DefaultRootPhrase {
 		}
 		if (val.length == 1) {
 			Object v0 = val[0];
-			if (v0 instanceof Map) {
-				return argMap((Map<String, Object>) v0);
+			if (v0 == null) {
+				argMap(Collections.emptyMap());
 			}
-			if (!(v0 instanceof Number) && !(v0 instanceof String)) {
-				return argObj(v0);
+			if (v0 instanceof Map) {
+				argMap((Map<String, Object>) v0);
+			}
+
+			if (v0 instanceof Collection) {
+				argArr(val);
 			}
 			if (JavaBeans.instanceOfSimpleType(v0)) {
-				return argArr(val);
+				argArr(val);
 			}
+			argObj(val);
 		}
 		return argArr(val);
 	}
