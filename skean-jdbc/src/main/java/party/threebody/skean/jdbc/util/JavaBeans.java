@@ -112,7 +112,7 @@ public class JavaBeans {
         return false;
     }
 
-    public static boolean isSimpleTypeOf(Object v) {
+    public static boolean instanceOfSimpleType(Object v) {
         return (v instanceof Number) || (v instanceof String) || (v instanceof Character) ||
                 (v instanceof Date) || (v instanceof Temporal) || (v instanceof Boolean);
 

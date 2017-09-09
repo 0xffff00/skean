@@ -94,7 +94,7 @@ public class DictController {
 
 	@GetMapping("/words")
 	public ResponseEntity<List<Word>> listWords(@RequestParam Map<String, String> reqestParamMap) {
-		return ControllerUtils.respondListAndCount(reqestParamMap, wordService::listWords, wordService::countWords);
+		return ControllerUtils.respondListAndCountByPLOC(reqestParamMap, wordService::listWords, wordService::countWords);
 	}
 
 	@GetMapping("/words/{text}")

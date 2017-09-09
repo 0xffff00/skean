@@ -1,6 +1,7 @@
 package party.threebody.herd.dao
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.MediaPath
@@ -17,8 +18,6 @@ class MediaPathDao extends DualPKCrudDAO<MediaPath, String, String> {
     @Autowired
     ChainedJdbcTemplate cjt
 
-    @Autowired
-    NamedParameterJdbcTemplate njt
 
     @Override
     protected String getTable() {
@@ -49,18 +48,18 @@ class MediaPathDao extends DualPKCrudDAO<MediaPath, String, String> {
     }
 
     List<MediaPath> listByRepoNames(List<String> repoNames){
-        def sql="SELECT * FROM hd_media_path WHERE repo_name in (:repoNames)"
-        njt.queryForList(sql, [repoNames:repoNames], MediaPath.class)
-
+        fromTable().by('repo_name').val([repoNames]).list(MediaPath.class)
     }
 
+
     List<MediaPath> listBySyncTime(LocalDateTime syncTime){
-        fromTable().by('sync_time').val(syncTime).list()
+        fromTable().by('sync_time').val(syncTime).list(MediaPath.class)
     }
 
     int deleteByRepoNames(List<String> repoNames){
-        def sql="DELETE FROM hd_media_path WHERE repo_name in (:repoNames)"
-        njt.update(sql, [repoNames:repoNames])
+        def repoName_IN=CriteriaUtils.buildClauseOfInStrs('repo_name',repoNames)
+        def sql="DELETE FROM hd_media_path WHERE $repoName_IN"
+        cjt.sql(sql).execute()
     }
 
 

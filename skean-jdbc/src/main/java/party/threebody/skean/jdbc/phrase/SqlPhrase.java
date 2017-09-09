@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
+import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.jdbc.util.SqlAndArgs;
 
 public class SqlPhrase extends DefaultRootPhrase {
@@ -53,6 +54,9 @@ public class SqlPhrase extends DefaultRootPhrase {
 			}
 			if (!(v0 instanceof Number) && !(v0 instanceof String)) {
 				return argObj(v0);
+			}
+			if (JavaBeans.instanceOfSimpleType(v0)) {
+				return argArr(val);
 			}
 		}
 		return argArr(val);

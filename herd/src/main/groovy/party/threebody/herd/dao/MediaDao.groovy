@@ -1,11 +1,12 @@
 package party.threebody.herd.dao
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.Media
-import party.threebody.herd.domain.MediaPath
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
+import party.threebody.skean.jdbc.util.CriteriaUtils
 import party.threebody.skean.mvc.dao.SinglePKCrudDAO
 
 import java.time.LocalDateTime
@@ -39,23 +40,36 @@ class MediaDao extends SinglePKCrudDAO<Media, String> {
     }
 
     List<Media> listAll() {
-        def sql='''
+        def sql = '''
 SELECT m.*,
        (SELECT p.path FROM hd_media_path p WHERE p.hash=m.hash LIMIT 1) path0Path
 FROM hd_media m
 '''
-        cjt.arg(repoName).list()
+        cjt.sql(sql).list(Media.class)
     }
 
 
-    List<Media> listBySyncTime(LocalDateTime syncTime){
-        def sql='''
+    List<Media> listBySyncTime(LocalDateTime syncTime) {
+        def sql = '''
 SELECT m.*,
        (SELECT p.path FROM hd_media_path p WHERE p.hash=m.hash LIMIT 1) path0Path
 FROM hd_media m
-WHERE sync_time=:syncTime
+WHERE sync_time=?
 '''
-        njt.queryForList(sql,[syncTime:syncTime])
+        cjt.sql(sql).arg(syncTime).list(Media.class)
     }
+
+    List<Media> listByHashs(Collection<String> hashs) {
+        def hash_IN=CriteriaUtils.buildClauseOfInStrs('hash',hashs)
+        def sql = """
+SELECT m.*,
+       (SELECT p.path FROM hd_media_path p WHERE p.hash=m.hash LIMIT 1) path0Path
+FROM hd_media m
+WHERE $hash_IN
+"""
+       cjt.sql(sql).list(Media.class)
+
+    }
+
 
 }

@@ -4,6 +4,7 @@ package party.threebody.herd.domain;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 public class ImageMedia {
     protected String hash;
@@ -92,6 +93,22 @@ public class ImageMedia {
             this.exifAperture = exifAperture;
         }
     }
+
+    //equals & hashs
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageMedia that = (ImageMedia) o;
+        return Objects.equals(hash, that.hash);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hash);
+    }
+
 
     //getters & setters
 
