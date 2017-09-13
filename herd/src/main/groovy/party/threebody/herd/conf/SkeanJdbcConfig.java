@@ -8,12 +8,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
-import party.threebody.skean.jdbc.ChainedJdbcTemplate;
-import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
-import party.threebody.skean.jdbc.SqlPrinter;
-import party.threebody.skean.jdbc.phrase.SqlBuilder;
-import party.threebody.skean.jdbc.phrase.SqlBuilderConfig;
-import party.threebody.skean.jdbc.phrase.SqlBuilderMysqlImpl;
+import party.threebody.skean.core.jdbc.ChainedJdbcTemplate;
+import party.threebody.skean.core.jdbc.ChainedJdbcTemplateContext;
+import party.threebody.skean.core.jdbc.SqlPrinter;
+import party.threebody.skean.core.jdbc.phrase.SqlBuilder;
+import party.threebody.skean.core.jdbc.phrase.SqlBuilderConfig;
+import party.threebody.skean.core.jdbc.phrase.SqlBuilderMysqlImpl;
 
 import javax.sql.DataSource;
 

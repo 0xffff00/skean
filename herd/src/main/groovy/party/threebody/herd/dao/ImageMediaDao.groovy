@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.ImageMedia
-import party.threebody.herd.domain.Media
-import party.threebody.skean.jdbc.ChainedJdbcTemplate
+import party.threebody.skean.core.jdbc.ChainedJdbcTemplate
 import party.threebody.skean.mvc.dao.SinglePKCrudDAO
 
 @Repository

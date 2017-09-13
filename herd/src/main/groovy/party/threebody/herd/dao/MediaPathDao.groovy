@@ -1,13 +1,10 @@
 package party.threebody.herd.dao
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.BeanPropertyRowMapper
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.MediaPath
-import party.threebody.skean.core.query.BasicCriterion
-import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.jdbc.util.CriteriaUtils
+import party.threebody.skean.core.jdbc.ChainedJdbcTemplate
+import party.threebody.skean.core.jdbc.util.CriteriaUtils
 import party.threebody.skean.mvc.dao.DualPKCrudDAO
 
 import java.time.LocalDateTime

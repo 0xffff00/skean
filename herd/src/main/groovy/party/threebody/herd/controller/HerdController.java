@@ -12,7 +12,7 @@ import party.threebody.herd.util.ImageConverter;
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.mvc.generic.AffectCount;
 import party.threebody.skean.mvc.generic.ControllerUtils;
-import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
+import party.threebody.skean.core.query.QueryParamsBuildUtils;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

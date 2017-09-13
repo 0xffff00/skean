@@ -3,7 +3,7 @@ package party.threebody.skean.mvc.generic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import party.threebody.skean.core.query.QueryParamsSuite;
-import party.threebody.skean.jdbc.ChainedJdbcTemplate;
+import party.threebody.skean.core.jdbc.ChainedJdbcTemplate;
 
 import java.util.List;
 import java.util.Map;

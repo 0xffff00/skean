@@ -13,11 +13,11 @@ import party.threebody.herd.util.ImageConverter;
 import party.threebody.herd.util.ImageMetaUtils;
 import party.threebody.herd.util.MediaType;
 import party.threebody.herd.util.RepoFileTypeUtils;
-import party.threebody.skean.SkeanException;
+import party.threebody.skean.core.SkeanException;
 import party.threebody.skean.core.query.QueryParamsSuite;
-import party.threebody.skean.mvc.generic.AffectCount;
-import party.threebody.skean.mvc.generic.AffectCounter;
-import party.threebody.skean.util.DateTimeFormatters;
+import party.threebody.skean.core.result.Count;
+import party.threebody.skean.core.result.Counts;
+import party.threebody.skean.lang.DateTimeFormatters;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,14 +26,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.stream.Collectors.*;
@@ -109,41 +107,41 @@ public class HerdService {
 
 
     //-----------sync logic ----------------
-    public AffectCount clearAll() {
+    public Count clearAll() {
         int rnd = 0;
         rnd += mediaPathDao.deleteSome(null);
         rnd += mediaDao.deleteSome(null);
         rnd += imageMediaDao.deleteSome(null);
-        return AffectCount.ofOnlyDeleted(rnd);
+        return Counts.deleted(rnd);
     }
 
 
-    public AffectCount clearMediaPaths(List<Repo> repos) {
+    public Count clearMediaPaths(List<Repo> repos) {
         LocalDateTime actionTime = LocalDateTime.now();
         logger.info("clearing MediaPaths @ {} ...", actionTime);
-        AffectCount afc = AffectCount.ofOnlyDeleted(mediaPathDao.deleteByRepoNames(repos.stream().map(Repo::getName).collect(toList())));
-        logger.info(afc.toString("MediaPath"));
+        Count afc = Counts.of(MediaPath.class).deleted(mediaPathDao.deleteByRepoNames(repos.stream().map(Repo::getName).collect(toList())));
+        logger.info(afc.toString());
         createRepoLogByRepos(actionTime, "clearMediaPaths", repos, afc);
         return afc;
     }
 
-    public AffectCount clearMedias(List<Repo> repos) {
+    public Count clearMedias(List<Repo> repos) {
         LocalDateTime actionTime = LocalDateTime.now();
-        logger.info("clearing Medias @ {} ...", actionTime);
+        logger.info("clearMedias @ {} ...", actionTime);
         List<Media> medias = listMediasByRepoNames(repos.stream().map(Repo::getName).collect(toList()));
-        AffectCount afc = AffectCount.ofOnlyDeleted(medias.stream().mapToInt(mediaDao::deleteByExample).sum());
-        logger.info(afc.toString("Media"));
+        Count afc = Counts.of(Media.class).deleted(medias.stream().mapToInt(mediaDao::deleteByExample).sum());
+        logger.info(afc.toString());
         createRepoLogByRepos(actionTime, "clearMedias", repos, afc);
         return afc;
     }
 
-    public AffectCount clearImageMedias(List<Repo> repos) {
+    public Count clearImageMedias(List<Repo> repos) {
         LocalDateTime actionTime = LocalDateTime.now();
-        logger.info("clearing MediaPaths @ {} ...", actionTime);
+        logger.info("clearImageMedias @ {} ...", actionTime);
         List<Media> medias = listMediasByRepoNames(repos.stream().map(Repo::getName).collect(toList()));
         int rnd = medias.stream().map(Media::getHash).mapToInt(imageMediaDao::delete).sum();
-        AffectCount afc = AffectCount.ofOnlyDeleted(rnd);
-        logger.info(afc.toString("ImageMedia"));
+        Count afc = Counts.of(ImageMedia.class).deleted(rnd);
+        logger.info(afc.toString());
         createRepoLogByRepos(actionTime, "clearImageMedias", repos, afc);
         return afc;
     }
@@ -157,15 +155,14 @@ public class HerdService {
      * @param repos
      * @return
      */
-    public AffectCount synchonizeAndAnalyzeAll(List<Repo> repos) {
+    public List<Count> synchonizeAndAnalyzeAll(List<Repo> repos) {
         final LocalDateTime syncTime = LocalDateTime.now();
-        AffectCount count = new AffectCount();
-        count = count.add(synchonizeMediaPaths(repos, syncTime));
+        List<Count> cnt1 = synchonizeMediaPaths(repos, syncTime);
         List<MediaPath> newMediaPaths = listMediaPathsBySyncTime(syncTime);
-        count = count.add(synchonizeMedias(newMediaPaths, syncTime));
+        Count cnt2 = synchonizeMedias(newMediaPaths, syncTime);
         List<Media> newMedias = listMediasBySyncTime(syncTime);
-        count = count.add(analyzeMedias(newMedias, syncTime));
-        return count;
+        Count cnt3 = analyzeMedias(newMedias, syncTime);
+        return Stream.of(cnt1,Arrays.asList(cnt2,cnt3)).flatMap(List::stream).collect(toList());
     }
 
 
@@ -173,12 +170,14 @@ public class HerdService {
      * scan and hash all files in all repos, and record hash and path to MediaPath data
      * >>>data flow: Repo -> MediaPath
      *
-     * @return MediaPath's AffectCount
+     * @return MediaPath's Count
      */
-    public AffectCount synchonizeMediaPaths(List<Repo> repos, LocalDateTime syncTime) {
+    public List<Count> synchonizeMediaPaths(List<Repo> repos, LocalDateTime syncTime) {
         logger.info("synchonizing MediaPaths @ {} ...", DateTimeFormatters.DEFAULT.format(syncTime));
         final long t0 = currentTimeMillis();
         final AtomicInteger totalFiles = new AtomicInteger();
+        final AtomicInteger totalFilesToHash = new AtomicInteger();
+        final AtomicInteger totalFilesToHashFailed = new AtomicInteger();
         final AtomicLong totalSizeInBytes = new AtomicLong();
         final List<MediaPath> mediaPathsToHashes = new ArrayList<>();
         final Set<String> oldPathStrs = listMediaPaths().stream().map(mp -> mp.getPath()).collect(Collectors.toSet());
@@ -188,9 +187,10 @@ public class HerdService {
             logger.info("scanning repo[{}] ...", repo.getName());
             Path pRoot = Paths.get(repo.getAbsPath());
             try {
-                final int numFiles = (int) Files.walk(pRoot).filter(fileFilter).count();
-                totalFiles.addAndGet(numFiles);
+                final int n = (int) Files.walk(pRoot).filter(fileFilter).count();
+                totalFiles.addAndGet(n);
                 AtomicInteger i = new AtomicInteger();
+                AtomicInteger j = new AtomicInteger();
                 Files.walk(pRoot).filter(fileFilter).forEach(path -> {
                     long t1 = currentTimeMillis();
                     try {
@@ -198,35 +198,46 @@ public class HerdService {
                         totalSizeInBytes.addAndGet(Files.size(path));
                         mediaPathsToHashes.add(new MediaPath(hash, path.toString(), null, repo.getName(), syncTime));
                         logger.info("[{}/{}] hashed, {}ms used : {} << {}",
-                                i.incrementAndGet(), numFiles, System.currentTimeMillis() - t1, hash, path);
+                                i.incrementAndGet(), n, System.currentTimeMillis() - t1, hash, path);
                     } catch (IOException e) {
+                        j.incrementAndGet();
                         createRepoLogWhenFail(syncTime, "syncMediaPaths.hash", "absPath", path.toString(), e);
                         logger.warn("[{}/{}] hash failed! {}ms used : {} ",
-                                i.incrementAndGet(), numFiles, System.currentTimeMillis() - t1, e.getMessage());
+                                i.incrementAndGet(), n, System.currentTimeMillis() - t1, e.getMessage());
                     }
                 });
+                totalFiles.addAndGet(n);
+                totalFilesToHash.addAndGet(i.get());
+                totalFilesToHashFailed.addAndGet(j.get());
             } catch (IOException e) {
                 throw new SkeanException("fail to scan repo: " + repo.getName(), e);
             }
         });
         logger.info("scanning finished: {} files found; {} bytes in all files.",
                 totalFiles.get(), totalSizeInBytes.get());
-
-        int rns = mediaPathsToHashes.size();
-        int rnc = mediaPathsToHashes.stream().map(mp -> {
-            int rnc1 = 0;
+        Count hashCnt = Counts.of("FileToHash")
+                .completed(totalFilesToHash.get())
+                .failed(totalFilesToHashFailed.get())
+                .skipped(totalFiles.get() - totalFilesToHash.get()).since(t0);
+        final long t1 = currentTimeMillis();
+        int totalMediaPaths = mediaPathsToHashes.size();
+        int totalMediaPathsCreated = mediaPathsToHashes.stream().map(mp -> {
             try {
-                rnc1 = mediaPathDao.create(mp);
+                return mediaPathDao.create(mp);
             } catch (Exception e) {
                 createRepoLogWhenFail(syncTime, "syncMediaPaths.createMP", "absPath", mp.getPath(), e);
                 logger.warn("create MediaPath failed : " + mp.getPath(), e);
+                return 0;
             }
-            return rnc1;
         }).reduce((s, a) -> s + a).orElse(0);
-        AffectCount afc = new AffectCount(rnc, 0, 0, rns - rnc, 0).tillNow(t0);
-        logger.info(afc.toString("MediaPath"));
-        createRepoLogByRepos(syncTime, "syncMediaPaths", repos, afc);
-        return afc;
+
+        Count mpCnt = Counts.of("MediaPath")
+                .created(totalMediaPathsCreated)
+                .failed(totalMediaPaths - totalMediaPathsCreated).since(t1);
+        createRepoLogByRepos(syncTime, "syncMediaPaths", repos, mpCnt);
+        logger.info(mpCnt.toString());
+        logger.info(mpCnt.toString());
+        return Counts.merge(hashCnt, mpCnt);
     }
 
 
@@ -234,10 +245,10 @@ public class HerdService {
      * according to MediaPaths, rebuild Media data
      * >>>data flow: MediaPath -> Media
      *
-     * @return Media's AffectCount
+     * @return Media's Count
      */
     @Transactional
-    public AffectCount synchonizeMedias(List<MediaPath> mediaPaths, LocalDateTime syncTime) {
+    public Count synchonizeMedias(List<MediaPath> mediaPaths, LocalDateTime syncTime) {
         logger.info("synchonizing Medias @ {} ...", DateTimeFormatters.DEFAULT.format(syncTime));
         Map<String, Set<String>> hash2pathsMap = mediaPaths.stream()
                 .collect(
@@ -246,28 +257,31 @@ public class HerdService {
                                 mapping(MediaPath::getPath, toSet())
                         )
                 );
-        final int mediaPathCnt = mediaPaths.size();
-        final int hashCnt = hash2pathsMap.keySet().size();
-        final AffectCounter counter = new AffectCounter();
-        hash2pathsMap.forEach((hash, paths) -> {
-            String path0 = paths.iterator().next();
-            AffectCount afc = synchonizeMedia(hash, path0, syncTime);
-            counter.addAndGet(afc);
-            logger.debug("[{}/{}] : {}", counter.result().total(), hashCnt, path0);
-        });
-        logger.debug("{} mediaPaths found. {} redundant files found.", mediaPathCnt, mediaPathCnt - hashCnt);
-        logger.info("synchonize Medias finished. {}", counter.result().toString("Media"));
-        createRepoLog(syncTime, "syncMediaPaths", "", "", "OK", counter.result().toString());
-        return counter.result();
+        final int totalMediaPath = mediaPaths.size();
+        final int totalHashs = hash2pathsMap.keySet().size();
+        AtomicInteger i = new AtomicInteger();
+        Count cnt=hash2pathsMap.keySet().stream()
+                .map(hash -> {
+                    String path0 = hash2pathsMap.get(hash).iterator().next();
+                    logger.debug("[{}/{}] : {}", i.incrementAndGet(), totalHashs, path0);
+                    return synchonizeMedia(hash, path0, syncTime);
+                })
+                .reduce(Counts.of(Media.class),Count::add)
+                .skipped(totalMediaPath - totalHashs);
+
+        logger.debug("{} mediaPaths found. {} redundant files found.", totalMediaPath, totalMediaPath - totalHashs);
+        logger.info("synchonize Medias finished. {}", cnt);
+        createRepoLog(syncTime, "syncMediaPaths", "", "", "OK", cnt);
+        return cnt;
     }
 
 
     /**
      * save Media if not exists
      */
-    private AffectCount synchonizeMedia(String hash, String pathStr, LocalDateTime syncTime) {
+    private Count synchonizeMedia(String hash, String pathStr, LocalDateTime syncTime) {
         long t1 = currentTimeMillis();
-        int rnc = 0;
+        int rnd = 0;
         try {
             Media old = mediaDao.readOne(hash);
             if (old == null) {
@@ -277,43 +291,43 @@ public class HerdService {
                 media.setTypeAndSubtype(RepoFileTypeUtils.guessRepoFileTypeByPath(path));
                 media.setSize((int) Files.size(path));
                 media.setSyncTime(syncTime);
-                rnc = mediaDao.create(media);
+                rnd = mediaDao.create(media);
             }
-            return AffectCount.ofOnlyCreated(rnc).tillNow(t1);
+            return Counts.deleted(rnd).since(t1);
         } catch (Exception e) {
             createRepoLogWhenFail(syncTime, "synchonizeMedia", "absPath", pathStr, e);
-            return AffectCount.ONE_FAILED.tillNow(t1);
+            return Counts.failedOne().since(t1);
         }
     }
 
     /**
      * >>>data flow: MediaPath -> ImageMedia or else alike
      */
-    public AffectCount analyzeMedias(List<Media> medias, LocalDateTime analyzeTime) {
+    public Count analyzeMedias(List<Media> medias, LocalDateTime analyzeTime) {
         logger.info("analyzing Medias @ {} ...", DateTimeFormatters.DEFAULT.format(analyzeTime));
         List<String> mediaHashs = medias.stream().map(Media::getHash).collect(toList());
         List<ImageMedia> mediasAnalyzed = imageMediaDao.listByHashs(mediaHashs);
-        List<Media> mediasUnanalzed = medias.stream().filter(m -> !mediasAnalyzed.contains(m)).collect(toList());
+        List<Media> mediasUnanalyzed = medias.stream().filter(m -> !mediasAnalyzed.contains(m)).collect(toList());
 
         final AtomicInteger i = new AtomicInteger();
-        final int mediaCnt = mediasUnanalzed.size();
-        AffectCount count = mediasUnanalzed.stream()
+        final int totalMediasUnanalyzed = mediasUnanalyzed.size();
+        Count cnt = mediasUnanalyzed.stream()
                 .map(m -> {
-                    AffectCount afc = analyzeMedia(m, analyzeTime);
-                    logger.debug("[{}/{}] analyzed : {}", i.incrementAndGet(), mediaCnt, m.getPath0Path());
-                    return afc;
+                    Count cnt1 = analyzeMedia(m, analyzeTime);
+                    logger.debug("[{}/{}] analyzed : {}", i.incrementAndGet(), totalMediasUnanalyzed, m.getPath0Path());
+                    return cnt1;
                 })
-                .reduce(AffectCount::add)
-                .orElse(AffectCount.NOTHING);
-        logger.info("analyzing finished. {}", count.toString("ImageMedia"));
-        createRepoLog(analyzeTime, "analyzeMedias", "", "", "OK", count.toString());
-        return count;
+                .reduce(Counts.of("MediasToAnalyze"),Count::add)
+                .skipped(mediasAnalyzed.size());
+        logger.info("analyze Medias finished. {}", cnt);
+        createRepoLog(analyzeTime, "analyzeMedias", "", "", "OK", cnt);
+        return cnt;
     }
 
     /**
      * analyze the file and save its metadata if not exists
      */
-    public AffectCount analyzeMedia(Media media, LocalDateTime analyzeTime) {
+    public Count analyzeMedia(Media media, LocalDateTime analyzeTime) {
         final long t1 = currentTimeMillis();
         final String hash = media.getHash();
         final String absPath = media.getPath0Path();   //regard as absPath
@@ -322,45 +336,45 @@ public class HerdService {
             ImageMedia imageMedia = ImageMetaUtils.parseExifInfo(inputStream);
             imageMedia.setHash(hash);
             imageMediaDao.create(imageMedia);
-            return AffectCount.ONE_CREATED.tillNow(t1);
+            return Counts.createdOne().since(t1);
         } catch (Exception e) {
             createRepoLogWhenFail(analyzeTime, "analyzeMedia", "hash", hash, e);
-            return AffectCount.ONE_FAILED.tillNow(t1);
+            return Counts.failedOne().since(t1);
         }
 
     }
 
 
-    public AffectCount convertToJpgByMedias(List<Media> medias, LocalDateTime convertTime, ImageConverter converter) {
+    public Count convertToJpgByMedias(List<Media> medias, LocalDateTime convertTime, ImageConverter converter) {
         final int mediaCnt = medias.size();
         final AtomicInteger i = new AtomicInteger();
         final String localThumbnailRepoPath = getHerdLocalThumbnailRepoPath();
         final Path destDirPath = Paths.get(localThumbnailRepoPath, converter.getName());
         makeSureDirectoryExists(destDirPath);
         logger.info("thumbing Medias ...");
-        AffectCount count = medias.stream().map(m -> {
+        Count cnt = medias.stream()
+                .map(m -> {
             File srcFile = Paths.get(m.getPath0Path()).toFile();
             String fileName = m.getHash() + "." + MediaType.JPEG.getSuffix();
             File destFile = destDirPath.resolve(fileName).toFile();
             logger.debug("[{}/{}] converted to JPG : {}", i.incrementAndGet(), mediaCnt, m.getPath0Path());
             return convertToJPG(srcFile, destFile, convertTime, converter);
         })
-                .reduce(AffectCount::add)
-                .orElse(AffectCount.NOTHING);
-        logger.info("convert to JPG finished. {}", count.toString("JPG File"));
-        createRepoLog(convertTime, "convertToJpgs", "converter", converter.getName(), "OK", count.toString());
-        return count;
+                .reduce(Counts.of("ImagesToConvert"),Count::add);
+        logger.info("convert to JPG finished. {}", cnt);
+        createRepoLog(convertTime, "convertToJpgs", "converter", converter.getName(), "OK", cnt);
+        return cnt;
 
     }
 
-    public AffectCount convertToJPG(File srcImage, File destImage, LocalDateTime convertTime, ImageConverter converter) {
+    public Count convertToJPG(File srcImage, File destImage, LocalDateTime convertTime, ImageConverter converter) {
         final long t1 = currentTimeMillis();
         try {
             converter.convertToJPG(srcImage, destImage);
-            return AffectCount.ONE_CREATED.tillNow(t1);
+            return Counts.append("converted",1).since(t1);
         } catch (Exception e) {
             createRepoLogWhenFail(convertTime, "convertToJPG", "path", srcImage.getPath(), e);
-            return AffectCount.ONE_FAILED.tillNow(t1);
+            return Counts.failedOne().since(t1);
         }
     }
 
@@ -389,8 +403,8 @@ public class HerdService {
      * @param desc       desciption
      * @return RNA
      */
-    private int createRepoLog(LocalDateTime actionTime, String actionType, String entityKey, String entityVal, String result, String desc) {
-        RepoLogItem repoLogItem = new RepoLogItem(actionTime, actionType, entityKey, entityVal, result, desc);
+    private int createRepoLog(LocalDateTime actionTime, String actionType, String entityKey, String entityVal, String result, Object desc) {
+        RepoLogItem repoLogItem = new RepoLogItem(actionTime, actionType, entityKey, entityVal, result, Objects.toString(desc));
         return repoLogItemDao.create(repoLogItem);
     }
 
@@ -398,7 +412,7 @@ public class HerdService {
         return createRepoLog(actionTime, actionType, entityKey, entityVal, "FAIL", e.getMessage());
     }
 
-    private int createRepoLogByRepos(LocalDateTime actionTime, String actionType, List<Repo> repos, AffectCount afc) {
+    private int createRepoLogByRepos(LocalDateTime actionTime, String actionType, List<Repo> repos, Count afc) {
         String repoNames = repos.stream().map(Repo::getName).reduce((s, a) -> s + ", " + a).orElse("");
         return createRepoLog(actionTime, actionType, "repoNames", repoNames, "OK", afc.toString());
     }
@@ -408,7 +422,7 @@ public class HerdService {
             Path p = Paths.get(getHerdLocalThumbnailRepoPath(),
                     cacheCategory, hash + "." + MediaType.JPEG.getSuffix());
             if (Files.isRegularFile(p)) {
-                logger.debug("read file from CACHE: {}",p.toString());
+                logger.debug("read file from CACHE: {}", p.toString());
                 return Files.readAllBytes(p);
             }
         }
@@ -416,7 +430,7 @@ public class HerdService {
         for (String pathStr : pathStrs) {
             Path p = Paths.get(pathStr);
             if (Files.exists(p)) {
-                logger.debug("read file from ORIGIN: {}",p.toString());
+                logger.debug("read file from ORIGIN: {}", p.toString());
                 return Files.readAllBytes(p);
             }
         }

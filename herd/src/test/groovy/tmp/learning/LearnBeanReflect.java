@@ -1,7 +1,7 @@
 package tmp.learning;
 
 import party.threebody.herd.domain.ImageMedia;
-import party.threebody.skean.jdbc.util.JavaBeans;
+import party.threebody.skean.core.jdbc.util.JavaBeans;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;

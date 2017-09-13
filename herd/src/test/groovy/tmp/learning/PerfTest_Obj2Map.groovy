@@ -2,7 +2,7 @@ package tmp.learning
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.beanutils.BeanUtils
-import party.threebody.skean.util.ObjectMappers
+import party.threebody.skean.lang.ObjectMappers
 
 import java.util.function.Function
 

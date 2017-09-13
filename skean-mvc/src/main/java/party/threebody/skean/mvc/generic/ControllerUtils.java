@@ -3,7 +3,7 @@ package party.threebody.skean.mvc.generic;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import party.threebody.skean.core.query.QueryParamsSuite;
-import party.threebody.skean.mvc.util.QueryParamsBuildUtils;
+import party.threebody.skean.core.query.QueryParamsBuildUtils;
 
 import java.util.List;
 import java.util.Map;
