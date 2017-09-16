@@ -37,9 +37,12 @@ configure(subprojects) { project ->
 
             //others
             'guava'               : '21.0',
-            'jackson'             : '2.8.8',
+            'jackson'             : '2.9.1',
             'ehcache'             : '3.3.1',
-            'junit'               : '4.12'
+            'junit'               : '4.12',
+            'mysql-connector-java': '6.0.6',
+            'mariadb-java-client' : '2.1.1',
+            'HikariCP'            : '2.7.1'
     ]
 
     repositories {
@@ -93,7 +96,6 @@ configure(subprojects) { project ->
         options.encoding = 'UTF-8'
         options.compilerArgs += "-parameters"
     }
-
 
 //    compileGroovy?.options.encoding = 'UTF-8'
 //    compileTestGroovy?.options.encoding = 'UTF-8'

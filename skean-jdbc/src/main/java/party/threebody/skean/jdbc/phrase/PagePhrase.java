@@ -1,6 +1,7 @@
 package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
+import party.threebody.skean.jdbc.DualColsBean;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,13 @@ public class PagePhrase implements Phrase {
 	public <T> List<T> list(RowMapper<T> rowMapper) {
 		return root.list(rowMapper);
 	}
-	
+	public <T> List<T> listOfSingleCol(Class<T> columnType) {
+		return root.listOfSingleCol(columnType);
+	}
+
+	public <F0, F1> List<DualColsBean<F0, F1>> listOfDualCols(Class<F0> col0Clazz, Class<F1> col1Clazz) {
+		return root.listOfDualCols(col0Clazz, col1Clazz);
+	}
 	public Map<String, Object> first() {
 		return root.first();
 	}

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import party.threebody.herd.domain.ImageMedia;
 import party.threebody.herd.domain.Media;
 import party.threebody.herd.domain.MediaPath;
 import party.threebody.herd.domain.Repo;
@@ -101,6 +102,18 @@ public class HerdController {
             default:
         }
         return ResponseEntity.badRequest().body(res);
+    }
+
+    @GetMapping("/imageMedias")
+    public ResponseEntity<List<ImageMedia>> listImageMedias(@RequestParam Map<String, String> reqestParamMap) {
+        return ControllerUtils.respondListAndCountByPLOx(reqestParamMap,
+                herdService::listImageMedias, herdService::countImageMedias);
+    }
+
+    @GetMapping("/imageMedias/count")
+    @ResponseBody
+    public Object countImageMediasByGroup() {
+        return herdService.countImageMediasByDate();
     }
 
 

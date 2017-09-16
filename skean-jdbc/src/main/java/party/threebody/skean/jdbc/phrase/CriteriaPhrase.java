@@ -49,7 +49,7 @@ public class CriteriaPhrase implements Phrase {
 	}
 	
 	public <T> List<T> listOfSingleColumn(Class<T> columnType){
-		return root.listOfSingleColumn(columnType);
+		return root.listOfSingleCol(columnType);
 	}
 
 	public Map<String, Object> first() {

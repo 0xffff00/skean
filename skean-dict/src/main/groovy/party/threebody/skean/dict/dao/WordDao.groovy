@@ -26,7 +26,7 @@ SELECT a.w FROM (
 		
 ) a WHERE a.w NOT IN (SELECT `text`  FROM dct_word)
 		'''
-		cjt.sql(sql).listOfSingleColumn(String.class)
+		cjt.sql(sql).listOfSingleCol(String.class)
 	}
 
 	List<AliasRel> listAliasRels(){

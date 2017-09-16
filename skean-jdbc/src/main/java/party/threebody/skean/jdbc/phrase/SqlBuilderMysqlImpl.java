@@ -47,25 +47,33 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
             throw new ChainedJdbcTemplateException("illegal phrase 'affect' for SELECT SQL building.");
         }
         // PRINT>>>> SELECT... FROM...
-        // Handle 'select()'
-        if (p.seCols != null) {
-            sels = joinNamesByComma(p.seCols, nq);
-        } else if (p.enableCount) {
-            sels = "count(*) cnt"; // simple counting col
-        }
-        sql.append("SELECT ").append(sels).append(BL);
-        if (sels.length() > conf.getMaxCharsOfInlineSelCols()) {
-            sql.append(dlmt);
-        }
-        sql.append("FROM ").append(nq).append(p.table).append(nq).append(BL);
-        if (p.enableCount) {
-            if (p.tableAlias == null && p.seCols == null) {
-                p.tableAlias = "t";
+
+        if (p.originSelectSql == null) {
+            // Handle 'from()','select()'
+            if (p.seCols != null) {
+                sels = joinNamesByComma(p.seCols, nq);
+            } else if (p.enableCount) {
+                sels = "count(*) cnt"; // simple counting col
             }
+
+            sql.append("SELECT ").append(sels).append(BL);
+            if (sels.length() > conf.getMaxCharsOfInlineSelCols()) {
+                sql.append(dlmt);
+            }
+            sql.append("FROM ").append(nq).append(p.table).append(nq).append(BL);
+            if (p.enableCount) {
+                if (p.tableAlias == null && p.seCols == null) {
+                    p.tableAlias = "t";
+                }
+            }
+            if (p.tableAlias != null) {
+                sql.append(p.tableAlias).append(BL);
+            }
+        } else {
+            // Handle 'fromSql()'
+            sql.append(p.originSelectSql).append(BL);
         }
-        if (p.tableAlias != null) {
-            sql.append(p.tableAlias).append(BL);
-        }
+
 
         // PRINT>>>> WHERE...
         ClauseAndArgs wherePart = buildWhereClauseAndArgs(p);

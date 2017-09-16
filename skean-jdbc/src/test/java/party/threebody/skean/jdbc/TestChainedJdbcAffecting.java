@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import party.threebody.skean.util.Maps;
+import party.threebody.skean.collections.Maps;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

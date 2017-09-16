@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
+import party.threebody.skean.jdbc.DualColsBean;
+import party.threebody.skean.jdbc.DualColsBeanRowMapper;
 import party.threebody.skean.jdbc.util.SqlAndArgs;
 
 public abstract class DefaultRootPhrase implements RootPhrase {
@@ -31,8 +33,12 @@ public abstract class DefaultRootPhrase implements RootPhrase {
 		return listInternal(sa.getSql(), sa.getArgs(), rowMapper);
 	}
 
-	public <T> List<T> listOfSingleColumn(Class<T> columnType) {
+	public <T> List<T> listOfSingleCol(Class<T> columnType) {
 		return list(SingleColumnRowMapper.newInstance(columnType));
+	}
+
+	public <F0,F1> List<DualColsBean<F0,F1>> listOfDualCols(Class<F0> col0Clazz,Class<F1> col1Clazz){
+		return list(new DualColsBeanRowMapper<>(col0Clazz,col1Clazz));
 	}
 
 	protected abstract SqlAndArgs buildSelectSqlAndArgs();

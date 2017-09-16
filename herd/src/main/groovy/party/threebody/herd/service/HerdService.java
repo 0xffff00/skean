@@ -17,6 +17,7 @@ import party.threebody.skean.core.SkeanException;
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.core.result.Count;
 import party.threebody.skean.core.result.Counts;
+import party.threebody.skean.jdbc.DualColsBean;
 import party.threebody.skean.lang.DateTimeFormatters;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -105,6 +107,18 @@ public class HerdService {
         return mediaDao.readCount(qps);
     }
 
+    public List<ImageMedia> listImageMedias(QueryParamsSuite qps) {
+        return imageMediaDao.list(qps);
+    }
+
+    public int countImageMedias(QueryParamsSuite qps) {
+        return imageMediaDao.readCount(qps);
+    }
+
+    public List<DualColsBean<LocalDate, Integer>> countImageMediasByDate() {
+        return imageMediaDao.countByDate();
+    }
+
 
     //-----------sync logic ----------------
     public Count clearAll() {
@@ -162,7 +176,7 @@ public class HerdService {
         Count cnt2 = synchonizeMedias(newMediaPaths, syncTime);
         List<Media> newMedias = listMediasBySyncTime(syncTime);
         Count cnt3 = analyzeMedias(newMedias, syncTime);
-        return Stream.of(cnt1,Arrays.asList(cnt2,cnt3)).flatMap(List::stream).collect(toList());
+        return Stream.of(cnt1, Arrays.asList(cnt2, cnt3)).flatMap(List::stream).collect(toList());
     }
 
 
@@ -260,13 +274,13 @@ public class HerdService {
         final int totalMediaPath = mediaPaths.size();
         final int totalHashs = hash2pathsMap.keySet().size();
         AtomicInteger i = new AtomicInteger();
-        Count cnt=hash2pathsMap.keySet().stream()
+        Count cnt = hash2pathsMap.keySet().stream()
                 .map(hash -> {
                     String path0 = hash2pathsMap.get(hash).iterator().next();
                     logger.debug("[{}/{}] : {}", i.incrementAndGet(), totalHashs, path0);
                     return synchonizeMedia(hash, path0, syncTime);
                 })
-                .reduce(Counts.of(Media.class),Count::add)
+                .reduce(Counts.of(Media.class), Count::add)
                 .skipped(totalMediaPath - totalHashs);
 
         logger.debug("{} mediaPaths found. {} redundant files found.", totalMediaPath, totalMediaPath - totalHashs);
@@ -317,7 +331,7 @@ public class HerdService {
                     logger.debug("[{}/{}] analyzed : {}", i.incrementAndGet(), totalMediasUnanalyzed, m.getPath0Path());
                     return cnt1;
                 })
-                .reduce(Counts.of("MediasToAnalyze"),Count::add)
+                .reduce(Counts.of("MediasToAnalyze"), Count::add)
                 .skipped(mediasAnalyzed.size());
         logger.info("analyze Medias finished. {}", cnt);
         createRepoLog(analyzeTime, "analyzeMedias", "", "", "OK", cnt);
@@ -354,13 +368,13 @@ public class HerdService {
         logger.info("thumbing Medias ...");
         Count cnt = medias.stream()
                 .map(m -> {
-            File srcFile = Paths.get(m.getPath0Path()).toFile();
-            String fileName = m.getHash() + "." + MediaType.JPEG.getSuffix();
-            File destFile = destDirPath.resolve(fileName).toFile();
-            logger.debug("[{}/{}] converted to JPG : {}", i.incrementAndGet(), mediaCnt, m.getPath0Path());
-            return convertToJPG(srcFile, destFile, convertTime, converter);
-        })
-                .reduce(Counts.of("ImagesToConvert"),Count::add);
+                    File srcFile = Paths.get(m.getPath0Path()).toFile();
+                    String fileName = m.getHash() + "." + MediaType.JPEG.getSuffix();
+                    File destFile = destDirPath.resolve(fileName).toFile();
+                    logger.debug("[{}/{}] converted to JPG : {}", i.incrementAndGet(), mediaCnt, m.getPath0Path());
+                    return convertToJPG(srcFile, destFile, convertTime, converter);
+                })
+                .reduce(Counts.of("ImagesToConvert"), Count::add);
         logger.info("convert to JPG finished. {}", cnt);
         createRepoLog(convertTime, "convertToJpgs", "converter", converter.getName(), "OK", cnt);
         return cnt;
@@ -371,7 +385,7 @@ public class HerdService {
         final long t1 = currentTimeMillis();
         try {
             converter.convertToJPG(srcImage, destImage);
-            return Counts.append("converted",1).since(t1);
+            return Counts.append("converted", 1).since(t1);
         } catch (Exception e) {
             createRepoLogWhenFail(convertTime, "convertToJPG", "path", srcImage.getPath(), e);
             return Counts.failedOne().since(t1);

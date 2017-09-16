@@ -1,12 +1,8 @@
 package party.threebody.herd.conf;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -48,14 +44,22 @@ public class DataConfig {
 }
 
 @Configuration
+@PropertySource("classpath:jdbc.properties")
 class DataSourceConfig {
 
-
+	@Autowired
+	Environment env;
 	@Bean
 	@Profile("!memdb")
 	public DataSource defaultDataSource() {
-		HikariConfig config = new HikariConfig("/jdbc.properties");
-		HikariDataSource ds = new HikariDataSource(config);
+		final HikariDataSource ds = new HikariDataSource();
+		ds.setMaximumPoolSize(20);
+		ds.setDriverClassName("org.mariadb.jdbc.Driver");
+		ds.setJdbcUrl(env.getProperty("jdbc.url"));
+		ds.setUsername(env.getProperty("jdbc.username"));
+		ds.setPassword(env.getProperty("jdbc.password"));
+		ds.setMaximumPoolSize(Integer.valueOf(env.getProperty("jdbc.maximumPoolSize")));
+		ds.setAutoCommit(false);
 		return ds;
 	}
 	

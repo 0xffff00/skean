@@ -20,6 +20,8 @@ public class ImageMedia {
     protected String exifWhiteBalance;
     protected String exifAperture;
 
+    //----DTO props-----
+    protected Integer fileSize;
 
     public void fillHeight(int height) {
         if (this.height == 0 && height > 0) {
@@ -206,5 +208,13 @@ public class ImageMedia {
 
     public void setExifAperture(String exifAperture) {
         this.exifAperture = exifAperture;
+    }
+
+    public Integer getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Integer fileSize) {
+        this.fileSize = fileSize;
     }
 }

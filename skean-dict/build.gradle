@@ -5,8 +5,8 @@ dependencies {
 
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: versions.groovy
 
-    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.6.3'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: versions.HikariCP
+    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: versions.'mariadb-java-client'
 
     compileGroovy.options.encoding='UTF-8'
     compileTestGroovy.options.encoding='UTF-8'

@@ -3,7 +3,7 @@ package party.threebody.skean.jdbc;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import party.threebody.skean.SkeanSqlSecurityException;
+import party.threebody.skean.core.SkeanSqlSecurityException;
 import party.threebody.skean.jdbc.util.SqlSecurityUtils;
 
 public class TestSqlSecurityUtils {

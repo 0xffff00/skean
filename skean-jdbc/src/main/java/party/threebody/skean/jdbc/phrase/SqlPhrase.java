@@ -2,12 +2,15 @@ package party.threebody.skean.jdbc.phrase;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 
+import party.threebody.skean.core.query.Criterion;
+import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
 import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.jdbc.util.SqlAndArgs;
@@ -27,6 +30,7 @@ public class SqlPhrase extends DefaultRootPhrase {
 		this.context = context;
 		this.sql = sql;
 	}
+
 
 	// ------ args value filling --------
 	public ArgPhrase argArr(Object[] vals) {

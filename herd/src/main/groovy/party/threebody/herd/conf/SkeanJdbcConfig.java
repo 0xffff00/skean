@@ -14,6 +14,7 @@ import party.threebody.skean.jdbc.SqlPrinter;
 import party.threebody.skean.jdbc.phrase.SqlBuilder;
 import party.threebody.skean.jdbc.phrase.SqlBuilderConfig;
 import party.threebody.skean.jdbc.phrase.SqlBuilderMysqlImpl;
+import party.threebody.skean.lang.ObjectMappers;
 
 import javax.sql.DataSource;
 
@@ -44,10 +45,7 @@ public class SkeanJdbcConfig {
 
 	@Bean
 	ObjectMapper jacksonObjectMapper() {
-		ObjectMapper objMapper = new ObjectMapper();
-		objMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-		objMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		return objMapper;
+		return ObjectMappers.DEFAULT;
 	}
 
 }

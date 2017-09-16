@@ -2,8 +2,8 @@ package party.threebody.skean.mvc.generic;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.core.query.QueryParamsBuildUtils;
+import party.threebody.skean.core.query.QueryParamsSuite;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +17,15 @@ public class ControllerUtils {
     private ControllerUtils() {
 
     }
+
+    /**
+     * respond for a controller method by PLOx
+     * @param reqestParamMap  reqestParams Map from a controller method
+     * @param listReader a function to fetch entities list by QPS
+     * @param countReader a function to fetch count without QPS
+     * @param <E> the type of entity
+     * @return what a controller method should return
+     */
     public static <E> ResponseEntity<List<E>> respondListAndCountByPLOx(
             Map<String, String> reqestParamMap,
             Function<QueryParamsSuite, List<E>> listReader,
