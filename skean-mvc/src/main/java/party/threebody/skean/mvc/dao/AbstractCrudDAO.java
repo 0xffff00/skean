@@ -1,12 +1,12 @@
 package party.threebody.skean.mvc.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import party.threebody.skean.core.jdbc.util.JavaBeans;
 import party.threebody.skean.core.query.QueryParamsSuite;
-import party.threebody.skean.core.jdbc.ChainedJdbcTemplate;
-import party.threebody.skean.core.jdbc.phrase.AffectPhrase;
-import party.threebody.skean.core.jdbc.phrase.ByPhrase;
-import party.threebody.skean.core.jdbc.phrase.FromPhrase;
+import party.threebody.skean.jdbc.ChainedJdbcTemplate;
+import party.threebody.skean.jdbc.phrase.AffectPhrase;
+import party.threebody.skean.jdbc.phrase.ByPhrase;
+import party.threebody.skean.jdbc.phrase.FromPhrase;
+import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.lang.StringCases;
 
 import java.util.List;
@@ -100,7 +100,7 @@ public abstract class AbstractCrudDAO<T> {
         return fromTableByPkCols().valObj(example).delete();
     }
 
-    public int deleteSome(QueryParamsSuite qps){
+    public int deleteSome(QueryParamsSuite qps) {
         return fromTable().suite(qps).delete();
     }
 }

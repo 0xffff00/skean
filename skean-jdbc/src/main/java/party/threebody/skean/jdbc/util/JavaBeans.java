@@ -1,7 +1,7 @@
 package party.threebody.skean.jdbc.util;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import party.threebody.skean.SkeanException;
+import party.threebody.skean.core.SkeanException;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
