@@ -43,9 +43,6 @@ public class SkeanJdbcConfig {
 		return new ChainedJdbcTemplate(pc);
 	}
 
-	@Bean
-	ObjectMapper jacksonObjectMapper() {
-		return ObjectMappers.DEFAULT;
-	}
+
 
 }

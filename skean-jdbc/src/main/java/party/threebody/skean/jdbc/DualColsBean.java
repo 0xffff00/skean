@@ -19,4 +19,9 @@ public class DualColsBean<F0, F1> {
     public F1 get1() {
         return f1;
     }
+
+    @Override
+    public String toString() {
+        return "(" + f0 + "," + f1 + ")";
+    }
 }

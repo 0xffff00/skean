@@ -5,8 +5,8 @@ import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
 public final class SqlPrintUtils {
     public ChainedJdbcTemplateContext context;
 
-    public static final String ANSI_COLOR_KEYWORD=ANSI.PURPLE;
-    public static final String ANSI_COLOR_ARG=ANSI.CYAN;
+    public static final String ANSI_COLOR_KEYWORD = ANSI.PURPLE;
+    public static final String ANSI_COLOR_ARG = ANSI.CYAN;
 
     private SqlPrintUtils() {
     }
@@ -47,13 +47,11 @@ public final class SqlPrintUtils {
     }
 
     /**
-     * format sql & args to ANSI String, each '?' placeholder is replaced to an
-     * arg.
+     * format sql & args to ANSI String, each '?' placeholder is replaced to an arg.
      *
      * @param sql
      * @param args
-     * @return the returned sql ,in which each '?' placeholder is replaced to an
-     * arg.
+     * @return the returned sql ,in which each '?' placeholder is replaced to an arg.
      */
     public static String ansiFormatSql(String sql, Object[] args) {
         if (sql == null) {
@@ -62,8 +60,8 @@ public final class SqlPrintUtils {
         String res = sql;
 
         for (String kw : ANSI.KEYWORDS_SQL2003) {
-            res = res.replaceAll("\\b" + kw + "\\b", ANSI.YELLOW + kw + ANSI.RESET);
-            res = res.replaceAll("\\b" + kw.toLowerCase() + "\\b", ANSI.YELLOW + kw + ANSI.RESET);
+            res = res.replaceAll("\\b" + kw + "\\b", ANSI_COLOR_KEYWORD + kw + ANSI.RESET);
+            res = res.replaceAll("\\b" + kw.toLowerCase() + "\\b", ANSI_COLOR_KEYWORD + kw + ANSI.RESET);
         }
 
         if (args != null && args.length > 0) {
@@ -146,7 +144,7 @@ public final class SqlPrintUtils {
                 "TIMESTAMP", "TIMEZONE_HOUR", "TIMEZONE_MINUTE", "TO", "TRAILING", "TRANSLATION", "TREAT", "TRIGGER",
                 "TRUE", "UNDO", "UNION", "UNIQUE", "UNKNOWN", "UNNEST", "UNTIL", "UPDATE", "USER", "USING", "VALUE",
                 "VALUES", "VARCHAR", "VARYING", "WHEN", "WHENEVER", "WHERE", "WHILE", "WINDOW", "WITH", "WITHIN",
-                "WITHOUT", "YEAR", "LIMIT", "OFFSET", "ASC", "DESC"};
+                "WITHOUT", "YEAR", "LIMIT", "OFFSET", "ASC", "DESC","COUNT"};
 
     }
 }
