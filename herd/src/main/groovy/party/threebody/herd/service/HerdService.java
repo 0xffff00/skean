@@ -17,7 +17,8 @@ import party.threebody.skean.core.SkeanException;
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.core.result.Count;
 import party.threebody.skean.core.result.Counts;
-import party.threebody.skean.jdbc.DualColsBean;
+import party.threebody.skean.jdbc.rs.DualColsBean;
+import party.threebody.skean.jdbc.rs.TripleColsBean;
 import party.threebody.skean.lang.DateTimeFormatters;
 
 import java.io.File;
@@ -117,6 +118,14 @@ public class HerdService {
 
     public List<DualColsBean<LocalDate, Integer>> countImageMediasByDate() {
         return imageMediaDao.countByDate();
+    }
+
+    public List<TripleColsBean<Integer, Integer, Integer>> countImageMediasByMonth() {
+        return imageMediaDao.countByMonth();
+    }
+
+    public List<DualColsBean<Integer, Integer>> countImageMediasByYear() {
+        return imageMediaDao.countByYear();
     }
 
 

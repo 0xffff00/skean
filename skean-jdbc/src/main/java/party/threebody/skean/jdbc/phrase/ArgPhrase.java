@@ -1,7 +1,7 @@
 package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
-import party.threebody.skean.jdbc.DualColsBean;
+import party.threebody.skean.jdbc.rs.DualColsBean;
 
 import java.util.List;
 import java.util.Map;

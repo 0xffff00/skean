@@ -3,6 +3,7 @@ package party.threebody.skean.jdbc.util;
 import org.apache.commons.lang3.StringUtils;
 import party.threebody.skean.core.query.BasicCriterion;
 import party.threebody.skean.core.query.Criterion;
+import party.threebody.skean.core.query.Operators;
 import party.threebody.skean.core.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 
@@ -79,41 +80,50 @@ public class CriteriaUtils {
         String part1 = opt;
         String part2 = "?";
         switch (opt) {
-            case "<":
-            case ">":
-            case "<=":
-            case ">=":
+            case Operators.LE:
+            case Operators.GE:
+            case Operators.LT:
+            case Operators.GT:
                 break;
-            case "=":
+            case Operators.EQ:
                 // handle null value
                 if (val == null) {
                     part1 = " IS ";
                     part2 = "NULL";
                 }
                 break;
-            case "!=":
+            case Operators.NE:
                 // handle null value
                 if (val == null) {
                     part1 = " IS NOT ";
                     part2 = "NULL";
                 }
                 break;
-            case "~":
-            case "contains":
+            case Operators.K:
                 part1 = " LIKE ";
                 val = escapePercentSymbolAndWrap(val, "%", "%");
                 break;
-            case "$":
-            case "endsWith":
+            case Operators.KR:
                 part1 = " LIKE ";
                 val = escapePercentSymbolAndWrap(val, "%", "");
                 break;
-            case "^":
-            case "startsWith":
+            case Operators.KL:
                 part1 = " LIKE ";
                 val = escapePercentSymbolAndWrap(val, "", "%");
                 break;
-            case "in":
+            case Operators.NK:
+                part1 = " NOT LIKE ";
+                val = escapePercentSymbolAndWrap(val, "%", "%");
+                break;
+            case Operators.NKR:
+                part1 = " NOT LIKE ";
+                val = escapePercentSymbolAndWrap(val, "%", "");
+                break;
+            case Operators.NKL:
+                part1 = " NOT LIKE ";
+                val = escapePercentSymbolAndWrap(val, "", "%");
+                break;
+            case Operators.IN:
                 part1 = " IN ";
                 if (val instanceof Collection) {
                     Collection<?> valColl = (Collection<?>) val;
@@ -122,7 +132,7 @@ public class CriteriaUtils {
                     valArr = valColl.toArray(new Object[len]);
                 }
                 break;
-            case "not in":
+            case Operators.NIN:
                 part1 = " NOT IN ";
                 if (val instanceof Collection) {
                     Collection<?> valColl = (Collection<?>) val;

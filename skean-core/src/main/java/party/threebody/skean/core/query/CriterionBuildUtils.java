@@ -1,8 +1,8 @@
 package party.threebody.skean.core.query;
 
-import party.threebody.skean.core.SkeanException;
+import party.threebody.skean.collections.Maps;
 import party.threebody.skean.collections.Sets;
-import party.threebody.skean.lang.StringCases;
+import party.threebody.skean.core.SkeanException;
 import party.threebody.skean.lang.ObjectMappers;
 
 import java.io.IOException;
@@ -12,7 +12,15 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import static party.threebody.skean.core.query.Operators.*;
+
 public class CriterionBuildUtils {
+
+    private static final Map<String, String> TAIL2OPT_MAP = Maps.ofKeysAndVals(
+            new String[]{"_LT", "_GT", "_LE", "_GE", "_K", "_KL", "_KR", "_NK", "_NKL", "_NKR", "_IN", "_NIN"},
+            new String[]{LT, GT, LE, GE, K, KL, KR, NK, NKL, NKR, IN, NIN}
+    );
+
     private CriterionBuildUtils() {
     }
 
@@ -36,11 +44,9 @@ public class CriterionBuildUtils {
         return !RESERVED_NAMES.contains(name) && RE_LEGAL_PARAM_NAME.matcher(name).find();
     }
 
-    /**
-     * TODO support more complex param naming
-     */
+
     public static BasicCriterion[] buildBasicCriterionArray(Map<String, String> paramsMap) {
-        return buildBasicCriterionArray(paramsMap,null);
+        return buildBasicCriterionArray(paramsMap, null);
 
     }
 
@@ -56,10 +62,22 @@ public class CriterionBuildUtils {
                 .keySet().stream()
                 .filter(whiteListChecker)
                 .filter(CriterionBuildUtils::isLegalParamName)
-                .map(pname -> new BasicCriterion(StringCases.camelToSnake(pname), paramsMap.get(pname)))
+                .map(pname -> toBasicCriterionByExtendingTail(pname, paramsMap.get(pname)))
                 .toArray(BasicCriterion[]::new);
 
     }
+
+    private static BasicCriterion toBasicCriterionByExtendingTail(String paramName, String paramValue) {
+        for (String key : TAIL2OPT_MAP.keySet()) {
+            if (paramName.endsWith(key)) {
+                String realParamName = paramName.substring(0, paramName.length() - key.length());
+                String operator = TAIL2OPT_MAP.get(key);
+                return new BasicCriterion(realParamName, operator, paramValue);
+            }
+        }
+        return new BasicCriterion(paramName, paramValue);
+    }
+
 
 }
 

@@ -29,6 +29,7 @@ public class SkeanJdbcConfig {
 		SqlBuilderConfig sqlBuilderConfig = new SqlBuilderConfig();
 		sqlBuilderConfig.setEnableBackquote(true);
 		sqlBuilderConfig.setEnableModifyAllRows(true);
+		sqlBuilderConfig.setEnableConvertParamNameToSnakeCase(true);
 		SqlBuilder sqlBuilder = new SqlBuilderMysqlImpl(sqlBuilderConfig);
 		
 		ChainedJdbcTemplateContext pc = new ChainedJdbcTemplateContext();

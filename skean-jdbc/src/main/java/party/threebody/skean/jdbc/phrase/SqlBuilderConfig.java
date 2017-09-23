@@ -7,6 +7,7 @@ public class SqlBuilderConfig {
 	private String ln;
 	private boolean enableBackquote;
 	private boolean enableModifyAllRows;
+	private boolean enableConvertParamNameToSnakeCase;
 	private int maxCharsOfInlineSelCols;
 
 	private void init(){
@@ -62,8 +63,8 @@ public class SqlBuilderConfig {
 	public boolean isModifyAllRowsEnabled() {
 		return enableModifyAllRows;
 	}
-	public void setEnableBackquote(String s) {
-		this.enableBackquote = "true".equalsIgnoreCase(s);
+	public void setEnableBackquote(String enableBackquote) {
+		this.enableBackquote = "true".equalsIgnoreCase(enableBackquote);
 	}
 	public void setEnableBackquote(boolean enableBackquote) {
 		this.enableBackquote = enableBackquote;
@@ -80,6 +81,15 @@ public class SqlBuilderConfig {
 	public void setMaxCharsOfInlineSelCols(int maxCharsOfInlineSelCols) {
 		this.maxCharsOfInlineSelCols = maxCharsOfInlineSelCols;
 	}
-	
 
+	public boolean isConvertParamNameToSnakeCaseEnabled() {
+		return enableConvertParamNameToSnakeCase;
+	}
+
+	public void setEnableConvertParamNameToSnakeCase(boolean enableConvertParamNameToSnakeCase) {
+		this.enableConvertParamNameToSnakeCase = enableConvertParamNameToSnakeCase;
+	}
+	public void setEnableConvertParamNameToSnakeCase(String enableConvertParamNameToSnakeCase) {
+		this.enableConvertParamNameToSnakeCase = "true".equalsIgnoreCase(enableConvertParamNameToSnakeCase);
+	}
 }

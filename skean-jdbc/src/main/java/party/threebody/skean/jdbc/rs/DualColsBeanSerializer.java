@@ -1,11 +1,10 @@
-package party.threebody.skean.jdbc;
+package party.threebody.skean.jdbc.rs;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
-import java.util.Collections;
 
 public class DualColsBeanSerializer extends StdSerializer<DualColsBean> {
     public DualColsBeanSerializer(){
@@ -21,7 +20,6 @@ public class DualColsBeanSerializer extends StdSerializer<DualColsBean> {
         gen.writeStartArray();
         gen.writeObject(value.get0());
         gen.writeObject(value.get1());
-        gen.writeObject(Collections.singletonMap("kkk",333));
         gen.writeEndArray();
     }
 }

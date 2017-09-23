@@ -18,7 +18,7 @@ public class ChainedJdbcTemplate {
     }
 
     public SelectPhrase fromSql(String originalSql) {
-        return new FromPhrase(phraseContext, null, originalSql).select(null);
+        return new FromPhrase(phraseContext, null, originalSql).select();
     }
 
     public SqlPhrase sql(String sql) {

@@ -22,6 +22,6 @@ public class Sets {
      * @return
      */
     public static <E> Set<E> of(E... elements){
-        return new HashSet<E>(Arrays.asList(elements));
+        return new HashSet<>(Arrays.asList(elements));
     }
 }

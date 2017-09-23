@@ -2,7 +2,8 @@ package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
 import party.threebody.skean.core.query.SortingField;
-import party.threebody.skean.jdbc.DualColsBean;
+import party.threebody.skean.jdbc.rs.DualColsBean;
+import party.threebody.skean.jdbc.rs.TripleColsBean;
 
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,9 @@ public class WherePhrase implements Phrase {
         return root.listOfDualCols(col0Clazz, col1Clazz);
     }
 
+    public <F0, F1, F2> List<TripleColsBean<F0, F1, F2>> listOfTripleCols(Class<F0> type0, Class<F1> type1, Class<F2> type2){
+        return root.listOfTripleCols(type0,type1,type2);
+    }
     public Map<String, Object> first() {
         return root.first();
     }

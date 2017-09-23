@@ -4,9 +4,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import party.threebody.skean.core.query.Criterion;
 import party.threebody.skean.core.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 import party.threebody.skean.jdbc.util.*;
+import party.threebody.skean.lang.StringCases;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,8 +41,10 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         setConfig(conf);
     }
 
+
     @Override
     public SqlAndArgs buildSelectSql(FromPhrase p) {
+        mayConvertParamNames(p);
         StringBuilder sql = new StringBuilder();
         String sels = "*";
         if (p.afCols != null) {
@@ -285,6 +289,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildInsertSql(FromPhrase p) {
+        mayConvertParamNames(p);
         SqlSecurityUtils.checkTableNameLegality(p.table);
         StringBuilder sql0 = new StringBuilder();
         sql0.append("INSERT INTO ");
@@ -311,6 +316,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildUpdateSql(FromPhrase p) {
+        mayConvertParamNames(p);
         SqlSecurityUtils.checkTableNameLegality(p.table);
         Object[] args = null;
         StringBuilder sql = new StringBuilder();
@@ -353,6 +359,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildDeleteSql(FromPhrase p) {
+        mayConvertParamNames(p);
         SqlSecurityUtils.checkTableNameLegality(p.table);
         StringBuilder sql = new StringBuilder();
         // PRINT>>>> DELETE FROM ...
@@ -373,6 +380,35 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
             SqlSecurityUtils.checkColumnNameLegality(name);
         }
         return nq + String.join(nq + CM + nq, names) + nq;
+    }
+
+    private void convertToSnakeCase(String[] cols) {
+        if (cols == null) {
+            return;
+        }
+        for (int i = 0; i < cols.length; i++) {
+            cols[i] = StringCases.camelToSnake(cols[i]);
+        }
+    }
+
+    private void mayConvertParamNames(FromPhrase p) {
+        if (!conf.isConvertParamNameToSnakeCaseEnabled()) {
+            return;
+        }
+        convertToSnakeCase(p.seCols);
+        convertToSnakeCase(p.afCols);
+        convertToSnakeCase(p.byCols);
+        if (p.criteria != null) {
+            for (Criterion criterion : p.criteria) {
+                criterion.setName(StringCases.camelToSnake(criterion.getName()));
+            }
+        }
+        if (p.sortingFields != null) {
+            for (SortingField sortingField : p.sortingFields) {
+                sortingField.setName(StringCases.camelToSnake(sortingField.getName()));
+            }
+        }
+
     }
 
     private static String buildOrderByClause(SortingField sf, String nq) {

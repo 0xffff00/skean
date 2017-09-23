@@ -1,4 +1,4 @@
-package party.threebody.skean.jdbc;
+package party.threebody.skean.jdbc.rs;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

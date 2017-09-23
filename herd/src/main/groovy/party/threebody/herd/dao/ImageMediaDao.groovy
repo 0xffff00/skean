@@ -5,7 +5,8 @@ import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.ImageMedia
 import party.threebody.skean.core.query.QueryParamsSuite
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.jdbc.DualColsBean
+import party.threebody.skean.jdbc.rs.DualColsBean
+import party.threebody.skean.jdbc.rs.TripleColsBean
 import party.threebody.skean.mvc.dao.SinglePKCrudDAO
 
 import java.time.LocalDate
@@ -58,5 +59,23 @@ FROM hd_media_image mi
         cjt.sql(sql).listOfDualCols(LocalDate.class, Integer.class)
     }
 
+    List<TripleColsBean<Integer, Integer, Integer>> countByMonth() {
+        def sql = '''
+  SELECT YEAR(exif_date_time),MONTH(exif_date_time),COUNT(*) 
+  FROM hd_media_image 
+  GROUP BY YEAR(exif_date_time),MONTH(exif_date_time) 
+  ORDER BY YEAR(exif_date_time) DESC,MONTH(exif_date_time) DESC
+'''
+        cjt.sql(sql).listOfTripleCols(Integer.class, Integer.class, Integer.class)
+    }
 
+    List<DualColsBean<Integer, Integer>> countByYear() {
+        def sql = '''  
+  SELECT YEAR(exif_date_time),COUNT(*) 
+  FROM hd_media_image 
+  GROUP BY YEAR(exif_date_time)
+  ORDER BY YEAR(exif_date_time) DESC
+'''
+        cjt.sql(sql).listOfDualCols(Integer.class, Integer.class)
+    }
 }

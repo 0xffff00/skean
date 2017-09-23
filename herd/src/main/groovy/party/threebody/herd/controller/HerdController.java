@@ -110,12 +110,23 @@ public class HerdController {
                 herdService::listImageMedias, herdService::countImageMedias);
     }
 
-    @GetMapping("/imageMedias/count")
+    @GetMapping("/imageMedias/countByDate")
     @ResponseBody
-    public Object countImageMediasByGroup() {
+    public Object countImageMediasByDate() {
         return herdService.countImageMediasByDate();
     }
 
+    @GetMapping("/imageMedias/countByMonth")
+    @ResponseBody
+    public Object countImageMediasByMonth() {
+        return herdService.countImageMediasByMonth();
+    }
+
+    @GetMapping("/imageMedias/countByYear")
+    @ResponseBody
+    public Object countImageMediasByYear() {
+        return herdService.countImageMediasByYear();
+    }
 
     @ResponseBody
     @GetMapping(value = "/pic2/{hash}.jpg", produces = MediaType.IMAGE_JPEG_VALUE)

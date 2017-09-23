@@ -77,8 +77,8 @@ public class TestChainedJdbcReading {
 		assertNull(q.from("t1ship").by("code").valMap(new HashMap()).firstCell());
 		assertNotNull(q.from("t1ship").criteria().list());
 		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("weig", ">", 30000)).list());
-		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code", "^", "CV")).list());
-		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code", "~", "V0"),
+		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code", "likeLeft", "CV")).list());
+		assertNotNull(q.from("t1ship").criteria(new BasicCriterion("code", "like", "V0"),
 				new BasicCriterion("weig", ">", 30000), new BasicCriterion("name", "!=", null)).list());
 
 		assertNotNull(q.from("t1ship").where("code like ?").val("DD%").list());

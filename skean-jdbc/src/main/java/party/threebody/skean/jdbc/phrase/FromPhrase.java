@@ -150,8 +150,7 @@ public class FromPhrase extends DefaultRootPhrase {
 
     // ------ sorting --------
     public OrderByPhrase orderBy(String... cols) {
-        this.sortingFields = CriteriaUtils.toSortingFields(cols);
-        return new OrderByPhrase(this);
+        return orderBy(CriteriaUtils.toSortingFields(cols));
     }
 
     public OrderByPhrase orderBy(List<String> cols) {
