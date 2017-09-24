@@ -43,7 +43,7 @@ class ImageMediaDao extends SinglePKCrudDAO<ImageMedia, String> {
 
     List<ImageMedia> list(QueryParamsSuite qps) {
         def sql = '''
-SELECT *,(SELECT size FROM hd_media m WHERE m.hash=mi.hash)
+SELECT *,(SELECT size FROM hd_media m WHERE m.hash=mi.hash) file_size
 FROM hd_media_image mi
 '''
         cjt.fromSql(sql).suite(qps).list(ImageMedia.class)

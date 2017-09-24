@@ -16,6 +16,10 @@ import static party.threebody.skean.core.query.Operators.*;
 
 public class CriterionBuildUtils {
 
+    private static final Set<String> RESERVED_NAMES = Sets.of(
+            "p", "page", "l", "limit", "o", "orders", "f", "offset");
+    private static final Pattern RE_LEGAL_PARAM_NAME = Pattern.compile("^[A-Za-z_][A-Za-z0-9_\\$\\.]*$");
+
     private static final Map<String, String> TAIL2OPT_MAP = Maps.ofKeysAndVals(
             new String[]{"_LT", "_GT", "_LE", "_GE", "_K", "_KL", "_KR", "_NK", "_NKL", "_NKR", "_IN", "_NIN"},
             new String[]{LT, GT, LE, GE, K, KL, KR, NK, NKL, NKR, IN, NIN}
@@ -25,7 +29,7 @@ public class CriterionBuildUtils {
     }
 
 
-    public static BasicCriterion[] buildBasicCriterionArray(String criteria) {
+    public static BasicCriterion[] buildBasicCriterionArrayByWrappedObject(String criteria) {
         if (criteria == null) {
             return null;
         }
@@ -36,9 +40,6 @@ public class CriterionBuildUtils {
         }
     }
 
-
-    private static final Set<String> RESERVED_NAMES = Sets.of("p", "page", "l", "len", "o", "orders");
-    private static final Pattern RE_LEGAL_PARAM_NAME = Pattern.compile("^[A-Za-z_][A-Za-z0-9_\\$\\.]*$");
 
     protected static boolean isLegalParamName(String name) {
         return !RESERVED_NAMES.contains(name) && RE_LEGAL_PARAM_NAME.matcher(name).find();

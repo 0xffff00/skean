@@ -50,7 +50,7 @@ public class ControllerUtils {
 
         List<E> entities = listReader.apply(queryParamsSuite);
         int totalCount = 0;
-        if (queryParamsSuite.isPaginationEnabled()) {
+        if (queryParamsSuite.getPagingInfo().isPagingEnabled()) {
             totalCount = countReader.apply(queryParamsSuite);
         } else {
             totalCount = entities.size();

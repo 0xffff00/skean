@@ -8,7 +8,7 @@ public class CriterionBuildUtilsTest {
     @Test
     public void test() {
         String s1 = "[{\"n\":\"name1\",\"o\":\"=\",\"v\":\"Tom\"},{\"n\":\"age\",\"o\":\">\",\"v\":20}]";
-        BasicCriterion[] crits = CriterionBuildUtils.buildBasicCriterionArray(s1);
+        BasicCriterion[] crits = CriterionBuildUtils.buildBasicCriterionArrayByWrappedObject(s1);
         assertEquals("name1", crits[0].getName());
         assertEquals(20, crits[1].getValue());
     }

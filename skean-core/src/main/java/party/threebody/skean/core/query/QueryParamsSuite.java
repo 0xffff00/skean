@@ -4,14 +4,12 @@ public class QueryParamsSuite {
 
 	private Criterion[] criteria;
 	private SortingField[] sortingField;
-	private Integer pageIndex;
-	private Integer pageLength;
+	private PagingInfo pagingInfo;
 
-	public QueryParamsSuite(Criterion[] criteria, SortingField[] sortingField, Integer pageIndex, Integer pageLength) {
+	public QueryParamsSuite(Criterion[] criteria, SortingField[] sortingField,PagingInfo pagingInfo) {
 		this.criteria = criteria;
 		this.sortingField = sortingField;
-		this.pageIndex = pageIndex;
-		this.pageLength = pageLength;
+		this.pagingInfo = pagingInfo;
 	}
 
 	public Criterion[] getCriteria() {
@@ -30,32 +28,11 @@ public class QueryParamsSuite {
 		this.sortingField = sortingField;
 	}
 
-	public Integer getPageIndex() {
-		return pageIndex;
+	public PagingInfo getPagingInfo() {
+		return pagingInfo;
 	}
 
-	public void setPageIndex(Integer pageIndex) {
-		this.pageIndex = pageIndex;
+	public void setPagingInfo(PagingInfo pagingInfo) {
+		this.pagingInfo = pagingInfo;
 	}
-
-	public Integer getPageLength() {
-		return pageLength;
-	}
-
-	public int getPageIndexNonNull() {
-		return pageIndex == null ? 1 : pageIndex;
-	}
-
-	public int getPageLengthNonNull() {
-		return pageLength == null ? 0 : pageLength;
-	}
-
-	public void setPageLength(Integer pageLength) {
-		this.pageLength = pageLength;
-	}
-
-	public boolean isPaginationEnabled() {
-		return pageLength != null && pageLength > 0;
-	}
-
 }

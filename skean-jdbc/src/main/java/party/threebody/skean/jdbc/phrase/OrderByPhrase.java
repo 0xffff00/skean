@@ -1,6 +1,7 @@
 package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
+import party.threebody.skean.core.query.PagingInfo;
 import party.threebody.skean.jdbc.rs.DualColsBean;
 import party.threebody.skean.jdbc.rs.TripleColsBean;
 
@@ -18,6 +19,9 @@ public class OrderByPhrase implements Phrase {
     // ------ paging --------
     public PagePhrase page(int page, int size) {
         return root.page(page, size);
+    }
+    public PagePhrase page(PagingInfo pagingInfo) {
+        return root.page(pagingInfo);
     }
 
     public PagePhrase limit(int limit) {

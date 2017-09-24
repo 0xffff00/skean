@@ -128,6 +128,19 @@ public class HerdService {
         return imageMediaDao.countByYear();
     }
 
+    //----- thin CRUDs ---------
+    public int createRepo(Repo repo) {
+        return repoDao.create(repo);
+    }
+
+    public int deleteRepo(String repoName) {
+        return repoDao.delete(repoName);
+    }
+
+    public int updateRepo(Repo repo, String repoName) {
+        return repoDao.update(repo, repoName);
+    }
+
 
     //-----------sync logic ----------------
     public Count clearAll() {

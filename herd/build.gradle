@@ -1,5 +1,5 @@
 group 'party.threebody.herd'
-version '0.1.0.SNAPSHOT'
+version '0.2.0.SNAPSHOT'
 
 apply plugin: 'groovy'
 apply plugin: 'java'

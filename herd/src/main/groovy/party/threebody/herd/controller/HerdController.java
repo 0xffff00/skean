@@ -34,9 +34,14 @@ public class HerdController {
         return ControllerUtils.respondListAndCountByPLOx(reqestParamMap, herdService::listRepos, herdService::countRepos);
     }
 
-    @GetMapping("/medias")
-    public ResponseEntity<List<Media>> listMedias(@RequestParam Map<String, String> reqestParamMap) {
-        return ControllerUtils.respondListAndCountByPLOx(reqestParamMap, herdService::listMedias, herdService::countMedias);
+    @PostMapping("/repos")
+    public ResponseEntity<Object>  createRepo(@RequestBody Repo repo){
+        return ControllerUtils.respondRowNumAffected(herdService.createRepo(repo));
+    }
+
+    @PutMapping("/repos")
+    public ResponseEntity<Object> updateRepo(@RequestBody Repo repo,@RequestParam String repoName){
+        return ControllerUtils.respondRowNumAffected(herdService.updateRepo(repo,repoName));
     }
 
     /**
@@ -49,7 +54,7 @@ public class HerdController {
      * @param action
      * @return
      */
-    @PostMapping("/repos")
+    @PostMapping("/advanced/repos")
     public ResponseEntity<Object> actOnRepos(@RequestParam Map<String, String> reqestParamMap, @RequestParam("action") String action) {
         QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuiteByPLOx(
                 reqestParamMap,
@@ -104,11 +109,18 @@ public class HerdController {
         return ResponseEntity.badRequest().body(res);
     }
 
+    @GetMapping("/medias")
+    public ResponseEntity<List<Media>> listMedias(@RequestParam Map<String, String> reqestParamMap) {
+        return ControllerUtils.respondListAndCountByPLOx(reqestParamMap, herdService::listMedias, herdService::countMedias);
+    }
+
+
     @GetMapping("/imageMedias")
     public ResponseEntity<List<ImageMedia>> listImageMedias(@RequestParam Map<String, String> reqestParamMap) {
         return ControllerUtils.respondListAndCountByPLOx(reqestParamMap,
                 herdService::listImageMedias, herdService::countImageMedias);
     }
+
 
     @GetMapping("/imageMedias/countByDate")
     @ResponseBody

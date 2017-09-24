@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.TimeZone;
 
 public class ImageMetaUtils {
 
@@ -75,10 +76,8 @@ public class ImageMetaUtils {
         }
 
 
-
         return imageMedia;
     }
-
 
 
     private static void fillTagValue(ImageMedia imageMedia, ExifDirectoryBase exifDirectory, int exifTagType) {
@@ -105,7 +104,7 @@ public class ImageMetaUtils {
             case ExifDirectoryBase.TAG_DATETIME:
             case ExifDirectoryBase.TAG_DATETIME_ORIGINAL:
             case ExifDirectoryBase.TAG_DATETIME_DIGITIZED:
-                imageMedia.fillExifDateTime(exifDirectory.getDate(exifTagType));
+                imageMedia.fillExifDateTime(exifDirectory.getDate(exifTagType, TimeZone.getDefault()));
                 break;
 
             case ExifDirectoryBase.TAG_IMAGE_HEIGHT:

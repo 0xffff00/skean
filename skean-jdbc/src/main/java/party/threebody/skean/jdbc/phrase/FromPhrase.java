@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import party.threebody.skean.core.query.Criterion;
+import party.threebody.skean.core.query.PagingInfo;
 import party.threebody.skean.core.query.QueryParamsSuite;
 import party.threebody.skean.core.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
@@ -58,8 +59,7 @@ public class FromPhrase extends DefaultRootPhrase {
         if (qps == null) {
             return new PagePhrase(this);
         }
-        return criteria(qps.getCriteria()).orderBy(qps.getSortingField()).page(qps.getPageIndexNonNull(),
-                qps.getPageLengthNonNull());
+        return criteria(qps.getCriteria()).orderBy(qps.getSortingField()).page(qps.getPagingInfo());
     }
 
     // ------ filtering --------
@@ -172,6 +172,14 @@ public class FromPhrase extends DefaultRootPhrase {
         }
         this.limit = size;
         this.offset = (page - 1) * size;
+        return new PagePhrase(this);
+    }
+
+    public PagePhrase page(PagingInfo pagingInfo) {
+        if (pagingInfo != null) {
+            limit(pagingInfo.getLimit());
+            offset(pagingInfo.getOffset());
+        }
         return new PagePhrase(this);
     }
 
