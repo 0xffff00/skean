@@ -130,6 +130,7 @@ public class HerdService {
 
     //----- thin CRUDs ---------
     public int createRepo(Repo repo) {
+        repo.setSaveTime(LocalDateTime.now());
         return repoDao.create(repo);
     }
 
@@ -138,6 +139,7 @@ public class HerdService {
     }
 
     public int updateRepo(Repo repo, String repoName) {
+        repo.setSaveTime(LocalDateTime.now());
         return repoDao.update(repo, repoName);
     }
 

@@ -47,7 +47,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         /* 是否通过请求Url的扩展名来决定media type */
         configurer.favorPathExtension(true)
-				/* 不检查Accept请求头 */
+                /* 不检查Accept请求头 */
                 .ignoreAcceptHeader(false)
                 .parameterName("mediaType")
 				/* 设置默认的media type */
@@ -78,7 +78,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
                 .allowedOrigins("*")
                 .allowedMethods("*")
                 .allowedHeaders("*")
-                .exposedHeaders("X-Total-Count");
+                .exposedHeaders("X-Total-Count", "X-Total-Affected");
     }
 
 
