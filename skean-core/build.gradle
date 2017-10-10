@@ -11,29 +11,6 @@ dependencies {
     compile group: 'commons-net', name: 'commons-net', version: versions.'commons-net'
     compile group: 'com.google.guava', name: 'guava', version: versions.'guava'
 
-    compile "org.slf4j:slf4j-api:${versions.slf4j}"
-    compile "org.apache.logging.log4j:log4j-core:${versions.log4j2}"
-    compile "org.apache.logging.log4j:log4j-web:${versions.log4j2}"
-    compile "org.apache.logging.log4j:log4j-slf4j-impl:${versions.log4j2}"
-
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: versions.jackson
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson
-
-    compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.10'
-
-    compile group: 'org.springframework', name: 'spring-context', version: versions.spring
-    compile group: 'org.springframework', name: 'spring-context-support', version: versions.spring
-    compile group: 'org.springframework', name: 'spring-aop', version: versions.spring
-    compile group: 'org.springframework', name: 'spring-tx', version: versions.spring
-
-    compile group: 'org.springframework.security', name: 'spring-security-web', version: versions.'spring-security'
-    compile group: 'org.springframework.security', name: 'spring-security-config', version: versions.'spring-security'
-
-    //TODO to testCompile
-    compile group: 'junit', name: 'junit', version: '4.12'
-    compile "org.springframework:spring-test:${versions.spring}"
-    compile group: 'com.h2database', name: 'h2', version: '1.4.196'
 
 
 }

@@ -11,8 +11,9 @@ ext {
 
 configure(subprojects) { project ->
     ext.versions = [
-            java                  : '1.8',
+            java                  : '1.9',
             groovy                : '2.4.11',
+            servlet               : '4.0.0',
 
             //apache commons
             'commons-lang'        : '2.6',
@@ -32,21 +33,23 @@ configure(subprojects) { project ->
             'slf4j'               : '1.7.25',
 
             //spring
-            'spring'              : '4.3.7.RELEASE',
-            'spring-security'     : '4.2.2.RELEASE',
+            'spring'              : '5.0.0.RELEASE',
+            'spring-security'     : '5.0.0.M3',
+            'spring-boot'         : '2.0.0.M4',
 
             //others
             'guava'               : '21.0',
             'jackson'             : '2.9.1',
             'ehcache'             : '3.3.1',
             'junit'               : '4.12',
-            'mysql-connector-java': '6.0.6',
+
             'mariadb-java-client' : '2.1.1',
             'HikariCP'            : '2.7.1'
     ]
 
     repositories {
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://repo.spring.io/milestone/' }
         mavenCentral()
     }
 
@@ -87,6 +90,7 @@ configure(subprojects) { project ->
         sourceCompatibility = versions.java
         targetCompatibility = versions.java
         options.encoding = 'UTF-8'
+        options.compilerArgs += '-parameters'
     }
 
     compileTestJava {
