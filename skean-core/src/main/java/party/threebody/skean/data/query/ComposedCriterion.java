@@ -1,4 +1,4 @@
-package party.threebody.skean.core.query;
+package party.threebody.skean.data.query;
 
 /**
  * 复合的通用查询条件准则<br>

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import party.threebody.skean.core.query.SortingField;
+import party.threebody.skean.data.query.SortingField;
 
 public class CriteriaPhrase implements Phrase {
 

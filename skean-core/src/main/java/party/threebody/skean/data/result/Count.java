@@ -1,4 +1,4 @@
-package party.threebody.skean.core.result;
+package party.threebody.skean.data.result;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.time.DurationFormatUtils;

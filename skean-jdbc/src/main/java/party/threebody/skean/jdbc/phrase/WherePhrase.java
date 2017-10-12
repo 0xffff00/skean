@@ -1,7 +1,7 @@
 package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
-import party.threebody.skean.core.query.SortingField;
+import party.threebody.skean.data.query.SortingField;
 import party.threebody.skean.jdbc.rs.DualColsBean;
 import party.threebody.skean.jdbc.rs.TripleColsBean;
 

@@ -2,7 +2,7 @@ package party.threebody.skean.mvc.generic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import party.threebody.skean.mvc.dao.SinglePKCrudDAO;
-import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.data.query.QueryParamsSuite;
 
 import java.util.List;
 

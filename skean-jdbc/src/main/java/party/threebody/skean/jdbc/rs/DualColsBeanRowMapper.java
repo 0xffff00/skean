@@ -1,7 +1,7 @@
 package party.threebody.skean.jdbc.rs;
 
 import org.springframework.jdbc.core.RowMapper;
-import party.threebody.skean.core.SkeanException;
+import party.threebody.skean.misc.SkeanException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

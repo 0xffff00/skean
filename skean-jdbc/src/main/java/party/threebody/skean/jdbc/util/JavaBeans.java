@@ -1,7 +1,7 @@
 package party.threebody.skean.jdbc.util;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import party.threebody.skean.core.SkeanException;
+import party.threebody.skean.misc.SkeanReflectionException;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -117,13 +117,4 @@ public class JavaBeans {
                 (v instanceof Date) || (v instanceof Temporal) || (v instanceof Boolean);
 
     }
-}
-
-@SuppressWarnings("serial")
-class SkeanReflectionException extends SkeanException {
-
-    public SkeanReflectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

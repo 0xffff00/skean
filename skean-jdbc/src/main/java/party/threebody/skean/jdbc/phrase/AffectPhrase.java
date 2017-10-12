@@ -2,7 +2,7 @@ package party.threebody.skean.jdbc.phrase;
 
 import java.util.Map;
 
-import party.threebody.skean.core.query.BasicCriterion;
+import party.threebody.skean.data.query.BasicCriterion;
 
 public class AffectPhrase implements Phrase {
 

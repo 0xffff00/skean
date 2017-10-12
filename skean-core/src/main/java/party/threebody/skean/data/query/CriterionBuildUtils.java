@@ -1,8 +1,7 @@
-package party.threebody.skean.core.query;
+package party.threebody.skean.data.query;
 
 import party.threebody.skean.collections.Maps;
 import party.threebody.skean.collections.Sets;
-import party.threebody.skean.core.SkeanException;
 import party.threebody.skean.lang.ObjectMappers;
 
 import java.io.IOException;
@@ -12,8 +11,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import static party.threebody.skean.core.query.Operators.*;
-
 public class CriterionBuildUtils {
 
     private static final Set<String> RESERVED_NAMES = Sets.of(
@@ -22,7 +19,7 @@ public class CriterionBuildUtils {
 
     private static final Map<String, String> TAIL2OPT_MAP = Maps.ofKeysAndVals(
             new String[]{"_LT", "_GT", "_LE", "_GE", "_K", "_KL", "_KR", "_NK", "_NKL", "_NKR", "_IN", "_NIN"},
-            new String[]{LT, GT, LE, GE, K, KL, KR, NK, NKL, NKR, IN, NIN}
+            new String[]{Operators.LT, Operators.GT, Operators.LE, Operators.GE, Operators.K, Operators.KL, Operators.KR, Operators.NK, Operators.NKL, Operators.NKR, Operators.IN, Operators.NIN}
     );
 
     private CriterionBuildUtils() {
@@ -36,7 +33,7 @@ public class CriterionBuildUtils {
         try {
             return ObjectMappers.DEFAULT.readerFor(BasicCriterionVO[].class).readValue(criteria);
         } catch (IOException e) {
-            throw new SkeanException("IO error occurred in buildBasicCriterionArray", e);
+            throw new SkeanDataException("IO error occurred in buildBasicCriterionArray", e);
         }
     }
 

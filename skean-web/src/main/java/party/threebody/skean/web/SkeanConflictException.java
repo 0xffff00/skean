@@ -1,4 +1,4 @@
-package party.threebody.skean.core;
+package party.threebody.skean.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,4 +1,4 @@
-package party.threebody.skean.core.query;
+package party.threebody.skean.data.query;
 
 public class QueryParamsSuite {
 

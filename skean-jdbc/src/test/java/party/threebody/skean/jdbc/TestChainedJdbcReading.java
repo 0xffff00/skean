@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import party.threebody.skean.core.query.BasicCriterion;
+import party.threebody.skean.data.query.BasicCriterion;
 
 import java.util.HashMap;
 import java.util.List;

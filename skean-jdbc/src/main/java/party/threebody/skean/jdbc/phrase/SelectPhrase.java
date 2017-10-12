@@ -1,8 +1,8 @@
 package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
-import party.threebody.skean.core.query.BasicCriterion;
-import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.data.query.BasicCriterion;
+import party.threebody.skean.data.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.rs.DualColsBean;
 import party.threebody.skean.jdbc.rs.TripleColsBean;
 

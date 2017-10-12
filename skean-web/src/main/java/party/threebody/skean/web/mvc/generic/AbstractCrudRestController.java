@@ -1,4 +1,4 @@
-package party.threebody.skean.mvc.generic;
+package party.threebody.skean.web.mvc.generic;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

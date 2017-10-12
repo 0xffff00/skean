@@ -1,7 +1,6 @@
-package party.threebody.skean.core.query;
+package party.threebody.skean.data.query;
 
 import org.apache.commons.lang3.StringUtils;
-import party.threebody.skean.core.SkeanException;
 
 import java.util.Collection;
 import java.util.Map;
@@ -82,7 +81,7 @@ public class QueryParamsBuildUtils {
                 try {
                     return Integer.valueOf(v);
                 } catch (NumberFormatException e) {
-                    throw new SkeanException("not numeric value: [" + k + "=" + v + "]", e);
+                    throw new SkeanDataException("not numeric value: [" + k + "=" + v + "]", e);
                 }
             }
         }
@@ -99,12 +98,12 @@ public class QueryParamsBuildUtils {
     private static PagingInfo buildPagingInfo(Integer pageIndex, Integer pageOffset, Integer pageLimit) {
         if (pageLimit == null) {
             if (pageIndex != null && pageOffset != null) {
-                throw new SkeanException("pageLimit is required for pageIndex or pageOffset.");
+                throw new SkeanDataException("pageLimit is required for pageIndex or pageOffset.");
             }
             return PagingInfo.NA;
         }
         if (pageIndex != null && pageOffset != null) {
-            throw new SkeanException("pageIndex and pageOffset cannot be passed at the same time.");
+            throw new SkeanDataException("pageIndex and pageOffset cannot be passed at the same time.");
         }
         if (pageIndex != null) {
             return PagingInfo.ofPageNum(pageIndex, pageLimit);

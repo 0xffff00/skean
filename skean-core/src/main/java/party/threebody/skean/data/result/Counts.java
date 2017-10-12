@@ -1,4 +1,4 @@
-package party.threebody.skean.core.result;
+package party.threebody.skean.data.result;
 
 import java.util.*;
 import java.util.stream.Collectors;

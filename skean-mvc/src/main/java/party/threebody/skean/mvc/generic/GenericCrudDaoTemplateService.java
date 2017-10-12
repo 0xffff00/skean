@@ -3,7 +3,7 @@ package party.threebody.skean.mvc.generic;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.data.query.QueryParamsSuite;
 import party.threebody.skean.mvc.dao.SinglePKCrudDAO;
 
 import java.util.List;

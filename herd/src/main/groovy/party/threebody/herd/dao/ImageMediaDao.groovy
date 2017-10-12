@@ -3,7 +3,7 @@ package party.threebody.herd.dao
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import party.threebody.herd.domain.ImageMedia
-import party.threebody.skean.core.query.QueryParamsSuite
+import party.threebody.skean.data.query.QueryParamsSuite
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 import party.threebody.skean.jdbc.rs.DualColsBean
 import party.threebody.skean.jdbc.rs.TripleColsBean

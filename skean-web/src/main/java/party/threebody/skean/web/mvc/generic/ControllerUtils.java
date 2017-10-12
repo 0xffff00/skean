@@ -1,4 +1,4 @@
-package party.threebody.skean.mvc.generic;
+package party.threebody.skean.web.mvc.generic;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 public class ControllerUtils {
 
-    static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
-    static final String HEADER_NAME_TOTAL_AFFECTED = "X-Total-Affected";
+    private static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
+    private static final String HEADER_NAME_TOTAL_AFFECTED = "X-Total-Affected";
 
     private ControllerUtils() {
 

@@ -1,7 +1,6 @@
 package party.threebody.skean.jdbc.util;
 
-
-import party.threebody.skean.core.SkeanSqlSecurityException;
+import party.threebody.skean.jdbc.SkeanSqlSecurityException;
 
 public class SqlSecurityUtils {
     /**

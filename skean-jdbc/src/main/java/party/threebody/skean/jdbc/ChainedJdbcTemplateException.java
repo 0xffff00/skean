@@ -1,7 +1,7 @@
 package party.threebody.skean.jdbc;
 
 
-import party.threebody.skean.core.SkeanException;
+import party.threebody.skean.misc.SkeanException;
 
 public class ChainedJdbcTemplateException extends SkeanException {
 

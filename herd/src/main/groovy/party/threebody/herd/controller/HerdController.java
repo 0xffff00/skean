@@ -10,9 +10,9 @@ import party.threebody.herd.domain.MediaPath;
 import party.threebody.herd.domain.Repo;
 import party.threebody.herd.service.HerdService;
 import party.threebody.herd.util.ImageConverter;
-import party.threebody.skean.core.query.QueryParamsBuildUtils;
-import party.threebody.skean.core.query.QueryParamsSuite;
-import party.threebody.skean.core.result.Counts;
+import party.threebody.skean.data.query.QueryParamsBuildUtils;
+import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.data.result.Counts;
 import party.threebody.skean.mvc.generic.ControllerUtils;
 
 import java.io.IOException;

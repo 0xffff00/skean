@@ -1,10 +1,10 @@
 package party.threebody.skean.jdbc.util;
 
 import org.apache.commons.lang3.StringUtils;
-import party.threebody.skean.core.query.BasicCriterion;
-import party.threebody.skean.core.query.Criterion;
-import party.threebody.skean.core.query.Operators;
-import party.threebody.skean.core.query.SortingField;
+import party.threebody.skean.data.query.BasicCriterion;
+import party.threebody.skean.data.query.Criterion;
+import party.threebody.skean.data.query.Operators;
+import party.threebody.skean.data.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 
 import java.util.Collection;

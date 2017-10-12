@@ -1,7 +1,7 @@
 package party.threebody.skean.mvc.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import party.threebody.skean.core.query.QueryParamsSuite;
+import party.threebody.skean.data.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 import party.threebody.skean.jdbc.phrase.AffectPhrase;
 import party.threebody.skean.jdbc.phrase.ByPhrase;

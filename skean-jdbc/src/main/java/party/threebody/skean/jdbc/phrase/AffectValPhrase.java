@@ -3,7 +3,7 @@ package party.threebody.skean.jdbc.phrase;
 import java.util.List;
 import java.util.Map;
 
-import party.threebody.skean.core.query.BasicCriterion;
+import party.threebody.skean.data.query.BasicCriterion;
 
 /**
  * a 'val()' phrase after 'affect()' phrase.
