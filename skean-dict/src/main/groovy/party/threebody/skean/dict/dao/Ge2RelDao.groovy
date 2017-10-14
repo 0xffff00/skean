@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.Ge2Rel
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.mvc.dao.SinglePKCrudDAO
-import party.threebody.skean.mvc.dao.TriplePKCrudDAO
+import party.threebody.skean.web.mvc.dao.TriplePKCrudDAO
 
 @Repository
 class Ge2RelDao extends TriplePKCrudDAO<Ge2Rel,String,String,Integer> {

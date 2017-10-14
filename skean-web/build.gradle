@@ -1,7 +1,9 @@
 apply plugin: 'java'
+apply plugin: 'jacoco'
 
 dependencies {
     compile project(':skean-core')
+    compile project(':skean-jdbc')
 
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: versions.servlet
 
@@ -21,4 +23,11 @@ dependencies {
     compile group: 'org.ehcache', name: 'ehcache', version: '3.3.1'
 
 
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled true
+    }
 }

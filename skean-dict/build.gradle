@@ -3,6 +3,8 @@ apply plugin: 'groovy'
 apply plugin: 'war'
 dependencies {
 
+    compile project(':skean-web')
+
     compileGroovy.options.encoding = 'UTF-8'
     compileTestGroovy.options.encoding = 'UTF-8'
 
@@ -13,12 +15,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
 
-    // compile group: 'org.mongodb', name: 'mongodb-driver-reactivestreams', version: '1.6.0'
-    compile group: 'org.springframework.data', name: 'spring-data-mongodb', version: '2.0.0.RELEASE'
 
 
 
-
-    compile project(':skean-core')
-    compile project(':skean-mvc')
 }

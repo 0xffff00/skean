@@ -5,8 +5,6 @@ include 'skean-jdbc'
 include 'skean-mvc'
 include 'skean-id'
 include 'skean-dict'
-include 'herd'
-include 'skean-reactive-web'
 include 'skean-web'
 include 'skean-web-reactive'
 

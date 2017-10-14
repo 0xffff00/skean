@@ -8,13 +8,13 @@ import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 import java.util.List;
 
 @Repository
-public class UserDAO  {
+public class UserDAO {
 
-	@Autowired
-	private ChainedJdbcTemplate cjt;
+    @Autowired
+    private ChainedJdbcTemplate cjt;
 
-	public List<UserPO> list() {
-		return cjt.from("id_user").by("state").val("A").list(UserPO.class);
-	}
+    public List<UserPO> list() {
+        return cjt.from("id_user").by("state").val("A").list(UserPO.class);
+    }
 
 }
