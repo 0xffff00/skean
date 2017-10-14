@@ -6,6 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.util.UrlPathHelper;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -25,9 +26,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        // enable matrix variable support
+        // enable matrix variables support
+        final UrlPathHelper urlPathHelper = new UrlPathHelper();
+        configurer.setUrlPathHelper(urlPathHelper);
         configurer.getUrlPathHelper().setRemoveSemicolonContent(false);
     }
-
 
 }
