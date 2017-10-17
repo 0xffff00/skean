@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.AliasRel
 import party.threebody.skean.dict.domain.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO
+import party.threebody.skean.web.testapp.mvc.dao.SinglePKCrudDAO
 
 @Repository
 class WordDao extends SinglePKCrudDAO<Word,String> {

@@ -1,5 +1,5 @@
 configure(allprojects) { project ->
-    group = "party.threebody.skean"
+    group = 'party.threebody.skean'
     ext.versions = [
             //lang
             java                  : '1.8',
@@ -50,7 +50,7 @@ configure(subprojects) { project ->
 
     }
 
-    apply plugin: "java"
+    apply plugin: 'java'
     apply plugin: 'idea'
     compileJava {
         sourceCompatibility = versions.java
@@ -67,12 +67,35 @@ configure(subprojects) { project ->
         options.compilerArgs += "-parameters"
     }
 
-//    compileGroovy?.options.encoding = 'UTF-8'
-//    compileTestGroovy?.options.encoding = 'UTF-8'
-    // 编码改为 UTF-8, 否则编译源码的时候会出错`
-    //[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
-}
+    apply plugin: 'maven-publish'
 
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                artifact sourceJar {
+                    classifier "sources"
+                }
+            }
+        }
+    }
+
+
+    if (project.plugins.hasPlugin('groovy')){
+        compileGroovy{
+            options.encoding = 'UTF-8'
+        }
+        compileTestGroovy{
+            options.encoding = 'UTF-8'
+        }
+    }
+
+}
 
 
 

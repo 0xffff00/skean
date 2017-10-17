@@ -1,0 +1,46 @@
+package party.threebody.skean.web.testapp.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.web.testapp.dao.ShipDAO;
+import party.threebody.skean.web.testapp.domain.Ship;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class ShipService {
+
+    @Autowired
+    ShipDAO shipDAO;
+
+    public Ship getShip(String code) {
+        return shipDAO.readOne(code);
+    }
+
+    public List<Ship> listShips(QueryParamsSuite qps) {
+        return shipDAO.readList(qps);
+    }
+
+    public int countShips(QueryParamsSuite qps) {
+        return shipDAO.readCount(qps);
+    }
+
+    public Ship createAndGet(Ship ship) {
+        return shipDAO.createAndGet(ship);
+    }
+
+    public int update(Ship ship, String code) {
+        return shipDAO.update(ship, code);
+    }
+
+    public int partialUpdate(Map<String, Object> fieldsToUpdate, String code) {
+        return shipDAO.partialUpdate(fieldsToUpdate, code);
+    }
+
+    public int delete(String code) {
+        return shipDAO.delete(code);
+    }
+
+}

@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import party.threebody.skean.id.dao.RoleDAO;
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.web.mvc.controller.SimpleDaoCrudRestController;
-import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO;
+import party.threebody.skean.web.testapp.mvc.controller.SimpleDaoCrudRestController;
+import party.threebody.skean.web.testapp.mvc.dao.SinglePKCrudDAO;
 
 @RequestMapping("/id/roles")
 @RestController

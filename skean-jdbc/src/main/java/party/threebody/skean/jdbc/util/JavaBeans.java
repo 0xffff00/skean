@@ -17,6 +17,10 @@ import java.util.function.Function;
 
 public class JavaBeans {
 
+    final static Class<?>[] SIMPLE_CLASSES = {char.class, boolean.class, byte.class,
+            int.class, long.class, short.class, float.class, double.class,
+            Number.class, String.class, Character.class, Date.class, Temporal.class, Boolean.class};
+
     private JavaBeans() {
     }
 
@@ -99,9 +103,7 @@ public class JavaBeans {
         }
     }
 
-    static Class<?>[] SIMPLE_CLASSES = {char.class, boolean.class, byte.class,
-            int.class, long.class, short.class, float.class, double.class,
-            Number.class, String.class, Character.class, Date.class, Temporal.class, Boolean.class};
+
 
     public static boolean isSimpleType(Class<?> clazz) {
         for (Class<?> simpleClass : SIMPLE_CLASSES) {

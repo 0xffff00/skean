@@ -2,7 +2,7 @@ package party.threebody.skean.id.dao;
 
 import org.springframework.stereotype.Repository;
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO;
+import party.threebody.skean.web.testapp.mvc.dao.SinglePKCrudDAO;
 
 import java.util.List;
 

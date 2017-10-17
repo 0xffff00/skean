@@ -1,4 +1,8 @@
 apply plugin: 'java'
 dependencies {
     compile project(':skean-web')
+
+    compile group: 'org.springframework.security', name: 'spring-security-web', version: versions.'spring-security'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version: versions.'spring-security'
+
 }

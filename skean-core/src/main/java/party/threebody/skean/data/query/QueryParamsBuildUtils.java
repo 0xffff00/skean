@@ -18,6 +18,7 @@ public class QueryParamsBuildUtils {
      * @param paramsMap
      * @return
      */
+    @Deprecated
     public static QueryParamsSuite buildQueryParamsSuiteByPLOC(Map<String, String> paramsMap) {
         // build sortingFields
         SortingField[] sortingFields = buildSortingFields(paramsMap);
