@@ -9,7 +9,7 @@ import party.threebody.skean.dict.domain.Ge1Rel;
 import party.threebody.skean.dict.domain.Ge2Rel;
 import party.threebody.skean.dict.domain.Word;
 import party.threebody.skean.dict.service.WordService;
-import party.threebody.skean.web.testapp.mvc.controller.ControllerUtils;
+import party.threebody.skean.web.mvc.controller.ControllerUtils;
 
 import java.util.Collection;
 import java.util.List;
