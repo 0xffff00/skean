@@ -1,7 +1,6 @@
 package party.threebody.skean.web.mvc.controller;
 
 import party.threebody.skean.data.query.QueryParamsSuite;
-import party.threebody.skean.web.SkeanNotImplementedException;
 
 import java.util.List;
 import java.util.Map;
@@ -13,15 +12,21 @@ public class CrudFunctionsBuilder<E, PK> {
 
     public CrudFunctionsBuilder() {
         funcs = new SimpleCrudFunctions<>();
-        funcs.pkGetter = this::raiseNotImplemented;
-        funcs.listReader = this::raiseNotImplemented;
-        funcs.countReader = this::raiseNotImplemented;
-        funcs.oneReader = this::raiseNotImplemented;
-        funcs.creator = this::raiseNotImplemented;
-        funcs.entireUpdater = this::raiseNotImplemented;
-        funcs.partialUpdater = this::raiseNotImplemented;
-        funcs.deleter = this::raiseNotImplemented;
+        funcs.pkGetter = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.listReader = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.countReader = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.oneReader = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.creator = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.creatorWithReturn = e ->  {
+            funcs.creator.apply(e);
+            PK pk=funcs.pkGetter.apply(e);
+            return funcs.oneReader.apply(pk);
+        };
+        funcs.entireUpdater = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.partialUpdater = SimpleCrudFunctions::raiseNotImplemented;
+        funcs.deleter = SimpleCrudFunctions::raiseNotImplemented;
     }
+
 
     public SimpleCrudFunctions<E, PK> build() {
         return funcs;
@@ -48,8 +53,13 @@ public class CrudFunctionsBuilder<E, PK> {
         return this;
     }
 
-    public CrudFunctionsBuilder<E, PK> creator(Function<E, E> creator) {
+    public CrudFunctionsBuilder<E, PK> creator(Function<E, Integer> creator) {
         funcs.creator = creator;
+        return this;
+    }
+
+    public CrudFunctionsBuilder<E, PK> creatorWithReturn(Function<E, E> creator) {
+        funcs.creatorWithReturn = creator;
         return this;
     }
 
@@ -58,7 +68,7 @@ public class CrudFunctionsBuilder<E, PK> {
         return this;
     }
 
-    public CrudFunctionsBuilder<E, PK> partialUpdater(BiFunction<Map<String,Object>,PK, Integer> partialUpdater) {
+    public CrudFunctionsBuilder<E, PK> partialUpdater(BiFunction<Map<String, Object>, PK, Integer> partialUpdater) {
         funcs.partialUpdater = partialUpdater;
         return this;
     }
@@ -66,20 +76,6 @@ public class CrudFunctionsBuilder<E, PK> {
     public CrudFunctionsBuilder<E, PK> deleter(Function<PK, Integer> deleter) {
         funcs.deleter = deleter;
         return this;
-    }
-
-    private <O> O raiseNotImplemented() {
-        throw new SkeanNotImplementedException();
-    }
-
-    private <I,O> O raiseNotImplemented(I i) {
-        throw new SkeanNotImplementedException();
-    }
-    private <I1,I2,O> O raiseNotImplemented(I1 i1,I2 i2) {
-        throw new SkeanNotImplementedException();
-    }
-    private <I1,I2,I3,O> O raiseNotImplemented(I1 i1,I2 i2,I3 i3) {
-        throw new SkeanNotImplementedException();
     }
 
 

@@ -22,8 +22,8 @@ public abstract class SinglePKCrudRestController<E, PK> {
 
     public abstract void buildCrudFunctions(CrudFunctionsBuilder<E, PK> builder);
 
-    protected SimpleCrudFunctions<E, PK> getCrudFunctions(){
-        CrudFunctionsBuilder<E, PK> builder=new CrudFunctionsBuilder<>();
+    protected SimpleCrudFunctions<E, PK> getCrudFunctions() {
+        CrudFunctionsBuilder<E, PK> builder = new CrudFunctionsBuilder<>();
         buildCrudFunctions(builder);
         return builder.build();
     }
@@ -40,9 +40,10 @@ public abstract class SinglePKCrudRestController<E, PK> {
                 getCrudFunctions().getListReader(), getCrudFunctions().getCountReader());
     }
 
+
     @PostMapping("")
     public ResponseEntity<E> httpCreate(@RequestBody E entity) {
-        E created = getCrudFunctions().getCreator().apply(entity);
+        E created = getCrudFunctions().getCreatorWithReturn().apply(entity);
         PK pk = getCrudFunctions().getPkGetter().apply(entity);
         URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                 .path("/{pk}").buildAndExpand(pk).toUri();
@@ -54,7 +55,7 @@ public abstract class SinglePKCrudRestController<E, PK> {
     public ResponseEntity<Object> httpCreateOrUpdate(@PathVariable PK pk, @RequestBody E entity) {
         E original = getCrudFunctions().getOneReader().apply(pk);
         if (original == null) {    //create if not exists
-            E created = getCrudFunctions().getCreator().apply(entity);
+            E created = getCrudFunctions().getCreatorWithReturn().apply(entity);
             URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                     .path("/{pk}").buildAndExpand(pk).toUri();
             return ResponseEntity.created(location).build();
