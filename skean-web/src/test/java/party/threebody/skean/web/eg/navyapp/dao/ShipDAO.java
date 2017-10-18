@@ -1,7 +1,7 @@
-package party.threebody.skean.web.test.navyapp.dao;
+package party.threebody.skean.web.eg.navyapp.dao;
 
 import org.springframework.stereotype.Repository;
-import party.threebody.skean.web.test.navyapp.domain.Ship;
+import party.threebody.skean.web.eg.navyapp.domain.Ship;
 import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO;
 
 import java.util.List;

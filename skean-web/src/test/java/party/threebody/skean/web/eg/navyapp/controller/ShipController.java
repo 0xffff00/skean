@@ -1,14 +1,13 @@
-package party.threebody.skean.web.test.navyapp.controller;
+package party.threebody.skean.web.eg.navyapp.controller;
 
-import org.apache.commons.collections4.MultiValuedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import party.threebody.skean.web.mvc.controller.CrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudRestController;
-import party.threebody.skean.web.test.navyapp.domain.Ship;
-import party.threebody.skean.web.test.navyapp.service.ShipService;
+import party.threebody.skean.web.eg.navyapp.domain.Ship;
+import party.threebody.skean.web.eg.navyapp.service.ShipService;
 
 import java.util.Map;
 

@@ -1,8 +1,9 @@
-package party.threebody.skean.web.test.navyapp.domain;
+package party.threebody.skean.web.eg.navyapp.domain;
 
 public class Ship {
 	private String code, name;
-	private Integer weig, birth;
+	private Integer weig;
+	private Integer birthYear;
 
 	public String getCode() {
 		return code;
@@ -28,12 +29,11 @@ public class Ship {
 		this.weig = weig;
 	}
 
-	public Integer getBirth() {
-		return birth;
+	public Integer getBirthYear() {
+		return birthYear;
 	}
 
-	public void setBirth(Integer birth) {
-		this.birth = birth;
+	public void setBirthYear(Integer birthYear) {
+		this.birthYear = birthYear;
 	}
-
 }

@@ -16,6 +16,7 @@ public class SqlBuilderConfig {
 		setDlmt("\n");
 		setLn("\n");
 		setMaxCharsOfInlineSelCols(40);
+		setEnableConvertParamNameToSnakeCase(true);
 	}
 	public SqlBuilderConfig() {
 		init();

@@ -1,4 +1,4 @@
-package party.threebody.skean.web.test.navyapp;
+package party.threebody.skean.web.eg.navyapp;
 
 
 import com.fasterxml.jackson.core.JsonParser;

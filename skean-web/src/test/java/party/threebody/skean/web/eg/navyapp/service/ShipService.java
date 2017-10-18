@@ -1,10 +1,10 @@
-package party.threebody.skean.web.test.navyapp.service;
+package party.threebody.skean.web.eg.navyapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import party.threebody.skean.data.query.QueryParamsSuite;
-import party.threebody.skean.web.test.navyapp.dao.ShipDAO;
-import party.threebody.skean.web.test.navyapp.domain.Ship;
+import party.threebody.skean.web.eg.navyapp.dao.ShipDAO;
+import party.threebody.skean.web.eg.navyapp.domain.Ship;
 
 import java.util.List;
 import java.util.Map;

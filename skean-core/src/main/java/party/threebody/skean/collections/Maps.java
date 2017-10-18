@@ -1,6 +1,7 @@
 package party.threebody.skean.collections;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * complement some functions found in neither Google Guava nor Apache Common
@@ -33,6 +34,26 @@ public class Maps {
         Map<K, V> res = new HashMap<>(keysLeft.size() * 6 / 5);
         for (K k : keysLeft) {
             res.put(k, unfiltered.get(k));
+        }
+        return res;
+    }
+
+    /**
+     * no offical syntactic sugar for java 8 stream
+     * see: https://stackoverflow.com/questions/24630963/java-8-nullpointerexception-in-collectors-tomap
+     */
+    public static <K1,V1,K2,V2> Map<K2,V2> rebuild(Map<K1,V1> source,
+                                                   Function<K1,K2> keyTransformer,
+                                                   Function<V1,V2> valTransformer){
+        if (source==null){
+            return null;
+        }
+        Map res=new LinkedHashMap(source.size()*4/3);
+        for (K1 k1:source.keySet()){
+            V1 v1=source.get(k1);
+            K2 k2=keyTransformer.apply(k1);
+            V2 v2=valTransformer.apply(v1);
+            res.put(k2,v2);
         }
         return res;
     }

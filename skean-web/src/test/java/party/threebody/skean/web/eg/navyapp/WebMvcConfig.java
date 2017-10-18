@@ -1,4 +1,4 @@
-package party.threebody.skean.web.test.navyapp;
+package party.threebody.skean.web.eg.navyapp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

@@ -4,16 +4,16 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import party.threebody.skean.collections.Maps;
 import party.threebody.skean.data.query.Criterion;
 import party.threebody.skean.data.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 import party.threebody.skean.jdbc.util.*;
 import party.threebody.skean.lang.StringCases;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SqlBuilderMysqlImpl implements SqlBuilder {
@@ -44,7 +44,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildSelectSql(FromPhrase p) {
-        mayConvertParamNames(p);
+        mayConvertAllParamNamesToSnakeCase(p);
         StringBuilder sql = new StringBuilder();
         String sels = "*";
         if (p.afCols != null) {
@@ -289,7 +289,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildInsertSql(FromPhrase p) {
-        mayConvertParamNames(p);
+        mayConvertAllParamNamesToSnakeCase(p);
         SqlSecurityUtils.checkTableNameLegality(p.table);
         StringBuilder sql0 = new StringBuilder();
         sql0.append("INSERT INTO ");
@@ -316,7 +316,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildUpdateSql(FromPhrase p) {
-        mayConvertParamNames(p);
+        mayConvertAllParamNamesToSnakeCase(p);
         SqlSecurityUtils.checkTableNameLegality(p.table);
         Object[] args = null;
         StringBuilder sql = new StringBuilder();
@@ -326,7 +326,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         // colsAffected auto-generation by afValMap
         if (p.afCols == null) {
             if (p.afVal.getMap() != null) {
-                Set<String> colSet = new HashSet<String>(p.afVal.getMap().keySet());
+                Set<String> colSet = new HashSet<>(p.afVal.getMap().keySet());
                 if (p.byCols != null) { // remove colsBy from colsAffected
                     for (String c : p.byCols) {
                         colSet.remove(c);
@@ -359,7 +359,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     @Override
     public SqlAndArgs buildDeleteSql(FromPhrase p) {
-        mayConvertParamNames(p);
+        mayConvertAllParamNamesToSnakeCase(p);
         SqlSecurityUtils.checkTableNameLegality(p.table);
         StringBuilder sql = new StringBuilder();
         // PRINT>>>> DELETE FROM ...
@@ -382,7 +382,10 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         return nq + String.join(nq + CM + nq, names) + nq;
     }
 
-    private void convertToSnakeCase(String[] cols) {
+    /**
+     * exist side-effect
+     */
+    private static void convertToSnakeCase(String[] cols) {
         if (cols == null) {
             return;
         }
@@ -391,13 +394,33 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         }
     }
 
-    private void mayConvertParamNames(FromPhrase p) {
+    /**
+     * exist side-effect
+     */
+    private static void convertValMapToSnakeCase(ValueHolder valueHolder) {
+        if (valueHolder == null) {
+            return;
+        }
+        //update valMap
+        valueHolder.valMap(toSnakeCase(valueHolder.getMap()));
+    }
+
+    private static Map<String, Object> toSnakeCase(Map<String, Object> valMap) {
+        if (valMap == null) {
+            return null;
+        }
+        return Maps.rebuild(valMap,StringCases::camelToSnake, Function.identity());
+    }
+
+    private void mayConvertAllParamNamesToSnakeCase(FromPhrase p) {
         if (!conf.isConvertParamNameToSnakeCaseEnabled()) {
             return;
         }
         convertToSnakeCase(p.seCols);
         convertToSnakeCase(p.afCols);
         convertToSnakeCase(p.byCols);
+        convertValMapToSnakeCase(p.val);
+        convertValMapToSnakeCase(p.afVal);
         if (p.criteria != null) {
             for (Criterion criterion : p.criteria) {
                 criterion.setName(StringCases.camelToSnake(criterion.getName()));
@@ -408,6 +431,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
                 sortingField.setName(StringCases.camelToSnake(sortingField.getName()));
             }
         }
+
 
     }
 

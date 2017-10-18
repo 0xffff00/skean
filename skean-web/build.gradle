@@ -22,8 +22,11 @@ dependencies {
     testCompile group: 'org.springframework', name: 'spring-test', version: versions.spring
     compile group: 'org.ehcache', name: 'ehcache', version: '3.3.1'
 
+
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
 
 
