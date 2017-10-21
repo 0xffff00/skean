@@ -17,7 +17,7 @@ class Ge2RelDao extends TriplePKCrudDAO<Ge2Rel,String,String,Integer> {
 	}
 
 	@Override
-	protected Class<Ge2Rel> getBeanClass() {
+	protected Class<Ge2Rel> getEntityClass() {
 		Ge2Rel.class
 	}
 

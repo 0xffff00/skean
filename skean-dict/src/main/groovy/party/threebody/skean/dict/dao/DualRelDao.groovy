@@ -17,7 +17,7 @@ class DualRelDao extends TriplePKCrudDAO<DualRel,String,String,Integer> {
 	}
 
 	@Override
-	protected Class<DualRel> getBeanClass() {
+	protected Class<DualRel> getEntityClass() {
 		DualRel.class
 	}
 

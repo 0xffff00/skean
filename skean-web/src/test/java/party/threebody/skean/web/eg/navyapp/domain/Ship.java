@@ -1,5 +1,7 @@
 package party.threebody.skean.web.eg.navyapp.domain;
 
+import javax.persistence.Id;
+
 public class Ship {
 	private String code, name;
 	private Integer weig;

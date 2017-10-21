@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import party.threebody.skean.web.mvc.MapUtils;
 import party.threebody.skean.web.mvc.controller.CrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudRestController;
 import party.threebody.skean.web.eg.navyapp.domain.Ship;
@@ -23,7 +24,7 @@ public class ShipController extends SinglePKCrudRestController<Ship, String> {
         builder.countReader(shipService::countShips)
                 .listReader(shipService::listShips)
                 .oneReader(shipService::getShip)
-                .creator(shipService::createAndGet)
+                .creatorWithReturn(shipService::createAndGet)
                 .entireUpdater(shipService::update)
                 .partialUpdater(shipService::partialUpdate)
                 .deleter(shipService::delete)
@@ -43,8 +44,9 @@ public class ShipController extends SinglePKCrudRestController<Ship, String> {
         return ResponseEntity.ok().body(a + ":" + b);
     }
 
-    @GetMapping("/x/{x}")
-    public ResponseEntity<Object> x(@MatrixVariable Map<String, Object> matrixVars) {
+    // illegal: #%/;
+    @GetMapping("/x/{x:.+}")
+    public ResponseEntity<Object> x(@MatrixVariable Map<String, String> matrixVars) {
 
         return ResponseEntity.ok().body(matrixVars);
     }
@@ -55,11 +57,9 @@ public class ShipController extends SinglePKCrudRestController<Ship, String> {
         return ResponseEntity.ok().body(y);
     }
 
-    @GetMapping("/z/{z}")
-    public ResponseEntity<Object> z(@MatrixVariable MultiValueMap<String, Object> matrixVars) {
-
-
-        return ResponseEntity.ok().body( matrixVars.toSingleValueMap());
+    @GetMapping("/z/{z:.+}")
+    public ResponseEntity<Object> z(@MatrixVariable MultiValueMap<String, String> matrixVars) {
+        return ResponseEntity.ok().body(MapUtils.toMap(matrixVars));
     }
 }
 

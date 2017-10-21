@@ -20,7 +20,7 @@ public class ShipDAO extends SinglePKCrudDAO<Ship,String> {
     }
 
     @Override
-    protected Class<Ship> getBeanClass() {
+    protected Class<Ship> getEntityClass() {
         return Ship.class;
     }
 

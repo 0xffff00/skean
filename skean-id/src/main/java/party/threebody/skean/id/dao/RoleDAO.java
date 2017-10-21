@@ -15,7 +15,7 @@ public class RoleDAO extends SinglePKCrudDAO<Role, String> {
     }
 
     @Override
-    protected Class<Role> getBeanClass() {
+    protected Class<Role> getEntityClass() {
         return Role.class;
     }
 

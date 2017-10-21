@@ -1,5 +1,6 @@
 package party.threebody.skean.web.mvc.dao;
 
+import com.sun.javafx.fxml.builder.JavaFXFontBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import party.threebody.skean.data.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
@@ -12,7 +13,6 @@ import party.threebody.skean.lang.StringCases;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -26,7 +26,7 @@ public abstract class AbstractCrudDAO<T> {
 
     protected abstract String getTable();
 
-    protected abstract Class<T> getBeanClass();
+    protected abstract Class<T> getEntityClass();
 
     /**
      * @return names of columns which are exact primary keys
@@ -39,7 +39,6 @@ public abstract class AbstractCrudDAO<T> {
      * @return names of columns which should be affected (insert or update)
      */
     protected abstract List<String> getAffectedColumns();
-
     protected FromPhrase fromTable() {
         return cjt.from(getTable());
     }
@@ -64,11 +63,11 @@ public abstract class AbstractCrudDAO<T> {
     public T createAndGet(T entity) {
         Map<String, Object> propsMap = convertBeanToMap(entity);
         fromTableAffectCols().val(propsMap).insert();
-        return fromTable().by(getPrimaryKeyColumns()).val(propsMap).limit(1).first(getBeanClass());
+        return fromTable().by(getPrimaryKeyColumns()).val(propsMap).limit(1).first(getEntityClass());
     }
 
     public List<T> readList(QueryParamsSuite qps) {
-        return fromTable().suite(qps).list(getBeanClass());
+        return fromTable().suite(qps).list(getEntityClass());
     }
 
     public int readCount(QueryParamsSuite qps) {
@@ -76,11 +75,11 @@ public abstract class AbstractCrudDAO<T> {
     }
 
     protected T readOne(Object[] pk) {
-        return fromTableByPkCols().valArr(pk).limit(1).first(getBeanClass());
+        return fromTableByPkCols().valArr(pk).limit(1).first(getEntityClass());
     }
 
     public T readOneByExample(T example) {
-        return fromTableByPkCols().valObj(example).limit(1).first(getBeanClass());
+        return fromTableByPkCols().valObj(example).limit(1).first(getEntityClass());
     }
 
     protected int update(T entity, Object[] pkArr) {

@@ -1,5 +1,7 @@
 package party.threebody.skean.data.query;
 
+import java.util.Map;
+
 public class QueryParamsSuite {
 
 	private Criterion[] criteria;
@@ -35,4 +37,10 @@ public class QueryParamsSuite {
 	public void setPagingInfo(PagingInfo pagingInfo) {
 		this.pagingInfo = pagingInfo;
 	}
+
+	public static QueryParamsSuite ofPLOxMap(Map<String,String> map){
+		return QueryParamsBuildUtils.buildQueryParamsSuiteByPLOx(map);
+	}
+
+
 }

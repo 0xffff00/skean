@@ -15,6 +15,10 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-web', version: versions.spring
     compile group: 'org.springframework', name: 'spring-webmvc', version: versions.spring
 
+
+
+    compile group: 'javax.persistence', name: 'persistence-api', version: '1.0.2'
+
     //compile group: 'org.springframework.security', name: 'spring-security-web', version: versions.'spring-security'
     //compile group: 'org.springframework.security', name: 'spring-security-config', version: versions.'spring-security'
 

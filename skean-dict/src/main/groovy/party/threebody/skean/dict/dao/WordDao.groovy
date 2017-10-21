@@ -52,7 +52,7 @@ SELECT a.w FROM (
 	}
 
 	@Override
-	protected Class<Word> getBeanClass() {
+	protected Class<Word> getEntityClass() {
 		Word.class
 	}
 

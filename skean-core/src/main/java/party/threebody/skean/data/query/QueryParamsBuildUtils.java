@@ -34,7 +34,7 @@ public class QueryParamsBuildUtils {
 
     /**
      * <h1>read parameters by all keys</h1>
-     * PLOx means Page,Len,Orders and any other flat eXtensible params
+     * PLOx means pageNum(P),pageLength(L),Orders(O) and any other user-defined flat eXtensible params(X)
      *
      * @param paramsMap a parameter Map
      * @return QueryParamsSuite built
@@ -46,7 +46,7 @@ public class QueryParamsBuildUtils {
     /**
      * TODO need rename
      * <h1>read parameters by keys restricted by a white list</h1>
-     * PLOx means Page,Len,Orders and any other flat eXtensible params
+     * PLOx means pageNum(P),pageLength(L),Orders(O) and any other user-defined flat eXtensible params(X)
      *
      * @param paramsMap          a parameter Map
      * @param paramNamewhiteList white list to filter keys of the parameter Map
