@@ -1,0 +1,74 @@
+package party.threebody.skean.web.eg.navyapp.test;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import party.threebody.skean.collections.Maps;
+import party.threebody.skean.web.eg.navyapp.dao.FleetDAO;
+import party.threebody.skean.web.eg.navyapp.dao.ShipDAO;
+import party.threebody.skean.web.eg.navyapp.domain.Fleet;
+import party.threebody.skean.web.eg.navyapp.domain.Ship;
+
+import java.time.LocalDateTime;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class NavyDAOsTests {
+
+    @Autowired ShipDAO shipDAO;
+    @Autowired FleetDAO fleetDAO;
+
+    @Test
+    public void testShipDAO() throws Exception {
+        //create
+        shipDAO.create(new Ship("CA01", "Taishan", 31180, 2020));
+        shipDAO.create(new Ship("CA02", "Hengshan", 32500, 2024));
+        shipDAO.create(new Ship("CA03", "Songshan", 32840, 2026));
+        shipDAO.create(new Ship("CA04", "Huashan", 32850, 2026));
+        assertEquals(4, shipDAO.readCount(null));
+        Ship ca01 = shipDAO.readOne("CA01");
+        assertNotNull(ca01.getCreateTime());
+        LocalDateTime t1 = ca01.getUpdateTime();
+        assertNotNull(t1);
+
+        //update
+        shipDAO.partialUpdate(Maps.of("weight", 31200), "CA01");
+        ca01 = shipDAO.readOne("CA01");
+        assertEquals(31200, (int) ca01.getWeight());
+        LocalDateTime t2 = ca01.getUpdateTime();
+        assertNotNull(ca01.getCreateTime());
+        assertNotNull(t2);
+        assertTrue(t2.isAfter(t1));
+
+        shipDAO.update(new Ship("CA02a", "Hengshan1", 32501, 2024), "CA02");
+        Ship ca02 = shipDAO.readOne("CA02a");
+        assertEquals(32501, (int) ca02.getWeight());
+        t2 = ca02.getUpdateTime();
+        assertTrue(t2.isAfter(t1));
+
+        //delete
+        shipDAO.delete("CA04");
+        assertEquals(3, shipDAO.readCount(null));
+        assertEquals(2026, (int) shipDAO.readOne("CA03").getBirthYear());
+
+    }
+
+    @Test
+    public void testFleetDAO() throws Exception {
+        fleetDAO.create(new Fleet("CHN", "SOUTH1", "South No.1 Fleet", "Zhangzz", null));
+        fleetDAO.create(new Fleet("CHN", "SOUTH2", "South No.2 Fleet", "Zhangzz", null));
+        assertEquals(2, fleetDAO.readCount(null));
+        Fleet f2 = fleetDAO.readOne("CHN", "SOUTH2");
+        LocalDateTime t1 = f2.getUpdateTime();
+        assertNotNull(t1);
+
+        fleetDAO.partialUpdate(Maps.of("code", "SOUTH20", "leaderName", "Aaaaa"), "CHN", "SOUTH2");
+        f2 = fleetDAO.readOne("CHN", "SOUTH20");
+        LocalDateTime t2 = f2.getUpdateTime();
+        assertTrue(t2.isAfter(t1));
+    }
+}

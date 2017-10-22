@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import party.threebody.skean.data.query.QueryParamsSuite;
-import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO;
+import party.threebody.skean.web.mvc.dao0.SinglePKCrudDAO;
 
 import java.util.List;
 

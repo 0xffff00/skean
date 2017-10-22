@@ -1,127 +1,146 @@
 package party.threebody.skean.web.mvc.dao;
 
-import com.sun.javafx.fxml.builder.JavaFXFontBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.collections4.CollectionUtils;
 import party.threebody.skean.data.query.QueryParamsSuite;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
-import party.threebody.skean.jdbc.phrase.AffectPhrase;
 import party.threebody.skean.jdbc.phrase.ByPhrase;
 import party.threebody.skean.jdbc.phrase.FromPhrase;
 import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.lang.StringCases;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
- * @param <T> type of the entity bean
+ * @param <E> type of the entity bean
  * @author hzk
- * @since 2017-09-02
+ * @since 2017-10-22
  */
-public abstract class AbstractCrudDAO<T> {
-    @Autowired
-    ChainedJdbcTemplate cjt;
+public interface AbstractCrudDAO<E> {
 
-    protected abstract String getTable();
+    ChainedJdbcTemplate getChainedJdbcTemplate();
 
-    protected abstract Class<T> getEntityClass();
+    String getTable();
+
+    Class<E> getEntityClass();
 
     /**
      * @return names of columns which are exact primary keys
      */
-    protected abstract List<String> getPrimaryKeyColumns();
+    List<String> getPrimaryKeyColumns();
 
     /**
      * if return null, build actual AffectedColumns by properties of the bean
      *
      * @return names of columns which should be affected (insert or update)
      */
-    protected abstract List<String> getAffectedColumns();
-    protected FromPhrase fromTable() {
-        return cjt.from(getTable());
+    List<String> getAffectedColumns();
+
+    default List<String> getInsertedColumns() {
+        return getAffectedColumns();
     }
 
-    protected ByPhrase fromTableByPkCols() {
-        return cjt.from(getTable()).by(getPrimaryKeyColumns());
+    default List<String> getUpdatedColumns() {
+        return getAffectedColumns();
     }
 
-    protected AffectPhrase fromTableAffectCols() {
-        return cjt.from(getTable()).affect(getAffectedColumns());
+
+    default Map<String, Object> convertEntityBeanToMap(E entity) {
+        return JavaBeans.convertBeanToSimpleMap(entity, StringCases::camelToSnake);
+
     }
 
-    protected Map<String, Object> convertBeanToMap(T bean) {
-        return JavaBeans.convertBeanToSimpleMap(bean, StringCases::camelToSnake);
+    default Map<String, Object> buildExtraValMapToInsert(E entity) {
+        return Collections.emptyMap();
+
     }
 
-    public int create(T entity) {
-        Map<String, Object> propsMap = convertBeanToMap(entity);
-        return fromTableAffectCols().val(propsMap).insert();
+    default Map<String, Object> buildExtraValMapToUpdate(E entity) {
+        return Collections.emptyMap();
     }
 
-    public T createAndGet(T entity) {
-        Map<String, Object> propsMap = convertBeanToMap(entity);
-        fromTableAffectCols().val(propsMap).insert();
+    default FromPhrase fromTable() {
+        return getChainedJdbcTemplate().from(getTable());
+    }
+
+    default ByPhrase fromTableByPkCols() {
+        return getChainedJdbcTemplate().from(getTable()).by(getPrimaryKeyColumns());
+    }
+
+
+    default int create(E entity) {
+        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
+        propsMap.putAll(buildExtraValMapToInsert(entity));
+        return fromTable().affect(getInsertedColumns()).val(propsMap).insert();
+    }
+
+    default E createAndGet(E entity) {
+        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
+        propsMap.putAll(buildExtraValMapToInsert(entity));
+        fromTable().affect(getInsertedColumns()).val(propsMap).insert();
         return fromTable().by(getPrimaryKeyColumns()).val(propsMap).limit(1).first(getEntityClass());
     }
 
-    public List<T> readList(QueryParamsSuite qps) {
+    default List<E> readList(QueryParamsSuite qps) {
         return fromTable().suite(qps).list(getEntityClass());
     }
 
-    public int readCount(QueryParamsSuite qps) {
+    default int readCount(QueryParamsSuite qps) {
         return fromTable().suite(qps).count();
     }
 
-    protected T readOne(Object[] pk) {
+    default E readOne(Object[] pk) {
         return fromTableByPkCols().valArr(pk).limit(1).first(getEntityClass());
     }
 
-    public T readOneByExample(T example) {
+    default E readOneByExample(E example) {
         return fromTableByPkCols().valObj(example).limit(1).first(getEntityClass());
     }
 
-    protected int update(T entity, Object[] pkArr) {
-        Map<String, Object> propsMap = convertBeanToMap(entity);
-        return fromTableAffectCols().val(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+    default int update(E entity, Object[] pkArr) {
+        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
+        propsMap.putAll(buildExtraValMapToUpdate(entity));
+        return fromTable().affect(getUpdatedColumns()).val(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
     }
 
-    public int updateByExample(T entity) {
-        Map<String, Object> propsMap = convertBeanToMap(entity);
-        return fromTableAffectCols().val(propsMap).by(getPrimaryKeyColumns()).valObj(entity).update();
-    }
-
-    /**
-     * @since skean 2.0
-     */
-    public int partialUpdate(T entity, Object[] pkArr, Collection<String> colsToUpdate){
-        Map<String, Object> propsMap = convertBeanToMap(entity);
-        String[] afCols=colsToUpdate.stream()
-                .filter(col-> getAffectedColumns()==null || getAffectedColumns().contains(col))
-                .toArray(String[]::new);
-        return cjt.from(getTable()).affect(afCols).val(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+    default int updateByExample(E entity) {
+        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
+        propsMap.putAll(buildExtraValMapToUpdate(entity));
+        return fromTable().affect(getUpdatedColumns()).val(propsMap).by(getPrimaryKeyColumns()).valObj(entity).update();
     }
 
     /**
      * @since skean 2.0
      */
-    public int partialUpdate(Map<String,Object> fieldsToUpdate, Object[] pkArr){
-        if (fieldsToUpdate.isEmpty()){
+    default int partialUpdate(E entity, Object[] pkArr, Collection<String> colsToUpdate) {
+        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
+        propsMap.putAll(buildExtraValMapToUpdate(entity));
+        Collection<String> afCols = CollectionUtils.intersection(colsToUpdate, getUpdatedColumns());
+        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+    }
+
+    /**
+     * @since skean 2.0
+     */
+    default int partialUpdate(Map<String, Object> fieldsToUpdate, Object[] pkArr) {
+        if (fieldsToUpdate.isEmpty()) {
             return 0;
         }
-        return cjt.from(getTable()).affect(fieldsToUpdate).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+        Map<String, Object> propsMap = new HashMap<>(fieldsToUpdate);
+        propsMap.putAll(buildExtraValMapToUpdate(null));
+        Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatedColumns());
+        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
     }
 
-    protected int delete(Object[] pkArr) {
+    default int delete(Object[] pkArr) {
         return fromTableByPkCols().val(pkArr).delete();
     }
 
-    public int deleteByExample(T example) {
+    default int deleteByExample(E example) {
         return fromTableByPkCols().valObj(example).delete();
     }
 
-    public int deleteSome(QueryParamsSuite qps) {
+    default int deleteSome(QueryParamsSuite qps) {
         return fromTable().suite(qps).delete();
     }
 }

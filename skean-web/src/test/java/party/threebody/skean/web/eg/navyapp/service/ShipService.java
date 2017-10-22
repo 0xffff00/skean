@@ -3,8 +3,8 @@ package party.threebody.skean.web.eg.navyapp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import party.threebody.skean.data.query.QueryParamsSuite;
-import party.threebody.skean.web.eg.navyapp.dao.ShipDAO;
-import party.threebody.skean.web.eg.navyapp.domain.Ship;
+import party.threebody.skean.web.eg.navyapp.dao.Ship0DAO;
+import party.threebody.skean.web.eg.navyapp.domain.Ship0;
 
 import java.util.List;
 import java.util.Map;
@@ -13,13 +13,13 @@ import java.util.Map;
 public class ShipService {
 
     @Autowired
-    ShipDAO shipDAO;
+    Ship0DAO shipDAO;
 
-    public Ship getShip(String code) {
+    public Ship0 getShip(String code) {
         return shipDAO.readOne(code);
     }
 
-    public List<Ship> listShips(QueryParamsSuite qps) {
+    public List<Ship0> listShips(QueryParamsSuite qps) {
         return shipDAO.readList(qps);
     }
 
@@ -27,11 +27,11 @@ public class ShipService {
         return shipDAO.readCount(qps);
     }
 
-    public Ship createAndGet(Ship ship) {
+    public Ship0 createAndGet(Ship0 ship) {
         return shipDAO.createAndGet(ship);
     }
 
-    public int update(Ship ship, String code) {
+    public int update(Ship0 ship, String code) {
         return shipDAO.update(ship, code);
     }
 

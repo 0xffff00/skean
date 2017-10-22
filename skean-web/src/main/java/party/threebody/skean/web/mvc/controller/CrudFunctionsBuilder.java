@@ -1,6 +1,7 @@
 package party.threebody.skean.web.mvc.controller;
 
 import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.web.mvc.dao.SinglePKJpaCrudDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,9 @@ public class CrudFunctionsBuilder<E, PK> {
         funcs.countReader = SimpleCrudFunctions::raiseNotImplemented;
         funcs.oneReader = SimpleCrudFunctions::raiseNotImplemented;
         funcs.creator = SimpleCrudFunctions::raiseNotImplemented;
-        funcs.creatorWithReturn = e ->  {
+        funcs.creatorWithReturn = e -> {
             funcs.creator.apply(e);
-            PK pk=funcs.pkGetter.apply(e);
+            PK pk = funcs.pkGetter.apply(e);
             return funcs.oneReader.apply(pk);
         };
         funcs.entireUpdater = SimpleCrudFunctions::raiseNotImplemented;
@@ -79,4 +80,13 @@ public class CrudFunctionsBuilder<E, PK> {
     }
 
 
+    public CrudFunctionsBuilder<E, PK> fromDAO(SinglePKJpaCrudDAO<E, PK> dao) {
+        funcs.pkGetter = e -> (PK) dao.convertEntityBeanToMap(e).get(dao.getPrimaryKeyColumns().get(0));
+        funcs.listReader = dao::readList;
+        funcs.countReader = dao::readCount;
+        funcs.oneReader = dao::readOne;
+        funcs.creator = dao::create;
+        funcs.deleter = dao::delete;
+        return this;
+    }
 }

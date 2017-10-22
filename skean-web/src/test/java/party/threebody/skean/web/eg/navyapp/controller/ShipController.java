@@ -7,20 +7,20 @@ import org.springframework.web.bind.annotation.*;
 import party.threebody.skean.web.mvc.MapUtils;
 import party.threebody.skean.web.mvc.controller.CrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudRestController;
-import party.threebody.skean.web.eg.navyapp.domain.Ship;
+import party.threebody.skean.web.eg.navyapp.domain.Ship0;
 import party.threebody.skean.web.eg.navyapp.service.ShipService;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("ships")
-public class ShipController extends SinglePKCrudRestController<Ship, String> {
+public class ShipController extends SinglePKCrudRestController<Ship0, String> {
 
     @Autowired
     ShipService shipService;
 
     @Override
-    public void buildCrudFunctions(CrudFunctionsBuilder<Ship, String> builder) {
+    public void buildCrudFunctions(CrudFunctionsBuilder<Ship0, String> builder) {
         builder.countReader(shipService::countShips)
                 .listReader(shipService::listShips)
                 .oneReader(shipService::getShip)
@@ -28,13 +28,13 @@ public class ShipController extends SinglePKCrudRestController<Ship, String> {
                 .entireUpdater(shipService::update)
                 .partialUpdater(shipService::partialUpdate)
                 .deleter(shipService::delete)
-                .pkGetter(Ship::getCode);
+                .pkGetter(Ship0::getCode);
     }
 
 
     @GetMapping("/2222")
     @Override
-    public ResponseEntity<Ship> httpReadOne(String s) {
+    public ResponseEntity<Ship0> httpReadOne(String s) {
         return super.httpReadOne(s);
     }
 

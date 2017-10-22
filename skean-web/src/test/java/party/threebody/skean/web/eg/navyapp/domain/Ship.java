@@ -1,41 +1,78 @@
 package party.threebody.skean.web.eg.navyapp.domain;
 
+import party.threebody.skean.data.CreateTime;
+import party.threebody.skean.data.LastUpdateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
+@Table(name = "navy_ship")
 public class Ship {
-	private String code, name;
-	private Integer weig;
-	private Integer birthYear;
 
-	public String getCode() {
-		return code;
-	}
+    @Id private String code;
+    @Column private String name;
+    @Column private Integer weight;
+    @Column private Integer birthYear;
+    @CreateTime private LocalDateTime createTime;
+    @LastUpdateTime private LocalDateTime updateTime;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public Ship() {
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Ship(String code, String name, Integer weight, Integer birthYear) {
+        this.code = code;
+        this.name = name;
+        this.weight = weight;
+        this.birthYear = birthYear;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public Integer getWeig() {
-		return weig;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setWeig(Integer weig) {
-		this.weig = weig;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Integer getBirthYear() {
-		return birthYear;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setBirthYear(Integer birthYear) {
-		this.birthYear = birthYear;
-	}
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Integer getBirthYear() {
+        return birthYear;
+    }
+
+    public void setBirthYear(Integer birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
 }
