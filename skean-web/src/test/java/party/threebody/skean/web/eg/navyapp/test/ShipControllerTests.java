@@ -35,27 +35,35 @@ public class ShipControllerTests {
     MockMvc mvc;
 
     @Test
-    public void testCrud() throws Exception {
+    public void test1() throws Exception {
+        testShipsApis("/ships");
+    }
+    @Test
+    public void test2() throws Exception {
+        testShipsApis("/ships2");
+    }
+
+    void testShipsApis(String rootPath) throws Exception {
         //create
-        mvc.perform(post("/ships")
+        mvc.perform(post(rootPath)
                 .contentType(APPLICATION_JSON)
                 .content("{\"code\":\"SS01\",\"birthYear\":2001,\"name\":\"Zhenzhou\"}")
         ).andExpect(status().is2xxSuccessful());
 
-        mvc.perform(get("/ships/"))
+        mvc.perform(get(rootPath + "/"))
                 .andExpect(status().isOk())
                 .andExpect(
                         content().json("[{\"code\":\"SS01\",\"birthYear\":2001,\"name\":\"Zhenzhou\"}]")
                 );
 
-        mvc.perform(put("/ships/SS01")
+        mvc.perform(put(rootPath + "/SS01")
                 .contentType(APPLICATION_JSON)
                 .content("{\"code\":\"SS01\",\"birthYear\":2003,\"name\":\"Zhenzhou\"}")
         ).andExpect(status().is2xxSuccessful());
 
         assertEquals(Integer.valueOf(2003), shipService.getShip("SS01").getBirthYear());
 
-        mvc.perform(patch("/ships/SS01")
+        mvc.perform(patch(rootPath + "/SS01")
                 .contentType(APPLICATION_JSON)
                 .content("{\"code\":\"SSN01\",\"birthYear\":2004}")
         ).andExpect(status().is2xxSuccessful());
@@ -64,9 +72,9 @@ public class ShipControllerTests {
         assertEquals("Zhenzhou", shipService.getShip("SSN01").getName());
         assertEquals(1, shipService.countShips(null));
 
-        mvc.perform(delete("/ships/SSN01")
+        mvc.perform(delete(rootPath + "/SSN01")
         ).andExpect(status().is2xxSuccessful());
-        mvc.perform(delete("/ships/SSN01")
+        mvc.perform(delete(rootPath + "/SSN01")
         ).andExpect(status().isGone());
 
         assertEquals(0, shipService.countShips(null));
