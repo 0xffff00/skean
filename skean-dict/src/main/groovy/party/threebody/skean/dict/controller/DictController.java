@@ -9,7 +9,7 @@ import party.threebody.skean.dict.domain.Ge1Rel;
 import party.threebody.skean.dict.domain.Ge2Rel;
 import party.threebody.skean.dict.domain.Word;
 import party.threebody.skean.dict.service.WordService;
-import party.threebody.skean.web.mvc.controller.ControllerUtils;
+import party.threebody.skean.web.mvc.controller.CrudRestControllerUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +36,7 @@ public class DictController {
 	public ResponseEntity<Object> deleteDualRel(@MatrixVariable String key, @MatrixVariable String attr,
 			@MatrixVariable Integer vno) {
 		int rna = wordService.deleteDualRel(key, attr, vno);
-		return ControllerUtils.respondRowNumAffected(rna);
+		return CrudRestControllerUtils.respondRowNumAffected(rna);
 	}
 
 	@GetMapping("/ge1-rels")
@@ -59,7 +59,7 @@ public class DictController {
 		}else{
 			rna = wordService.deleteGe1Rel(key, attr, vno);
 		}
-		return ControllerUtils.respondRowNumAffected(rna);
+		return CrudRestControllerUtils.respondRowNumAffected(rna);
 	}
 
 	@GetMapping("/ge2-rels")
@@ -82,7 +82,7 @@ public class DictController {
 		}else{
 			rna = wordService.deleteGe2Rel(key, attr, vno);
 		}
-		return ControllerUtils.respondRowNumAffected(rna);
+		return CrudRestControllerUtils.respondRowNumAffected(rna);
 	}
 
 	@PostMapping("/words")
@@ -94,7 +94,7 @@ public class DictController {
 
 	@GetMapping("/words")
 	public ResponseEntity<List<Word>> listWords(@RequestParam Map<String, String> reqestParamMap) {
-		return ControllerUtils.respondListAndCountByPLOC(reqestParamMap, wordService::listWords, wordService::countWords);
+		return CrudRestControllerUtils.respondListAndCountByPLOC(reqestParamMap, wordService::listWords, wordService::countWords);
 	}
 
 	@GetMapping("/words/{text}")
@@ -104,12 +104,12 @@ public class DictController {
 
 	@PutMapping("/words/{text}")
 	public ResponseEntity<Object> updateWord(@PathVariable String text, @RequestBody Word entity) {
-		return ControllerUtils.respondRowNumAffected(wordService.updateWord(entity, text));
+		return CrudRestControllerUtils.respondRowNumAffected(wordService.updateWord(entity, text));
 	}
 
 	@DeleteMapping("/words/{text}")
 	public ResponseEntity<Object> deleteWord(@PathVariable String text) {
-		return ControllerUtils.respondRowNumAffected(wordService.deleteWord(text));
+		return CrudRestControllerUtils.respondRowNumAffected(wordService.deleteWord(text));
 	}
 
 	@GetMapping("/words/temporaryTexts")

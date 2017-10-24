@@ -12,6 +12,10 @@ import party.threebody.skean.web.mvc.MultiValueMaps;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @since skean 2.1
+ * @param <E>
+ */
 public abstract class CrudRestController<E> {
 
     public abstract void buildCrudFunctions(CrudFunctions.Builder<E> builder);
@@ -27,7 +31,7 @@ public abstract class CrudRestController<E> {
      */
     protected ResponseEntity<List<E>> httpReadList0(MultiValueMap<String, String> criteriaParams) {
         Map<String, Object> criteriaParamMap = MultiValueMaps.toMap(criteriaParams);
-        return ControllerUtils.respondListAndCount(criteriaParamMap,
+        return CrudRestControllerUtils.respondListAndCount(criteriaParamMap,
                 getCrudFunctions().getListReader(), getCrudFunctions().getCountReader());
     }
 
@@ -60,7 +64,7 @@ public abstract class CrudRestController<E> {
         }
         //update if exists
         Integer rna = getCrudFunctions().getUpdater().apply(entity, csp);
-        return ControllerUtils.respondRowNumAffected(rna);
+        return CrudRestControllerUtils.respondRowNumAffected(rna);
 
     }
 
@@ -68,7 +72,7 @@ public abstract class CrudRestController<E> {
      * HTTP PATCH: partialUpdate
      */
     protected ResponseEntity<Object> httpPartialUpdate0(MultiValueMap<String, String> criteriaParams,
-                                                     Map<String, Object> contentToApply) {
+                                                        Map<String, Object> contentToApply) {
         Map<String, Object> criteriaParamMap = MultiValueMaps.toMap(criteriaParams);
         CriteriaAndSortingAndPaging csp = PLOxStyleCriteriaUtils.toCriteriaAndSortingAndPaging(criteriaParamMap);
         Integer cnt = getCrudFunctions().getCountReader().apply(csp);
@@ -76,7 +80,7 @@ public abstract class CrudRestController<E> {
             throw new SkeanForbiddenException("batch update is disabled.");
         }
         Integer rna = getCrudFunctions().getPartialUpdater().apply(contentToApply, csp);
-        return ControllerUtils.respondRowNumAffected(rna);
+        return CrudRestControllerUtils.respondRowNumAffected(rna);
     }
 
     /**
@@ -90,7 +94,7 @@ public abstract class CrudRestController<E> {
             throw new SkeanForbiddenException("batch delete is disabled.");
         }
         Integer rna = getCrudFunctions().getDeleter().apply(csp);
-        return ControllerUtils.respondRowNumAffected(rna);
+        return CrudRestControllerUtils.respondRowNumAffected(rna);
     }
 }
 

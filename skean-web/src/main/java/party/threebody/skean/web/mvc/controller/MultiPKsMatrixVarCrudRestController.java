@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @param <E> type of the entity bean
  * @author hzk
- * @since 2017-10-14
+ * @since skean 2.1
  */
 public abstract class MultiPKsMatrixVarCrudRestController<E> extends MatrixVarCrudRestController<E> {
 

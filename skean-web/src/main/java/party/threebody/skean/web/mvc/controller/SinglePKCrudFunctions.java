@@ -11,6 +11,11 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * @since skean 2.1
+ * @param <E>
+ * @param <PK>
+ */
 public class SinglePKCrudFunctions<E, PK> extends CrudFunctions<E> {
 
 

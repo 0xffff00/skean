@@ -4,7 +4,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
-import party.threebody.skean.jdbc.phrase.ByPhrase;
 import party.threebody.skean.jdbc.phrase.FromPhrase;
 import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.lang.StringCases;
@@ -58,7 +57,6 @@ public interface AbstractCrudDAO<E> {
     default FromPhrase fromTable() {
         return getChainedJdbcTemplate().from(getTable());
     }
-
 
 
     default int create(E entity) {

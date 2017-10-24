@@ -7,13 +7,13 @@ import party.threebody.skean.misc.SkeanException;
 @ResponseStatus(HttpStatus.FORBIDDEN)
 public class SkeanForbiddenException extends SkeanException {
 
-	public SkeanForbiddenException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public SkeanForbiddenException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public SkeanForbiddenException(String message) {
-		super(message);
-	}
+    public SkeanForbiddenException(String message) {
+        super(message);
+    }
 
 
 }

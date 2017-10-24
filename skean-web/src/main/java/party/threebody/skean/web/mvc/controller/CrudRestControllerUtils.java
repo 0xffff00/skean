@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ControllerUtils {
+public class CrudRestControllerUtils {
 
     private static final String HEADER_NAME_TOTAL_COUNT = "X-Total-Count";
     private static final String HEADER_NAME_TOTAL_AFFECTED = "X-Total-Affected";
 
-    private ControllerUtils() {
+    private CrudRestControllerUtils() {
 
     }
 

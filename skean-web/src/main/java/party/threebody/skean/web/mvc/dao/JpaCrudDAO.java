@@ -18,6 +18,37 @@ import java.util.stream.Stream;
 
 public interface JpaCrudDAO<E> extends PrimaryKeysAwareCrudDAO<E> {
 
+    static boolean isAnnotatedOfAnyType(Field field, Class... annotationTypes) {
+        return Stream.of(annotationTypes)
+                .anyMatch(at ->
+                        AnnotationUtils.findAnnotation(field, at) != null
+                );
+    }
+
+    static Object now(Class<?> timeClass) {
+        if (timeClass.equals(LocalDateTime.class)) {
+            return LocalDateTime.now().toString();
+        }
+        //TODO support other types
+        return null;
+    }
+
+    static <E> List<String> fetchFieldNamesByAnnotated(Class<E> entityClass, Class... annotationTypes) {
+        return Stream.of(entityClass.getDeclaredFields())
+                .filter(field -> isAnnotatedOfAnyType(field, annotationTypes))
+                .map(Field::getName)
+                .collect(Collectors.toList());
+    }
+
+    static <E> Map<String, Object> buildNowTimeMapByAnnotated(Class<E> entityClass, Class... annotationTypes) {
+        return Stream.of(entityClass.getDeclaredFields())
+                .filter(field -> isAnnotatedOfAnyType(field, annotationTypes))
+                .collect(Collectors.toMap(
+                        f -> f.getName(),
+                        f -> now(f.getType())
+                ));
+    }
+
     @Override
     default String getTable() {
         Table annoTable = getEntityClass().getAnnotation(Table.class);
@@ -67,36 +98,5 @@ public interface JpaCrudDAO<E> extends PrimaryKeysAwareCrudDAO<E> {
     @Override
     default Map<String, Object> buildExtraValMapToUpdate(E entity) {
         return buildNowTimeMapByAnnotated(getEntityClass(), LastUpdateTime.class);
-    }
-
-    static boolean isAnnotatedOfAnyType(Field field, Class... annotationTypes) {
-        return Stream.of(annotationTypes)
-                .anyMatch(at ->
-                        AnnotationUtils.findAnnotation(field, at) != null
-                );
-    }
-
-    static Object now(Class<?> timeClass) {
-        if (timeClass.equals(LocalDateTime.class)) {
-            return LocalDateTime.now().toString();
-        }
-        //TODO support other types
-        return null;
-    }
-
-    static <E> List<String> fetchFieldNamesByAnnotated(Class<E> entityClass, Class... annotationTypes) {
-        return Stream.of(entityClass.getDeclaredFields())
-                .filter(field -> isAnnotatedOfAnyType(field, annotationTypes))
-                .map(Field::getName)
-                .collect(Collectors.toList());
-    }
-
-    static <E> Map<String, Object> buildNowTimeMapByAnnotated(Class<E> entityClass, Class... annotationTypes) {
-        return Stream.of(entityClass.getDeclaredFields())
-                .filter(field -> isAnnotatedOfAnyType(field, annotationTypes))
-                .collect(Collectors.toMap(
-                        f -> f.getName(),
-                        f -> now(f.getType())
-                ));
     }
 }

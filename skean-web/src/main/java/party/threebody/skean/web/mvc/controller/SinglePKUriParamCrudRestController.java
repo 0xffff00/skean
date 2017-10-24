@@ -4,13 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
-import party.threebody.skean.data.query.PLOxStyleCriteriaUtils;
-import party.threebody.skean.web.SkeanForbiddenException;
 import party.threebody.skean.web.mvc.MultiValueMaps;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +17,7 @@ import java.util.Map;
  * @param <E>  type of the entity bean
  * @param <PK> primitive type of the single-column primary key
  * @author hzk
- * @since 2017-10-14
+ * @since skean 2.1
  */
 public abstract class SinglePKUriParamCrudRestController<E, PK> extends UriParamCrudRestController<E> {
 
@@ -64,23 +60,23 @@ public abstract class SinglePKUriParamCrudRestController<E, PK> extends UriParam
             return ResponseEntity.created(location).build();
         } else {  //update if exists
             Integer rna = getCrudFunctions().getOneUpdater().apply(entity, pk);
-            return ControllerUtils.respondRowNumAffected(rna);
+            return CrudRestControllerUtils.respondRowNumAffected(rna);
         }
 
     }
 
     @PatchMapping("/{pk}")
     public ResponseEntity<Object> httpPartialUpdate(@PathVariable PK pk,
-                                                    @RequestParam MultiValueMap<String,String> reqestParamMap) {
-        Map<String,Object> varMap=MultiValueMaps.toMap(reqestParamMap);
+                                                    @RequestParam MultiValueMap<String, String> reqestParamMap) {
+        Map<String, Object> varMap = MultiValueMaps.toMap(reqestParamMap);
         Integer rna = getCrudFunctions().getOnePartialUpdater().apply(varMap, pk);
-        return ControllerUtils.respondRowNumAffected(rna);
+        return CrudRestControllerUtils.respondRowNumAffected(rna);
     }
 
     @DeleteMapping("/{pk}")
     public ResponseEntity<Object> httpDelete(@PathVariable PK pk) {
         Integer rna = getCrudFunctions().getOneDeleter().apply(pk);
-        return ControllerUtils.respondRowNumAffected(rna);
+        return CrudRestControllerUtils.respondRowNumAffected(rna);
     }
 
 }
