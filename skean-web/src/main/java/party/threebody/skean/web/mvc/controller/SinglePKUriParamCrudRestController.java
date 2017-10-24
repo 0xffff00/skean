@@ -1,8 +1,13 @@
 package party.threebody.skean.web.mvc.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
+import party.threebody.skean.data.query.PLOxStyleCriteriaUtils;
+import party.threebody.skean.web.SkeanForbiddenException;
+import party.threebody.skean.web.mvc.MultiValueMaps;
 
 import java.net.URI;
 import java.util.List;
@@ -18,12 +23,17 @@ import java.util.Map;
  * @author hzk
  * @since 2017-10-14
  */
-public abstract class SinglePKCrudRestController<E, PK> {
+public abstract class SinglePKUriParamCrudRestController<E, PK> extends UriParamCrudRestController<E> {
 
-    public abstract void buildCrudFunctions(CrudFunctionsBuilder<E, PK> builder);
+    @Override
+    public void buildCrudFunctions(CrudFunctions.Builder<E> builder) {
+        //NO-OP
+    }
 
-    protected SimpleCrudFunctions<E, PK> getCrudFunctions() {
-        CrudFunctionsBuilder<E, PK> builder = new CrudFunctionsBuilder<>();
+    public abstract void buildCrudFunctions(SinglePKCrudFunctions.Builder<E, PK> builder);
+
+    protected SinglePKCrudFunctions<E, PK> getCrudFunctions() {
+        SinglePKCrudFunctions.Builder<E, PK> builder = new SinglePKCrudFunctions.Builder<>();
         buildCrudFunctions(builder);
         return builder.build();
     }
@@ -34,16 +44,9 @@ public abstract class SinglePKCrudRestController<E, PK> {
         return ResponseEntity.ok().body(entity);
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<E>> httpReadList(@RequestParam Map<String, String> reqestParamMap) {
-        return ControllerUtils.respondListAndCountByPLOx(reqestParamMap,
-                getCrudFunctions().getListReader(), getCrudFunctions().getCountReader());
-    }
-
-
     @PostMapping("")
     public ResponseEntity<E> httpCreate(@RequestBody E entity) {
-        E created = getCrudFunctions().getCreatorWithReturn().apply(entity);
+        E created = getCrudFunctions().getOneCreatorWithReturn().apply(entity);
         PK pk = getCrudFunctions().getPkGetter().apply(entity);
         URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                 .path("/{pk}").buildAndExpand(pk).toUri();
@@ -55,12 +58,12 @@ public abstract class SinglePKCrudRestController<E, PK> {
     public ResponseEntity<Object> httpCreateOrUpdate(@PathVariable PK pk, @RequestBody E entity) {
         E original = getCrudFunctions().getOneReader().apply(pk);
         if (original == null) {    //create if not exists
-            E created = getCrudFunctions().getCreatorWithReturn().apply(entity);
+            E created = getCrudFunctions().getOneCreatorWithReturn().apply(entity);
             URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                     .path("/{pk}").buildAndExpand(pk).toUri();
             return ResponseEntity.created(location).build();
         } else {  //update if exists
-            Integer rna = getCrudFunctions().getEntireUpdater().apply(entity, pk);
+            Integer rna = getCrudFunctions().getOneUpdater().apply(entity, pk);
             return ControllerUtils.respondRowNumAffected(rna);
         }
 
@@ -68,15 +71,17 @@ public abstract class SinglePKCrudRestController<E, PK> {
 
     @PatchMapping("/{pk}")
     public ResponseEntity<Object> httpPartialUpdate(@PathVariable PK pk,
-                                                    @RequestBody Map<String, Object> reqestParamMap) {
-        Integer rna = getCrudFunctions().getPartialUpdater().apply(reqestParamMap, pk);
+                                                    @RequestParam MultiValueMap<String,String> reqestParamMap) {
+        Map<String,Object> varMap=MultiValueMaps.toMap(reqestParamMap);
+        Integer rna = getCrudFunctions().getOnePartialUpdater().apply(varMap, pk);
         return ControllerUtils.respondRowNumAffected(rna);
     }
 
     @DeleteMapping("/{pk}")
     public ResponseEntity<Object> httpDelete(@PathVariable PK pk) {
-        Integer rna = getCrudFunctions().getDeleter().apply(pk);
+        Integer rna = getCrudFunctions().getOneDeleter().apply(pk);
         return ControllerUtils.respondRowNumAffected(rna);
     }
+
 }
 

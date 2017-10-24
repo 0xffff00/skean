@@ -2,7 +2,7 @@ package party.threebody.skean.web.mvc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 
 import java.util.List;
@@ -24,12 +24,12 @@ public class SimpleMapCrudService {
         return cjt.from(table).affect(afCols).valMap(entity).insert();
     }
 
-    public int readCount(String table, QueryParamsSuite qps) {
+    public int readCount(String table, CriteriaAndSortingAndPaging qps) {
         return cjt.from(table).criteria(qps.getCriteria()).count();
     }
 
-    public List<Map<String, Object>> readListOfMap(String table, QueryParamsSuite qps) {
-        return cjt.from(table).suite(qps).list();
+    public List<Map<String, Object>> readListOfMap(String table, CriteriaAndSortingAndPaging qps) {
+        return cjt.from(table).criteriaAndSortAndPage(qps).list();
     }
 
     public Map<String, Object> readOneOfMap(String table, Map<String, Object> byWhat) {

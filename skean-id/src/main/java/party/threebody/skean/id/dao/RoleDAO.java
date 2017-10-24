@@ -2,31 +2,15 @@ package party.threebody.skean.id.dao;
 
 import org.springframework.stereotype.Repository;
 import party.threebody.skean.id.model.Role;
-import party.threebody.skean.web.mvc.dao0.SinglePKCrudDAO;
-
-import java.util.List;
+import party.threebody.skean.jdbc.ChainedJdbcTemplate;
+import party.threebody.skean.web.mvc.dao.SinglePKJpaCrudDAO;
 
 @Repository
-public class RoleDAO extends SinglePKCrudDAO<Role, String> {
+public class RoleDAO extends SinglePKJpaCrudDAO<Role, String> {
+
 
     @Override
-    protected String getTable() {
-        return "id_role";
-    }
-
-    @Override
-    protected Class<Role> getEntityClass() {
-        return Role.class;
-    }
-
-    @Override
-    protected String getPrimaryKeyColumn() {
-        return "name";
-    }
-
-    @Override
-    protected List<String> getAffectedColumns() {
+    public ChainedJdbcTemplate getChainedJdbcTemplate() {
         return null;
     }
-
 }

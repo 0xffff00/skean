@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class MapUtils {
+public class MultiValueMaps {
 
    public static Map<String, Object> toMap(MultiValueMap<String, String> mvmap) {
         return mvmap.keySet().stream().collect(Collectors.toMap(

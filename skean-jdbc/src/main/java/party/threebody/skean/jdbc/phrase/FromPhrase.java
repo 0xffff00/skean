@@ -3,10 +3,7 @@ package party.threebody.skean.jdbc.phrase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
-import party.threebody.skean.data.query.Criterion;
-import party.threebody.skean.data.query.PagingInfo;
-import party.threebody.skean.data.query.QueryParamsSuite;
-import party.threebody.skean.data.query.SortingField;
+import party.threebody.skean.data.query.*;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 import party.threebody.skean.jdbc.util.CriteriaUtils;
@@ -54,12 +51,12 @@ public class FromPhrase extends DefaultRootPhrase {
         return new SelectPhrase(this);
     }
 
-    // ------ suite -------
-    public PagePhrase suite(QueryParamsSuite qps) {
-        if (qps == null) {
+    // ------ criteriaAndSortAndPage -------
+    public PagePhrase criteriaAndSortAndPage(CriteriaAndSortingAndPaging csp) {
+        if (csp == null) {
             return new PagePhrase(this);
         }
-        return criteria(qps.getCriteria()).orderBy(qps.getSortingField()).page(qps.getPagingInfo());
+        return criteria(csp.getCriteria()).orderBy(csp.getSortingField()).page(csp.getPagingInfo());
     }
 
     // ------ filtering --------
@@ -85,6 +82,13 @@ public class FromPhrase extends DefaultRootPhrase {
     public CriteriaPhrase criteria(Criterion... criteria) {
         this.criteria = criteria;
         return new CriteriaPhrase(this);
+    }
+
+    public CriteriaPhrase criteria(Criteria criteria) {
+        if (criteria!=null){
+            return criteria(criteria.getCriteria());
+        }
+        return criteria();
     }
 
     // ------ value filling --------

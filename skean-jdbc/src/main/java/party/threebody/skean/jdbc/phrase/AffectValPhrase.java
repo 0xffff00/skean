@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import party.threebody.skean.data.query.BasicCriterion;
+import party.threebody.skean.data.query.Criteria;
 
 /**
  * a 'val()' phrase after 'affect()' phrase.
@@ -37,6 +38,9 @@ public class AffectValPhrase implements Phrase {
 	}
 
 	public CriteriaPhrase criteria(BasicCriterion[] criteria) {
+		return root.criteria(criteria);
+	}
+	public CriteriaPhrase criteria(Criteria criteria) {
 		return root.criteria(criteria);
 	}
 

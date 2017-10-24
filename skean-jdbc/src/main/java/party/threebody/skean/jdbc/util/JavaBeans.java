@@ -24,6 +24,16 @@ public class JavaBeans {
     private JavaBeans() {
     }
 
+    public static Object getProperty(Object bean, String propertyName) {
+        try {
+            return PropertyUtils.getSimpleProperty(bean, propertyName);
+
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new SkeanReflectionException(
+                    "fail to get property[" + propertyName + "] in bean[" + bean + "]", e);
+        }
+    }
+
     public static Object[] getProperties(Object bean, String[] propertyNames) {
         if (propertyNames == null) {
             return null;
@@ -31,13 +41,7 @@ public class JavaBeans {
         int n = propertyNames.length;
         Object[] vals = new Object[n];
         for (int i = 0; i < n; i++) {
-            try {
-                vals[i] = PropertyUtils.getSimpleProperty(bean, propertyNames[i]);
-
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new SkeanReflectionException(
-                        "fail to get property[" + propertyNames[i] + "] in bean[" + bean + "]", e);
-            }
+            vals[i] = getProperty(bean, propertyNames[i]);
         }
         return vals;
     }
@@ -102,7 +106,6 @@ public class JavaBeans {
             throw new SkeanReflectionException("convertBeanToMap failed.", e);
         }
     }
-
 
 
     public static boolean isSimpleType(Class<?> clazz) {

@@ -2,8 +2,9 @@ package party.threebody.skean.web.mvc.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import party.threebody.skean.data.query.QueryParamsBuildUtils;
-import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.data.query.Criteria;
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
+import party.threebody.skean.data.query.PLOxStyleCriteriaUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -20,39 +21,31 @@ public class ControllerUtils {
 
     /**
      * respond for a controller method by PLOx
-     * @param reqestParamMap  reqestParams Map from a controller method
-     * @param listReader a function to fetch entities list by QPS
+     *
+     * @param varMap      reqestParams Map from a controller method
+     * @param listReader  a function to fetch entities list by QPS
      * @param countReader a function to fetch count without QPS
-     * @param <E> the type of entity
+     * @param <E>         the type of entity
      * @return what a controller method should return
      */
-    public static <E> ResponseEntity<List<E>> respondListAndCountByPLOx(
-            Map<String, String> reqestParamMap,
-            Function<QueryParamsSuite, List<E>> listReader,
-            Function<QueryParamsSuite, Integer> countReader) {
-        QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuiteByPLOx(reqestParamMap);
-        return respondListAndCount(qps, listReader, countReader);
+    public static <E> ResponseEntity<List<E>> respondListAndCount(
+            Map<String, Object> varMap,
+            Function<CriteriaAndSortingAndPaging, List<E>> listReader,
+            Function<Criteria, Integer> countReader) {
+        CriteriaAndSortingAndPaging csp = PLOxStyleCriteriaUtils.toCriteriaAndSortingAndPaging(varMap);
+        return respondListAndCount(csp, listReader, countReader);
     }
 
-    @Deprecated
-    public static <E> ResponseEntity<List<E>> respondListAndCountByPLOC(
-            Map<String, String> reqestParamMap,
-            Function<QueryParamsSuite, List<E>> listReader,
-            Function<QueryParamsSuite, Integer> countReader) {
-
-        QueryParamsSuite qps = QueryParamsBuildUtils.buildQueryParamsSuiteByPLOC(reqestParamMap);
-        return respondListAndCount(qps, listReader, countReader);
-    }
 
     public static <E> ResponseEntity<List<E>> respondListAndCount(
-            QueryParamsSuite queryParamsSuite,
-            Function<QueryParamsSuite, List<E>> listReader,
-            Function<QueryParamsSuite, Integer> countReader) {
+            CriteriaAndSortingAndPaging criteriaAndSortingAndPaging,
+            Function<CriteriaAndSortingAndPaging, List<E>> listReader,
+            Function<Criteria, Integer> countReader) {
 
-        List<E> entities = listReader.apply(queryParamsSuite);
+        List<E> entities = listReader.apply(criteriaAndSortingAndPaging);
         int totalCount = 0;
-        if (queryParamsSuite.getPagingInfo().isPagingEnabled()) {
-            totalCount = countReader.apply(queryParamsSuite);
+        if (criteriaAndSortingAndPaging.getPagingInfo().isPagingEnabled()) {
+            totalCount = countReader.apply(criteriaAndSortingAndPaging);
         } else {
             totalCount = entities.size();
         }
@@ -60,7 +53,7 @@ public class ControllerUtils {
     }
 
     public static ResponseEntity<Object> respondRowNumAffected(Integer rowNumAffected) {
-        if (rowNumAffected ==null || rowNumAffected == 0) {
+        if (rowNumAffected == null || rowNumAffected == 0) {
             return new ResponseEntity<Object>(HttpStatus.GONE);
         }
         return ResponseEntity.noContent().header(HEADER_NAME_TOTAL_AFFECTED, String.valueOf(rowNumAffected)).build();

@@ -3,10 +3,15 @@ package party.threebody.skean.web.mvc.dao;
 
 import java.util.Map;
 
-public interface SinglePKCrudDAO<E, PK> extends AbstractCrudDAO<E> {
+public interface SinglePKCrudDAO<E, PK> extends PrimaryKeysAwareCrudDAO<E> {
 
     // name of the only column which is the very primary key
-
+    default String getPrimaryKeyColumn() {
+        if (getPrimaryKeyColumns() == null) {
+            return null;
+        }
+        return getPrimaryKeyColumns().get(0);
+    }
 
     default E readOne(PK pk) {
         return readOne(new Object[]{pk});

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface JpaCrudDAO<E> extends AbstractCrudDAO<E> {
+public interface JpaCrudDAO<E> extends PrimaryKeysAwareCrudDAO<E> {
 
     @Override
     default String getTable() {

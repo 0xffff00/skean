@@ -2,7 +2,7 @@ package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
 import party.threebody.skean.data.query.BasicCriterion;
-import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.jdbc.rs.DualColsBean;
 import party.threebody.skean.jdbc.rs.TripleColsBean;
 
@@ -18,8 +18,8 @@ public class SelectPhrase implements Phrase {
     }
 
     // ------ filtering --------
-    public PagePhrase suite(QueryParamsSuite qps) {
-        return root.suite(qps);
+    public PagePhrase suite(CriteriaAndSortingAndPaging qps) {
+        return root.criteriaAndSortAndPage(qps);
     }
 
     public ByPhrase by(String... cols) {

@@ -1,7 +1,8 @@
 package party.threebody.skean.web.mvc.dao;
 
 import org.apache.commons.collections4.CollectionUtils;
-import party.threebody.skean.data.query.QueryParamsSuite;
+import party.threebody.skean.data.query.Criteria;
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 import party.threebody.skean.jdbc.phrase.ByPhrase;
 import party.threebody.skean.jdbc.phrase.FromPhrase;
@@ -23,11 +24,6 @@ public interface AbstractCrudDAO<E> {
     String getTable();
 
     Class<E> getEntityClass();
-
-    /**
-     * @return names of columns which are exact primary keys
-     */
-    List<String> getPrimaryKeyColumns();
 
     /**
      * if return null, build actual AffectedColumns by properties of the bean
@@ -63,9 +59,6 @@ public interface AbstractCrudDAO<E> {
         return getChainedJdbcTemplate().from(getTable());
     }
 
-    default ByPhrase fromTableByPkCols() {
-        return getChainedJdbcTemplate().from(getTable()).by(getPrimaryKeyColumns());
-    }
 
 
     default int create(E entity) {
@@ -74,73 +67,35 @@ public interface AbstractCrudDAO<E> {
         return fromTable().affect(getInsertedColumns()).val(propsMap).insert();
     }
 
-    default E createAndGet(E entity) {
-        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
-        propsMap.putAll(buildExtraValMapToInsert(entity));
-        fromTable().affect(getInsertedColumns()).val(propsMap).insert();
-        return fromTable().by(getPrimaryKeyColumns()).val(propsMap).limit(1).first(getEntityClass());
+    default List<E> readList(CriteriaAndSortingAndPaging csp) {
+        return fromTable().criteriaAndSortAndPage(csp).list(getEntityClass());
     }
 
-    default List<E> readList(QueryParamsSuite qps) {
-        return fromTable().suite(qps).list(getEntityClass());
+    default int readCount(Criteria c) {
+        return fromTable().criteria(c).count();
     }
 
-    default int readCount(QueryParamsSuite qps) {
-        return fromTable().suite(qps).count();
-    }
-
-    default E readOne(Object[] pk) {
-        return fromTableByPkCols().valArr(pk).limit(1).first(getEntityClass());
-    }
-
-    default E readOneByExample(E example) {
-        return fromTableByPkCols().valObj(example).limit(1).first(getEntityClass());
-    }
-
-    default int update(E entity, Object[] pkArr) {
+    default int updateSome(E entity, Criteria criteria) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
-    }
-
-    default int updateByExample(E entity) {
-        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
-        propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap).by(getPrimaryKeyColumns()).valObj(entity).update();
+        return fromTable().affect(getUpdatedColumns()).val(propsMap).criteria(criteria).update();
     }
 
     /**
-     * @since skean 2.0
+     * @since skean 2.1
      */
-    default int partialUpdate(E entity, Object[] pkArr, Collection<String> colsToUpdate) {
-        Map<String, Object> propsMap = convertEntityBeanToMap(entity);
-        propsMap.putAll(buildExtraValMapToUpdate(entity));
-        Collection<String> afCols = CollectionUtils.intersection(colsToUpdate, getUpdatedColumns());
-        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
-    }
-
-    /**
-     * @since skean 2.0
-     */
-    default int partialUpdate(Map<String, Object> fieldsToUpdate, Object[] pkArr) {
+    default int partialUpdateSome(Map<String, Object> fieldsToUpdate, Criteria c) {
         if (fieldsToUpdate.isEmpty()) {
             return 0;
         }
         Map<String, Object> propsMap = new HashMap<>(fieldsToUpdate);
         propsMap.putAll(buildExtraValMapToUpdate(null));
         Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatedColumns());
-        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+        return fromTable().affect(afCols).valMap(propsMap).criteria(c).update();
     }
 
-    default int delete(Object[] pkArr) {
-        return fromTableByPkCols().val(pkArr).delete();
+    default int deleteSome(Criteria c) {
+        return fromTable().criteria(c).delete();
     }
 
-    default int deleteByExample(E example) {
-        return fromTableByPkCols().valObj(example).delete();
-    }
-
-    default int deleteSome(QueryParamsSuite qps) {
-        return fromTable().suite(qps).delete();
-    }
 }

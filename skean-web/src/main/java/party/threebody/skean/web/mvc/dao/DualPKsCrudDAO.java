@@ -10,7 +10,7 @@ import java.util.Map;
  * @author hzk
  * @since 2017-09-02
  */
-public interface DualPKCrudDAO<E, PK1, PK2> extends AbstractCrudDAO<E> {
+public interface DualPKsCrudDAO<E, PK1, PK2> extends PrimaryKeysAwareCrudDAO<E> {
 
     default E readOne(PK1 pk1, PK2 pk2) {
         return readOne(new Object[]{pk1, pk2});
