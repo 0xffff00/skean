@@ -1,10 +1,8 @@
 package party.threebody.skean.web.mvc.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import party.threebody.skean.web.mvc.MultiValueMaps;
 
 import java.net.URI;
 import java.util.Map;
@@ -67,9 +65,8 @@ public abstract class SinglePKUriParamCrudRestController<E, PK> extends UriParam
 
     @PatchMapping("/{pk}")
     public ResponseEntity<Object> httpPartialUpdate(@PathVariable PK pk,
-                                                    @RequestParam MultiValueMap<String, String> reqestParamMap) {
-        Map<String, Object> varMap = MultiValueMaps.toMap(reqestParamMap);
-        Integer rna = getCrudFunctions().getOnePartialUpdater().apply(varMap, pk);
+                                                    @RequestBody Map<String, Object> reqestParamMap) {
+        Integer rna = getCrudFunctions().getOnePartialUpdater().apply(reqestParamMap, pk);
         return CrudRestControllerUtils.respondRowNumAffected(rna);
     }
 

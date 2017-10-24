@@ -75,9 +75,13 @@ public class PLOxStyleCriteriaUtils {
 
     private static String getStrValueFromMap(Map<String, Object> map, String... possibleKeys) {
         for (String k : possibleKeys) {
-            String v = String.valueOf(map.get(k));
-            if (StringUtils.isNotEmpty(v)) {
-                return v;
+            Object v=map.get(k);
+            if (v==null){
+                continue;
+            }
+            String s = String.valueOf(map.get(k));
+            if (!s.isEmpty()){
+                return s;
             }
         }
         return null;
@@ -87,7 +91,7 @@ public class PLOxStyleCriteriaUtils {
         for (String k : possibleKeys) {
             Object v = map.get(k);
             if (v == null) {
-                throw new SkeanDataException("null numeric value: [" + k + "]");
+                return null;
             }
             if (v instanceof Number) {
                 return ((Number) v).intValue();
