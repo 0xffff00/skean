@@ -75,4 +75,14 @@ public class Ship {
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public String toString() {
+        return "Ship{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", weight=" + weight +
+                ", birthYear=" + birthYear +
+                '}';
+    }
 }

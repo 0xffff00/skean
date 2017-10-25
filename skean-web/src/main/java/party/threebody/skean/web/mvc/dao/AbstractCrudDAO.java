@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * @param <E> type of the entity bean
  * @author hzk
+ * @since 2.0
  * @since 2017-10-22
  */
 public interface AbstractCrudDAO<E> {
