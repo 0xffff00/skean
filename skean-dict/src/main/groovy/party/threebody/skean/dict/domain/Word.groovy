@@ -1,6 +1,10 @@
 package party.threebody.skean.dict.domain
 
+import party.threebody.skean.data.LastUpdateTime
 
+import javax.persistence.Column
+import javax.persistence.Id
+import javax.persistence.Table
 import java.time.LocalDateTime
 
 /**
@@ -8,7 +12,12 @@ import java.time.LocalDateTime
  * @author hzk
  * @since 2017-08-05
  */
-class Word extends WordDO {
+@Table(name = 'dct_word')
+class Word {
+
+    @Id String text
+    @Column String desc
+    @LastUpdateTime LocalDateTime updateTime
 
     //	Set<String> instancesDeep		//recursive
     //	Set<String> definitions			//self <--(INST)-- defs <--(SUBS)-- all super defs
@@ -27,28 +36,14 @@ class Word extends WordDO {
 
 }
 
-class WordDO {
-    String text
-    String desc
-    Date lopTime
-
-    public LocalDateTime getLastOptTime() {
-        return Dates.toLocalDateTime(lopTime);
-    }
-
-    public void setLocalDateTime(LocalDateTime ldt) {
-        lopTime = Dates.toDate(ldt)
-    }
-}
 
 class Rel {
-
     public static int VNO_BATCH = -1
-    String key
-    String val
-    String attr
-    Integer vno
-    String adv
+    @Id String key
+    @Id String val
+    @Id Integer vno
+    @Column String attr
+    @Column String adv
 
     @Override
     public int hashCode() {
@@ -74,10 +69,10 @@ class Rel {
 }
 
 class GeRel extends Rel {
-    String attrx
-    String pred
-    Integer time1
-    Integer time2
+    @Column String attrx
+    @Column String pred
+    @Column Integer time1
+    @Column Integer time2
 
     @Override
     public String toString() {
@@ -90,26 +85,27 @@ class SpRel extends Rel {
 }
 
 class AliasRel extends SpRel {
-    String lang
+    @Column String lang
 }
 
-
+@Table(name = 'dct_rel_ge_dat1')
 class Ge1Rel extends GeRel {
 
 
 }
 
+@Table(name = 'dct_rel_ge_dat2')
 class Ge2Rel extends GeRel {
-
-    String valstr
-    Integer valnum
-    String valmu
+    @Column String valstr
+    @Column Integer valnum
+    @Column String valmu
 
     String getVal() {
         valstr ?: valnum
     }
 }
 
+@Table(name = 'dct_rel_sp_dual')
 class DualRel extends SpRel {
 }
 

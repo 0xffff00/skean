@@ -14,6 +14,7 @@ import party.threebody.skean.dict.dao.Ge2RelDao;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.domain.*;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -183,7 +184,7 @@ public class WordService {
     }
 
     public int deleteGe2Rel(String key, String attr, Integer vno) {
-        return ge2RelDao.delete(key, attr, vno);
+        return ge2RelDao.delete(Arrays.asList(key, attr, vno));
     }
 
     public int deleteGe2Rels(String key, String attr) {
@@ -236,7 +237,7 @@ public class WordService {
             List<E> edges = edgeVisitor.apply(v);
             edgesVisited.addAll(edges);
             logger.debug("dfs({}) -> edges{}", v, edges);
-            if (edges.size() == 0){
+            if (edges.size() == 0) {
                 return;
             }
             edges.forEach(edge -> dfs(destVertexMapper.apply(edge)));

@@ -1,4 +1,4 @@
-create table `navy_ship` (
+create table IF NOT EXISTS `navy_ship` (
   `code` varchar (150),
   `name` varchar (150),
   `weight` int,
@@ -7,7 +7,7 @@ create table `navy_ship` (
   `update_time` datetime
 );
 
-create table `navy_fleet` (
+create table IF NOT EXISTS `navy_fleet` (
   `country_code` varchar (150),
   `code` varchar (150),
   `name` varchar (150),

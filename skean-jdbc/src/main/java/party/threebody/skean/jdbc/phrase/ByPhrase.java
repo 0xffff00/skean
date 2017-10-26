@@ -1,5 +1,6 @@
 package party.threebody.skean.jdbc.phrase;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class ByPhrase implements Phrase {
@@ -11,6 +12,10 @@ public class ByPhrase implements Phrase {
 	}
 
 	//------ value filling --------
+	public ValPhrase valArr(Collection<Object> vals){
+		return root.valArr(vals);
+	}
+
 	public ValPhrase valArr(Object[] vals){
 		return root.valArr(vals);
 	}

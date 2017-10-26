@@ -1,4 +1,4 @@
-package party.threebody.skean.dict.conf;
+package party.threebody.skean.dict;
 
 
 import com.fasterxml.jackson.core.JsonParser;

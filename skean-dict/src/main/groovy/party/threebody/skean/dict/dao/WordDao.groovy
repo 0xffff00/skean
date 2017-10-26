@@ -5,16 +5,21 @@ import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.AliasRel
 import party.threebody.skean.dict.domain.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.web.mvc.dao0.SinglePKCrudDAO
+import party.threebody.skean.web.mvc.dao.SinglePKJpaCrudDAO
 
 @Repository
-class WordDao extends SinglePKCrudDAO<Word,String> {
+class WordDao extends SinglePKJpaCrudDAO<Word, String> {
 
-	@Autowired ChainedJdbcTemplate cjt
+    @Autowired ChainedJdbcTemplate cjt
 
-	List<String> listTemporaryTexts(){
-		def sql=
-		'''		
+    @Override
+    ChainedJdbcTemplate getChainedJdbcTemplate() {
+        return cjt
+    }
+
+    List<String> listTemporaryTexts() {
+        def sql =
+                '''		
 SELECT a.w FROM (
 		        SELECT `key` w FROM dct_rel_ge_dat1
 		UNION	SELECT `val` w FROM dct_rel_ge_dat1
@@ -26,45 +31,24 @@ SELECT a.w FROM (
 		
 ) a WHERE a.w NOT IN (SELECT `text`  FROM dct_word)
 		'''
-		cjt.sql(sql).listOfSingleCol(String.class)
-	}
+        cjt.sql(sql).listOfSingleCol(String.class)
+    }
 
-	List<AliasRel> listAliasRels(){
-		cjt.from("dct_rel_sp_alias").list(AliasRel.class)
-	}
+    List<AliasRel> listAliasRels() {
+        cjt.from("dct_rel_sp_alias").list(AliasRel.class)
+    }
 
-	int createAliasRel(AliasRel rel){
-		cjt.from("dct_rel_sp_alias").affect('key','attr','lang','vno','val','adv').val(rel).insert()
-	}
+    int createAliasRel(AliasRel rel) {
+        cjt.from("dct_rel_sp_alias").affect('key', 'attr', 'lang', 'vno', 'val', 'adv').val(rel).insert()
+    }
 
-	int updateAliasRelByKV(AliasRel rel){
-		cjt.from("dct_rel_sp_alias")
-				.affect('key','attr','lang','vno','val','adv').by('key','val').val(rel).update()
-	}
+    int updateAliasRelByKV(AliasRel rel) {
+        cjt.from("dct_rel_sp_alias")
+                .affect('key', 'attr', 'lang', 'vno', 'val', 'adv').by('key', 'val').val(rel).update()
+    }
 
-	int deleteAliasRelsByKV(String key,String val){
-		cjt.from("dct_rel_sp_alias").by('key','val').val(key,val).delete()
-	}
+    int deleteAliasRelsByKV(String key, String val) {
+        cjt.from("dct_rel_sp_alias").by('key', 'val').val(key, val).delete()
+    }
 
-	@Override
-	protected String getTable() {
-		'dct_word'
-	}
-
-	@Override
-	protected Class<Word> getEntityClass() {
-		Word.class
-	}
-
-	@Override
-	protected String getPrimaryKeyColumn() {
-		'text'
-	}
-
-	@Override
-	protected List<String> getAffectedColumns() {
-		['text','desc']
-	}
-	
-	
 }

@@ -10,13 +10,13 @@ import java.util.Map;
 /**
  * a simple RestController supporting typical CRUD operations of an entity
  * bean<br>
- * all parameters are UriParam or PathVar
+ * all parameters are UriVar or PathVar
  *
  * @param <E> type of the entity bean
  * @author hzk
  * @since skean 2.1
  */
-public abstract class UriParamCrudRestController<E> extends CrudRestController<E> {
+public abstract class UriVarCrudRestController<E> extends CrudRestController<E> {
 
 
     /**

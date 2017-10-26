@@ -18,10 +18,10 @@ import java.util.Map;
  */
 public abstract class CrudRestController<E> {
 
-    public abstract void buildCrudFunctions(CrudFunctions.Builder<E> builder);
+    public abstract void buildCrudFunctions(CrudFunctionsBuilder<E> builder);
 
     protected CrudFunctions<E> getCrudFunctions() {
-        CrudFunctions.Builder<E> builder = new CrudFunctions.Builder<>();
+        CrudFunctionsBuilder<E> builder = new CrudFunctionsBuilder<>();
         buildCrudFunctions(builder);
         return builder.build();
     }

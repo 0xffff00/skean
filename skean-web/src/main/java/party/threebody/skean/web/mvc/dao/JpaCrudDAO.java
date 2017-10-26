@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface JpaCrudDAO<E> extends PrimaryKeysAwareCrudDAO<E> {
+public interface JpaCrudDAO<E> extends MultiPKsCrudDAO<E> {
 
     static boolean isAnnotatedOfAnyType(Field field, Class... annotationTypes) {
         return Stream.of(annotationTypes)

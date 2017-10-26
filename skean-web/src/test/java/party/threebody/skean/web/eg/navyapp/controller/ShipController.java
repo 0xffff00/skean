@@ -8,21 +8,23 @@ import party.threebody.skean.web.eg.navyapp.domain.Ship;
 import party.threebody.skean.web.eg.navyapp.service.ShipService;
 import party.threebody.skean.web.mvc.MultiValueMaps;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudFunctions;
-import party.threebody.skean.web.mvc.controller.SinglePKUriParamCrudRestController;
+import party.threebody.skean.web.mvc.controller.SinglePKCrudFunctionsBuilder;
+import party.threebody.skean.web.mvc.controller.SinglePKUriVarCrudRestController;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("ships")
-public class ShipController extends SinglePKUriParamCrudRestController<Ship, String> {
+public class ShipController extends SinglePKUriVarCrudRestController<Ship, String> {
 
     @Autowired
     ShipService shipService;
 
 
     @Override
-    public void buildCrudFunctions(SinglePKCrudFunctions.Builder<Ship, String> builder) {
-        builder.pkName("code")
+    public void buildCrudFunctions(SinglePKCrudFunctionsBuilder<Ship, String> builder) {
+        builder.pkNameSupplier("code")
+                .pkGetter(Ship::getCode)
                 .countReader(shipService::countShips)
                 .listReader(shipService::listShips)
                 .oneReader(shipService::getShip)

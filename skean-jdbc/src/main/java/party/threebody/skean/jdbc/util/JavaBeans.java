@@ -10,9 +10,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.temporal.Temporal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class JavaBeans {
@@ -45,6 +43,18 @@ public class JavaBeans {
         }
         return vals;
     }
+
+    public static List<Object> getProperties(Object bean, List<String> propertyNames) {
+        if (propertyNames == null) {
+            return null;
+        }
+        List<Object> res=new ArrayList<>(propertyNames.size());
+        for (String propertyName:propertyNames){
+            res.add(getProperty(bean, propertyName));
+        }
+        return res;
+    }
+
 
     /**
      * like PropertyUtils.describe()

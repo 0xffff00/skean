@@ -20,14 +20,17 @@ import java.util.List;
 public abstract class MultiPKsMatrixVarCrudRestController<E> extends MatrixVarCrudRestController<E> {
 
     @Override
-    public void buildCrudFunctions(CrudFunctions.Builder<E> builder) {
+    public void buildCrudFunctions(CrudFunctionsBuilder<E> builder) {
         // NO-OP
     }
 
-    public abstract void buildCrudFunctions(MultiPKsCrudFunctions.Builder<E, List<String>> builder);
+    public abstract void buildCrudFunctions(MultiPKsCrudFunctionsBuilder<E> builder);
 
+    @Override
     protected MultiPKsCrudFunctions<E> getCrudFunctions() {
-        return (MultiPKsCrudFunctions<E>) super.getCrudFunctions();
+        MultiPKsCrudFunctionsBuilder<E>  builder = new MultiPKsCrudFunctionsBuilder<>();
+        buildCrudFunctions(builder);
+        return builder.build();
     }
 
     /**

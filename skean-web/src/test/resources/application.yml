@@ -9,5 +9,14 @@ spring:
     username: sa
     password:
 
+  output:
+    ansi.enabled: ALWAYS
+
+  jackson:
+    serialization.write_dates_as_timestamps: false
+
 server:
-    port: 18923
+  port: 18923
+
+logging:
+  level: DEBUG

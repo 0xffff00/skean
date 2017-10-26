@@ -14,7 +14,7 @@ import java.util.Map;
  * @author hzk
  * @since 2017-10-24
  */
-public interface PrimaryKeysAwareCrudDAO<E> extends AbstractCrudDAO<E> {
+public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
 
     /**
      * @return names of columns which are exact primary keys
@@ -33,51 +33,53 @@ public interface PrimaryKeysAwareCrudDAO<E> extends AbstractCrudDAO<E> {
         return fromTable().by(getPrimaryKeyColumns()).val(propsMap).limit(1).first(getEntityClass());
     }
 
-    default E readOne(Object[] pk) {
-        return fromTableByPkCols().valArr(pk).limit(1).first(getEntityClass());
+    default E readOne(Collection<Object> primaryKeys) {
+        return fromTableByPkCols().valArr(primaryKeys).limit(1).first(getEntityClass());
     }
 
     default E readOneByExample(E example) {
         return fromTableByPkCols().valObj(example).limit(1).first(getEntityClass());
     }
 
-    default int update(E entity, Object[] pkArr) {
+    default int update(E entity, Collection<Object> primaryKeys) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+        return fromTable().affect(getUpdatedColumns()).val(propsMap)
+                .by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 
     default int updateByExample(E entity) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap).by(getPrimaryKeyColumns()).valObj(entity).update();
+        return fromTable().affect(getUpdatedColumns()).val(propsMap)
+                .by(getPrimaryKeyColumns()).valObj(entity).update();
     }
 
     /**
      * @since skean 2.0
      */
-    default int partialUpdate(E entity, Object[] pkArr, Collection<String> colsToUpdate) {
+    default int partialUpdate(E entity, Collection<Object> primaryKeys, Collection<String> colsToUpdate) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
         Collection<String> afCols = CollectionUtils.intersection(colsToUpdate, getUpdatedColumns());
-        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 
     /**
      * @since skean 2.0
      */
-    default int partialUpdate(Map<String, Object> fieldsToUpdate, Object[] pkArr) {
+    default int partialUpdate(Map<String, Object> fieldsToUpdate, Collection<Object> primaryKeys) {
         if (fieldsToUpdate.isEmpty()) {
             return 0;
         }
         Map<String, Object> propsMap = new HashMap<>(fieldsToUpdate);
         propsMap.putAll(buildExtraValMapToUpdate(null));
         Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatedColumns());
-        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(pkArr).update();
+        return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 
-    default int delete(Object[] pkArr) {
-        return fromTableByPkCols().val(pkArr).delete();
+    default int delete(Collection<Object> primaryKeys) {
+        return fromTableByPkCols().val(primaryKeys).delete();
     }
 
     default int deleteByExample(E example) {

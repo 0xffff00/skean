@@ -5,20 +5,16 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import party.threebody.skean.web.eg.navyapp.controller.ShipController;
+import party.threebody.skean.web.eg.navyapp.controller.ShipController2;
 import party.threebody.skean.web.eg.navyapp.domain.Ship;
 import party.threebody.skean.web.eg.navyapp.service.ShipService;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,19 +23,42 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ShipControllerTests {
+public class ShipRestApiMockTests {
 
-    @Autowired
-    ShipService shipService;
-    @Autowired
-    MockMvc mvc;
+    @Autowired ShipService shipService;
+    @Autowired MockMvc mvc;
+    @Autowired ShipController2 shipController2;
+    @Autowired ShipController shipController;
 
     @Test
-    public void test1() throws Exception {
+    public void test1controller() throws Exception {
+        shipController.httpCreate(new Ship("DD01", "Zhongguancun", 6432, 2021));
+        Ship dd01 = shipService.getShip("DD01");
+        assertNotNull(dd01);
+        shipController.httpDelete("DD01");
+        dd01 = shipService.getShip("DD01");
+        assertNull(dd01);
+
+    }
+
+    @Test
+    public void test2controller() throws Exception {
+        shipController2.httpCreate(new Ship("DD01", "Zhongguancun", 6432, 2021));
+        Ship dd01 = shipService.getShip("DD01");
+        assertEquals(6432, (int) dd01.getWeight());
+        shipController2.httpDelete("DD01");
+        dd01 = shipService.getShip("DD01");
+        assertNull(dd01);
+
+    }
+
+    @Test
+    public void test1http() throws Exception {
         testShipsApis("/ships");
     }
+
     @Test
-    public void test2() throws Exception {
+    public void test2http() throws Exception {
         testShipsApis("/ships2");
     }
 
@@ -79,33 +98,6 @@ public class ShipControllerTests {
 
         assertEquals(0, shipService.countShips(null));
 
-    }
-
-    @Test
-    public void testMultithreadAndTransation() throws Exception{
-        //create
-        RestTemplate restTemplate=new RestTemplate();
-        Ship ss01=new Ship("SS01","Zhenzhou",12200,2001);
-        ;
-        restTemplate.postForObject("/ships",new HttpEntity<Ship>(ss01),Ship.class);
-
-        Ship ss01got=restTemplate.getForObject("/ships/SS01",Ship.class);
-        assertEquals(ss01.toString(),ss01got.toString());
-//        ExecutorService exs=Executors.newFixedThreadPool(1000);
-//        exs.submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    mvc.perform(get("/ships/SS01")).
-//                    mvc.perform(patch("/ships/SS01")
-//                            .contentType(APPLICATION_JSON)
-//                            .content("{\"code\":\"SSN01\",\"birthYear\":2004}"))
-//                            .add
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
     }
 
 }

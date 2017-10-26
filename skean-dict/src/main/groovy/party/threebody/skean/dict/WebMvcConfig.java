@@ -1,4 +1,4 @@
-package party.threebody.skean.dict.conf;
+package party.threebody.skean.dict;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

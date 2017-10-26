@@ -17,17 +17,18 @@ import java.util.Map;
  * @author hzk
  * @since skean 2.1
  */
-public abstract class SinglePKUriParamCrudRestController<E, PK> extends UriParamCrudRestController<E> {
+public abstract class SinglePKUriVarCrudRestController<E, PK> extends UriVarCrudRestController<E> {
 
     @Override
-    public void buildCrudFunctions(CrudFunctions.Builder<E> builder) {
+    public void buildCrudFunctions(CrudFunctionsBuilder<E> builder) {
         //NO-OP
     }
 
-    public abstract void buildCrudFunctions(SinglePKCrudFunctions.Builder<E, PK> builder);
+    public abstract void buildCrudFunctions(SinglePKCrudFunctionsBuilder<E, PK> builder);
 
+    @Override
     protected SinglePKCrudFunctions<E, PK> getCrudFunctions() {
-        SinglePKCrudFunctions.Builder<E, PK> builder = new SinglePKCrudFunctions.Builder<>();
+        SinglePKCrudFunctionsBuilder<E, PK> builder = new SinglePKCrudFunctionsBuilder<>();
         buildCrudFunctions(builder);
         return builder.build();
     }
