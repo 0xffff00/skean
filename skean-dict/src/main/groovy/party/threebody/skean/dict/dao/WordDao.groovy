@@ -21,10 +21,10 @@ import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.AliasRel
 import party.threebody.skean.dict.domain.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.web.mvc.dao.legacy.LegacySinglePKJpaCrudDAO
+import party.threebody.skean.web.mvc.dao.SinglePKJpaCrudDAO
 
 @Repository
-class WordDao extends LegacySinglePKJpaCrudDAO<Word, String> {
+class WordDao extends SinglePKJpaCrudDAO<Word, String> {
 
     @Autowired ChainedJdbcTemplate cjt
 

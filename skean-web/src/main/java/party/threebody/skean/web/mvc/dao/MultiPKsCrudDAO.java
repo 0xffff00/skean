@@ -46,7 +46,7 @@ public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
     default E createAndGet(E entity) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToInsert(entity));
-        fromTable().affect(getInsertedColumns()).val(propsMap).insert();
+        fromTable().affect(getInsertableColumns()).val(propsMap).insert();
         return fromTable().by(getPrimaryKeyColumns()).val(propsMap).limit(1).first(getEntityClass());
     }
 
@@ -61,14 +61,14 @@ public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
     default int update(E entity, Collection<Object> primaryKeys) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap)
+        return fromTable().affect(getUpdatableColumns()).val(propsMap)
                 .by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 
     default int updateByExample(E entity) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap)
+        return fromTable().affect(getUpdatableColumns()).val(propsMap)
                 .by(getPrimaryKeyColumns()).valObj(entity).update();
     }
 
@@ -76,7 +76,7 @@ public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
     default int partialUpdate(E entity, Collection<Object> primaryKeys, Collection<String> colsToUpdate) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        Collection<String> afCols = CollectionUtils.intersection(colsToUpdate, getUpdatedColumns());
+        Collection<String> afCols = CollectionUtils.intersection(colsToUpdate, getUpdatableColumns());
         return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 
@@ -87,7 +87,7 @@ public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
         }
         Map<String, Object> propsMap = new HashMap<>(fieldsToUpdate);
         propsMap.putAll(buildExtraValMapToUpdate(null));
-        Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatedColumns());
+        Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatableColumns());
         return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 

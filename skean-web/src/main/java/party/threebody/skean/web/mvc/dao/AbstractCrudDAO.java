@@ -45,19 +45,38 @@ public interface AbstractCrudDAO<E> {
 
     Class<E> getEntityClass();
 
-    /**
-     * if return null, build actual AffectedColumns by properties of the bean
-     *
-     * @return names of columns which should be affected (insert or update)
-     */
-    List<String> getAffectedColumns();
 
-    default List<String> getInsertedColumns() {
-        return getAffectedColumns();
+    /**
+     * @return all columns those should be persistent
+     */
+    List<String> getAllColumns();
+
+    /**
+     * default implementation is {@link #getAllColumns()}
+     *
+     * @return the white list of column names that can be in {@link Criteria}'s name for querying
+     */
+    default List<String> getLegalCriterialColumns() {
+        return getAllColumns();
     }
 
-    default List<String> getUpdatedColumns() {
-        return getAffectedColumns();
+
+    /**
+     * default implementation is {@link #getAllColumns()}
+     *
+     * @return which columns should be affected when inserting
+     */
+    default List<String> getInsertableColumns() {
+        return getAllColumns();
+    }
+
+    /**
+     * default implementation is {@link #getAllColumns()}
+     *
+     * @return which columns should be affected when updating
+     */
+    default List<String> getUpdatableColumns() {
+        return getAllColumns();
     }
 
 
@@ -75,6 +94,15 @@ public interface AbstractCrudDAO<E> {
         return Collections.emptyMap();
     }
 
+    default void ensureCriteriaLegal(Criteria criteria) {
+        if (criteria == null) {
+            return;
+        }
+        criteria.ensureAllNamesLegal(getLegalCriterialColumns());
+    }
+
+
+
     default FromPhrase fromTable() {
         return getChainedJdbcTemplate().from(getTable());
     }
@@ -83,21 +111,23 @@ public interface AbstractCrudDAO<E> {
     default int create(E entity) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToInsert(entity));
-        return fromTable().affect(getInsertedColumns()).val(propsMap).insert();
+        return fromTable().affect(getInsertableColumns()).val(propsMap).insert();
     }
 
     default List<E> readList(CriteriaAndSortingAndPaging csp) {
+        ensureCriteriaLegal(csp);
         return fromTable().criteriaAndSortAndPage(csp).list(getEntityClass());
     }
 
     default int readCount(Criteria c) {
+        ensureCriteriaLegal(c);
         return fromTable().criteria(c).count();
     }
 
     default int updateSome(E entity, Criteria criteria) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
-        return fromTable().affect(getUpdatedColumns()).val(propsMap).criteria(criteria).update();
+        return fromTable().affect(getUpdatableColumns()).val(propsMap).criteria(criteria).update();
     }
 
     /**
@@ -109,7 +139,7 @@ public interface AbstractCrudDAO<E> {
         }
         Map<String, Object> propsMap = new HashMap<>(fieldsToUpdate);
         propsMap.putAll(buildExtraValMapToUpdate(null));
-        Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatedColumns());
+        Collection<String> afCols = CollectionUtils.intersection(propsMap.keySet(), getUpdatableColumns());
         return fromTable().affect(afCols).valMap(propsMap).criteria(c).update();
     }
 

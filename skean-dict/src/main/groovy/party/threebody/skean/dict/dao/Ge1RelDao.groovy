@@ -20,10 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.Ge1Rel
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.web.mvc.dao.legacy.LegacyTriplePKsJpaCrudDAO
+import party.threebody.skean.web.mvc.dao.TriplePKsJpaCrudDAO
 
 @Repository
-class Ge1RelDao extends LegacyTriplePKsJpaCrudDAO<Ge1Rel, String, String, Integer> {
+class Ge1RelDao extends TriplePKsJpaCrudDAO<Ge1Rel, String, String, Integer> {
 
     @Autowired
     ChainedJdbcTemplate cjt

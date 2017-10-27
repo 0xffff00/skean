@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-present  Skean Project Contributors.
+ * Copyright 2017. https://github.com/0xffff00
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.data;
+package party.threebody.skean.misc;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public class SkeanInvalidArgumentException extends SkeanException {
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+    public SkeanInvalidArgumentException(String message) {
+        super(message);
+    }
 
-@Target({METHOD, FIELD})
-@Retention(RUNTIME)
-@Column
-public @interface CreateTime {
-
+    public SkeanInvalidArgumentException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -17,7 +17,7 @@
 package party.threebody.skean.web.mvc.controller;
 
 import party.threebody.skean.jdbc.util.JavaBeans;
-import party.threebody.skean.web.SkeanNotImplementedException;
+import party.threebody.skean.misc.SkeanNotImplementedException;
 import party.threebody.skean.web.mvc.dao.AbstractCrudDAO;
 import party.threebody.skean.web.mvc.dao.MultiPKsCrudDAO;
 import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO;

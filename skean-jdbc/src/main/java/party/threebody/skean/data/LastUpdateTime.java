@@ -25,6 +25,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({METHOD, FIELD})
 @Retention(RUNTIME)
+@Column
 public @interface LastUpdateTime {
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-present  Skean Project Contributors.
+ * Copyright 2017. https://github.com/0xffff00
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.data;
+package party.threebody.skean.dict;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import party.threebody.skean.web.mvc.DefaultSkeanExceptionHandler;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+@RestControllerAdvice
+public class GlobalSkeanExceptionHandler extends DefaultSkeanExceptionHandler {
 
-@Target({METHOD, FIELD})
-@Retention(RUNTIME)
-@Column
-public @interface CreateTime {
 
 }
+

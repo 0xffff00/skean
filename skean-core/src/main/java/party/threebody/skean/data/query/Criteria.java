@@ -16,10 +16,12 @@
 
 package party.threebody.skean.data.query;
 
-import java.util.Map;
+import party.threebody.skean.misc.SkeanInvalidArgumentException;
+
+import java.util.Collection;
 
 /**
- * @since skean 2.1
+ * @since 2.1
  */
 public class Criteria {
 
@@ -41,5 +43,15 @@ public class Criteria {
         this.criteria = criteria;
     }
 
-
+    public void ensureAllNamesLegal(Collection<String> whiteList) {
+        if (criteria == null) {
+            return;
+        }
+        for (int i = 0; i < criteria.length; ++i) {
+            String name = criteria[i].getName();
+            if (!whiteList.contains(name)) {
+                throw new SkeanInvalidArgumentException("illegal field name: [" + name + "]");
+            }
+        }
+    }
 }

@@ -16,37 +16,52 @@
 
 package party.threebody.skean.data.query;
 
-import java.util.Map;
+import party.threebody.skean.misc.SkeanInvalidArgumentException;
 
-public class CriteriaAndSortingAndPaging extends Criteria{
+import java.util.Collection;
 
-	private SortingField[] sortingField;
-	private PagingInfo pagingInfo;
+public class CriteriaAndSortingAndPaging extends Criteria {
 
-	public CriteriaAndSortingAndPaging() {
-	}
+    private SortingField[] sortingField;
+    private PagingInfo pagingInfo;
 
-	public CriteriaAndSortingAndPaging(Criterion[] criteria, SortingField[] sortingField, PagingInfo pagingInfo) {
-		setCriteria(criteria);
-		this.sortingField = sortingField;
-		this.pagingInfo = pagingInfo;
-	}
+    public CriteriaAndSortingAndPaging() {
+    }
 
-	public SortingField[] getSortingField() {
-		return sortingField;
-	}
+    public CriteriaAndSortingAndPaging(Criterion[] criteria, SortingField[] sortingField, PagingInfo pagingInfo) {
+        setCriteria(criteria);
+        this.sortingField = sortingField;
+        this.pagingInfo = pagingInfo;
+    }
 
-	public void setSortingField(SortingField[] sortingField) {
-		this.sortingField = sortingField;
-	}
+    public SortingField[] getSortingField() {
+        return sortingField;
+    }
 
-	public PagingInfo getPagingInfo() {
-		return pagingInfo;
-	}
+    public void setSortingField(SortingField[] sortingField) {
+        this.sortingField = sortingField;
+    }
 
-	public void setPagingInfo(PagingInfo pagingInfo) {
-		this.pagingInfo = pagingInfo;
-	}
+    public PagingInfo getPagingInfo() {
+        return pagingInfo;
+    }
 
+    public void setPagingInfo(PagingInfo pagingInfo) {
+        this.pagingInfo = pagingInfo;
+    }
+
+    @Override
+    public void ensureAllNamesLegal(Collection<String> whiteList) {
+        super.ensureAllNamesLegal(whiteList);
+        if (sortingField == null) {
+            return;
+        }
+        for (int i = 0; i < sortingField.length; ++i) {
+            String name = sortingField[i].getName();
+            if (!whiteList.contains(name)) {
+                throw new SkeanInvalidArgumentException("illegal field name: [" + name + "]");
+            }
+        }
+    }
 
 }

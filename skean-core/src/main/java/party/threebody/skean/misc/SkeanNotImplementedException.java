@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-present  Skean Project Contributors.
+ * Copyright 2017. https://github.com/0xffff00
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.web;
+package party.threebody.skean.misc;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import party.threebody.skean.misc.SkeanException;
-
-@ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
 public class SkeanNotImplementedException extends SkeanException {
 
     public SkeanNotImplementedException(String message, Throwable cause) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-present  Skean Project Contributors.
+ * Copyright 2017. https://github.com/0xffff00
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,11 @@ package party.threebody.skean.data;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({METHOD, FIELD})
+@Target({METHOD, FIELD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-@Column
-public @interface CreateTime {
+public @interface Column {
 
 }
