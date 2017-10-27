@@ -11,6 +11,7 @@ import java.util.Map;
  * @param <PK3> type of the third primary key
  * @author hzk
  * @since 2017-09-02
+ * @since 2.1
  */
 public interface TriplePKsCrudDAO<E, PK1, PK2, PK3> extends MultiPKsCrudDAO<E> {
 

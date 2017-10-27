@@ -22,4 +22,5 @@ class Ge2RelDao implements JpaCrudDAO<Ge2Rel> {
     int delete(String key, String attr) {get
         cjt.from(getTable()).by('key', 'attr').val(key, attr).delete()
     }
+
 }

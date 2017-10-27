@@ -16,6 +16,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @param <E>
+ * @since 2.0
+ */
 public interface JpaCrudDAO<E> extends MultiPKsCrudDAO<E> {
 
     static boolean isAnnotatedOfAnyType(Field field, Class... annotationTypes) {

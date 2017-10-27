@@ -13,6 +13,7 @@ import java.util.Map;
  * @param <E> type of the entity bean
  * @author hzk
  * @since 2017-10-24
+ * @since 2.1
  */
 public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
 
@@ -55,9 +56,7 @@ public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
                 .by(getPrimaryKeyColumns()).valObj(entity).update();
     }
 
-    /**
-     * @since skean 2.0
-     */
+
     default int partialUpdate(E entity, Collection<Object> primaryKeys, Collection<String> colsToUpdate) {
         Map<String, Object> propsMap = convertEntityBeanToMap(entity);
         propsMap.putAll(buildExtraValMapToUpdate(entity));
@@ -65,9 +64,7 @@ public interface MultiPKsCrudDAO<E> extends AbstractCrudDAO<E> {
         return fromTable().affect(afCols).valMap(propsMap).by(getPrimaryKeyColumns()).valArr(primaryKeys).update();
     }
 
-    /**
-     * @since skean 2.0
-     */
+
     default int partialUpdate(Map<String, Object> fieldsToUpdate, Collection<Object> primaryKeys) {
         if (fieldsToUpdate.isEmpty()) {
             return 0;

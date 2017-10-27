@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.AliasRel
 import party.threebody.skean.dict.domain.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
-import party.threebody.skean.web.mvc.dao.SinglePKJpaCrudDAO
+import party.threebody.skean.web.mvc.dao.legacy.LegacySinglePKJpaCrudDAO
 
 @Repository
-class WordDao extends SinglePKJpaCrudDAO<Word, String> {
+class WordDao extends LegacySinglePKJpaCrudDAO<Word, String> {
 
     @Autowired ChainedJdbcTemplate cjt
 
@@ -50,5 +50,6 @@ SELECT a.w FROM (
     int deleteAliasRelsByKV(String key, String val) {
         cjt.from("dct_rel_sp_alias").by('key', 'val').val(key, val).delete()
     }
+
 
 }

@@ -10,6 +10,7 @@ import java.util.Map;
  * @param <PK2> type of the second primary key
  * @author hzk
  * @since 2017-09-02
+ * @since skean 2.0
  */
 public interface DualPKsCrudDAO<E, PK1, PK2> extends MultiPKsCrudDAO<E> {
 

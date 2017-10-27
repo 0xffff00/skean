@@ -12,10 +12,14 @@ import java.util.*;
 
 
 /**
+ * <h1>an abstact DAO(Data Access Object) providing basic CRUD methods.</h1>
+ * AbstractCrudDAO uses {@link ChainedJdbcTemplate},which holding the very {@link javax.sql.DataSource}.<br>
+ * AbstractCrudDAO concerns about a single entity bean, usually a domain object.
+ *
  * @param <E> type of the entity bean
  * @author hzk
- * @since 2.0
  * @since 2017-10-22
+ * @since 2.0
  */
 public interface AbstractCrudDAO<E> {
 

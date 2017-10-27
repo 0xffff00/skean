@@ -5,9 +5,10 @@ import org.springframework.stereotype.Repository
 import party.threebody.skean.dict.domain.DualRel
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 import party.threebody.skean.web.mvc.dao.TriplePKsJpaCrudDAO
+import party.threebody.skean.web.mvc.dao.legacy.LegacyTriplePKsJpaCrudDAO
 
 @Repository
-class DualRelDao extends TriplePKsJpaCrudDAO<DualRel, String, String, Integer> {
+class DualRelDao extends LegacyTriplePKsJpaCrudDAO<DualRel, String, String, Integer> {
 
     @Autowired
     ChainedJdbcTemplate cjt
@@ -16,4 +17,6 @@ class DualRelDao extends TriplePKsJpaCrudDAO<DualRel, String, String, Integer> {
     ChainedJdbcTemplate getChainedJdbcTemplate() {
         return cjt
     }
+
+
 }
