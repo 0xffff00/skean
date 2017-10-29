@@ -29,7 +29,6 @@ import party.threebody.skean.lang.StringCases;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SqlBuilderMysqlImpl implements SqlBuilder {
@@ -414,7 +413,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
      * exist side-effect
      */
     private static void convertValMapToSnakeCase(ValueHolder valueHolder) {
-        if (valueHolder == null) {
+        if (valueHolder == null || !valueHolder.enabled()) {
             return;
         }
         //update valMap
@@ -425,7 +424,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         if (valMap == null) {
             return null;
         }
-        return Maps.rebuild(valMap,StringCases::camelToSnake, Function.identity());
+        return Maps.rebuild(valMap, StringCases::camelToSnake, Function.identity());
     }
 
     private void mayConvertAllParamNamesToSnakeCase(FromPhrase p) {
