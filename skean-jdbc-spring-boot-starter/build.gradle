@@ -1,0 +1,13 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+dependencies {
+    compile project(':skean-jdbc-core')
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: versions.'spring-boot'
+
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
+}

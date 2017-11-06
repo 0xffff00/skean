@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.data.query;
+package party.threebody.skean.jdbc;
 
+import party.threebody.skean.jdbc.phrase.FromPhrase;
+import party.threebody.skean.jdbc.util.SqlAndArgs;
 /**
- * 通用查询条件准则<br>
- *
+ * SQL Builder interface for ChainedJdbcTemplate's FromPhrase
  * @author hzk
- * @since 2017-06-17
+ *
  */
-public interface Criterion {
+public interface SqlBuilder {
 
-    public static final Criterion NONE = new BasicCriterion("1", "0");
+	SqlAndArgs buildSelectSql(FromPhrase p);
 
-    void setName(String name);
+	SqlAndArgs buildInsertSql(FromPhrase p);
 
-    String getName();
+	SqlAndArgs buildUpdateSql(FromPhrase p);
 
-    void setValue(Object value);
+	SqlAndArgs buildDeleteSql(FromPhrase p);
 
-    Object getValue();
+	void setConfig(SqlBuilderConfig conf);
+
 }

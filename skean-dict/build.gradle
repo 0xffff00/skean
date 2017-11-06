@@ -14,8 +14,8 @@ dependencies {
 
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
+    compile project(':skean-jdbc-spring-boot-starter')
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
-
 
 
 

@@ -3,8 +3,7 @@ apply plugin: 'jacoco'
 
 dependencies {
     compile project(':skean-core')
-    compile project(':skean-jdbc')
-
+    compile project(':skean-jdbc-core')
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: versions.servlet
 
     compile group: 'org.springframework', name: 'spring-context', version: versions.spring
@@ -31,7 +30,9 @@ dependencies {
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
+
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
+    compile project(':skean-jdbc-spring-boot-starter')
 
 
 }

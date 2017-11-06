@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import party.threebody.skean.collections.Maps;
+import party.threebody.skean.data.query.Criteria;
+import party.threebody.skean.data.query.Criterion;
 import party.threebody.skean.web.eg.navyapp.dao.FleetDAO;
 import party.threebody.skean.web.eg.navyapp.dao.ShipDAO;
 import party.threebody.skean.web.eg.navyapp.domain.Fleet;
@@ -54,6 +56,11 @@ public class NavyDAOsTests {
         shipDAO.delete("CA04");
         assertEquals(3, shipDAO.readCount(null));
         assertEquals(2026, (int) shipDAO.readOne("CA03").getBirthYear());
+
+        //clear
+        shipDAO.deleteSome(Criteria.ALL);
+        assertEquals(0, shipDAO.readCount(Criteria.ALL));
+
 
     }
 

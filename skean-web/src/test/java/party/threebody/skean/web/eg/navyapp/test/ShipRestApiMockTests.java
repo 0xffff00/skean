@@ -96,8 +96,8 @@ public class ShipRestApiMockTests {
         mvc.perform(delete(rootPath + "/SSN01")
         ).andExpect(status().isGone());
 
+        //
         assertEquals(0, shipService.countShips(null));
-
     }
 
 }

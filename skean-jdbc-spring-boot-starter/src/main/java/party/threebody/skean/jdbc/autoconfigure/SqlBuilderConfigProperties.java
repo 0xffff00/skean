@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.data.query;
+package party.threebody.skean.jdbc.autoconfigure;
 
-/**
- * 通用查询条件准则<br>
- *
- * @author hzk
- * @since 2017-06-17
- */
-public interface Criterion {
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import party.threebody.skean.jdbc.SqlBuilderConfig;
 
-    public static final Criterion NONE = new BasicCriterion("1", "0");
+@ConfigurationProperties("skean.jdbc.sql-builder")
+public class SqlBuilderConfigProperties extends SqlBuilderConfig {
 
-    void setName(String name);
-
-    String getName();
-
-    void setValue(Object value);
-
-    Object getValue();
 }

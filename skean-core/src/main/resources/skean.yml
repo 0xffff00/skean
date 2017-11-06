@@ -1,0 +1,34 @@
+skean.data.query:
+  uri-common-param-names:
+    page:
+      index:
+        - p
+        - page
+      offset:
+        - f
+        - offset
+      limit:
+        - l
+        - limit
+
+    sort:
+      - o
+      - sort
+
+    criteria:
+       operator:
+         tailing:
+           LT: _LT
+           GT: _GT
+           LE: _LE
+           GE: _GE
+           EQ: _EQ
+           NE: _NE
+           K: _K
+           KL: _KL
+           NKL: _NKL
+           IN: _IN
+           NIN: _NIN
+
+
+

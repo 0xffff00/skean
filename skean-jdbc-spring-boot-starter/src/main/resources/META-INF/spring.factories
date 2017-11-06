@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=party.threebody.skean.jdbc.autoconfigure.SkeanJdbcAutoConfiguration

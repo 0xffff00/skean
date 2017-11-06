@@ -1,10 +1,12 @@
 rootProject.name = 'skean'
 
 include 'skean-core'
-include 'skean-jdbc'
+include 'skean-jdbc-core'
+include 'skean-jdbc-spring-boot-starter'
 include 'skean-mvc'
 include 'skean-id'
 include 'skean-dict'
 include 'skean-web'
 include 'skean-web-reactive'
+
 

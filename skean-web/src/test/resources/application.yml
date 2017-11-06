@@ -20,3 +20,8 @@ server:
 
 logging:
   level: DEBUG
+
+skean:
+  jdbc:
+    sql-builder:
+      modify-all-rows-enabled: true
