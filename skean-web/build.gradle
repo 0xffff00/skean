@@ -21,18 +21,7 @@ dependencies {
     //compile group: 'org.springframework.security', name: 'spring-security-web', version: versions.'spring-security'
     //compile group: 'org.springframework.security', name: 'spring-security-config', version: versions.'spring-security'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.springframework', name: 'spring-test', version: versions.spring
 
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
-
-    testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
-
-    testCompile project(':skean-jdbc-spring-boot-starter')
-    testCompile project(':skean-web-spring-boot-starter')
 
 
 }
