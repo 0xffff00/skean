@@ -205,14 +205,14 @@ public class CriteriaUtils {
      * build a clause like 'col IN ('a','b')' or an always false clause if values empty
      */
     public static String buildClauseOfInStrs(String columnName, Collection<String> values) {
-        return  buildClauseOfIn(columnName,values,"'");
+        return buildClauseOfIn(columnName, values, "'");
     }
 
-    public static String buildClauseOfInNums(String columnName, Collection<? extends  Number> values) {
-        return  buildClauseOfIn(columnName,values,"");
+    public static String buildClauseOfInNums(String columnName, Collection<? extends Number> values) {
+        return buildClauseOfIn(columnName, values, "");
     }
 
-    private static String buildClauseOfIn(String columnName, Collection<?> values,String valDlmt) {
+    private static String buildClauseOfIn(String columnName, Collection<?> values, String valDlmt) {
         if (values == null || values.isEmpty()) {
             return "'" + columnName + " IN'='NOTHING'";    //always false
         } else {

@@ -8,5 +8,5 @@ include 'skean-id'
 include 'skean-dict'
 include 'skean-web'
 include 'skean-web-reactive'
-
+include 'skean-web-spring-boot-starter'
 

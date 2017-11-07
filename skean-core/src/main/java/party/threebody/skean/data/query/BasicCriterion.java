@@ -18,52 +18,52 @@ package party.threebody.skean.data.query;
 
 public class BasicCriterion implements Criterion {
 
-	private String name;
-	private String operator;
-	private Object value;
+    private String name;
+    private String operator;    //operator name
+    private Object value;
 
-	public BasicCriterion() {
-		this(null, null, null);
-	}
+    public BasicCriterion() {
+        this(null, null, null);
+    }
 
-	public BasicCriterion(String name, Object value) {
-		this(name, null, value);
-	}
+    public BasicCriterion(String name, Object value) {
+        this(name, null, value);
+    }
 
-	public BasicCriterion(String name, String operator, Object value) {
-		this.name = name;
-		this.operator = operator;
-		this.value = value;
-	}
+    public BasicCriterion(String name, String operator, Object value) {
+        this.name = name;
+        this.operator = operator;
+        this.value = value;
+    }
 
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setOperator(String operator) {
-		this.operator = operator;
-	}
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getOperator() {
-		return operator;
-	}
+    public String getOperator() {
+        return operator;
+    }
 
-	public Object getValue() {
-		return value;
-	}
+    public Object getValue() {
+        return value;
+    }
 
-	@Override
-	public String toString() {
-		return "SimpleCriterionImpl{name:" + name + ", operator:" + operator + ", value:" + value + "}";
-	}
+    @Override
+    public String toString() {
+        return "BasicCriterion{name:" + name + ", operator:" + operator + ", value:" + value + "}";
+    }
 
 }

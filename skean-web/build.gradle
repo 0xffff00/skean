@@ -14,7 +14,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-web', version: versions.spring
     compile group: 'org.springframework', name: 'spring-webmvc', version: versions.spring
 
-
+    compile group: 'org.ehcache', name: 'ehcache', version: '3.3.1'
 
     compile group: 'javax.persistence', name: 'persistence-api', version: '1.0.2'
 
@@ -23,8 +23,6 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.springframework', name: 'spring-test', version: versions.spring
-    compile group: 'org.ehcache', name: 'ehcache', version: '3.3.1'
-
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
@@ -32,7 +30,9 @@ dependencies {
     testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
 
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
-    compile project(':skean-jdbc-spring-boot-starter')
+
+    testCompile project(':skean-jdbc-spring-boot-starter')
+    testCompile project(':skean-web-spring-boot-starter')
 
 
 }

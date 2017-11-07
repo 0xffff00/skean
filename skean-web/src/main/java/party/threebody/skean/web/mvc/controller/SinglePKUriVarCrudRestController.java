@@ -75,7 +75,7 @@ public abstract class SinglePKUriVarCrudRestController<E, PK> extends UriVarCrud
             return ResponseEntity.created(location).build();
         } else {  //update if exists
             Integer rna = getCrudFunctions().getOneUpdater().apply(entity, pk);
-            return CrudRestControllerUtils.respondRowNumAffected(rna);
+            return respondRowNumAffected(rna);
         }
 
     }
@@ -84,13 +84,13 @@ public abstract class SinglePKUriVarCrudRestController<E, PK> extends UriVarCrud
     public ResponseEntity<Object> httpPartialUpdate(@PathVariable PK pk,
                                                     @RequestBody Map<String, Object> reqestParamMap) {
         Integer rna = getCrudFunctions().getOnePartialUpdater().apply(reqestParamMap, pk);
-        return CrudRestControllerUtils.respondRowNumAffected(rna);
+        return respondRowNumAffected(rna);
     }
 
     @DeleteMapping("/{pk}")
     public ResponseEntity<Object> httpDelete(@PathVariable PK pk) {
         Integer rna = getCrudFunctions().getOneDeleter().apply(pk);
-        return CrudRestControllerUtils.respondRowNumAffected(rna);
+        return respondRowNumAffected(rna);
     }
 
 }

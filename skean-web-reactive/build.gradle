@@ -1,9 +1,0 @@
-apply plugin: 'java'
-
-dependencies {
-    compile project(':skean-core')
-    compile group: 'org.springframework', name: 'spring-webflux', version: versions.spring
-    compile group: 'io.projectreactor', name: 'reactor-core', version: '3.1.0.RELEASE'
-    compile group: 'io.projectreactor.ipc', name: 'reactor-netty', version: '0.7.0.RELEASE'
-
-}

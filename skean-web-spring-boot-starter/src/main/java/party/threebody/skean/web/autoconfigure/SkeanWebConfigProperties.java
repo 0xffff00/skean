@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.data.query;
+package party.threebody.skean.web.autoconfigure;
 
-public interface Operators {
-    String LT = "<";
-    String GT = ">";
-    String LE = "<=";
-    String GE = ">=";
-    String EQ = "=";
-    String NE = "!=";
-    String K = "like";
-    String NK = "unlike";
-    String KL = "likeLeft";
-    String KR = "likeRight";
-    String NKL = "notLikeLeft";
-    String NKR = "notLikeRight";
-    String IN = "in";
-    String NIN = "notIn";
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import party.threebody.skean.web.data.SkeanWebConfig;
+
+@ConfigurationProperties("skean.web")
+public class SkeanWebConfigProperties extends SkeanWebConfig {
 }
-

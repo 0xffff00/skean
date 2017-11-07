@@ -17,6 +17,7 @@
 package party.threebody.skean.collections;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,12 +33,22 @@ public class Sets {
     }
 
     /**
-     *  seems more efficient via https://stackoverflow.com/questions/3064423/how-to-convert-an-array-to-a-set-in-java
+     * seems more efficient via https://stackoverflow.com/questions/3064423/how-to-convert-an-array-to-a-set-in-java
+     *
      * @param elements
      * @param <E>
      * @return
      */
-    public static <E> Set<E> of(E... elements){
+    public static <E> Set<E> of(E... elements) {
         return new HashSet<>(Arrays.asList(elements));
     }
+
+    public static <E> Set<E> of(Collection<E>... elements) {
+        Set set = new HashSet<E>();
+        for (Collection<E> e : elements) {
+            set.addAll(e);
+        }
+        return set;
+    }
+
 }
