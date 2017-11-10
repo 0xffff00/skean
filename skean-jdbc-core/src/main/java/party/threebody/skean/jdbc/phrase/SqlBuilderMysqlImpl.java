@@ -278,11 +278,13 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
 
     /**
      * translate args
+     * <pre>
      * =========================
-     * before -> after       use for clause
+     *              before -> after     use for clause
      * normal arg:     1 -> 1           col = ?
      * null arg :      1 -> 0           col IS NULL/IS NOT NULL
      * collection arg: 1 -> N           col IN (?,?..?)
+     * </pre>
      */
     private static Object[] translateArgs(Object[] args) {
         return Stream.of(args).flatMap(arg -> {

@@ -57,7 +57,8 @@ public class FromPhrase extends DefaultRootPhrase {
         this.table = table;
         this.originSelectSql = originSelectSql;
         enableCount = false;
-        limit = offset = 0;
+        limit = 0;
+        offset = 0;
         val = new ValueHolder();
         afVal = new ValueHolder();
     }
@@ -278,4 +279,9 @@ public class FromPhrase extends DefaultRootPhrase {
         }
         return list.toArray(new String[list.size()]);
     }
+
+    // -------- getters & setters --------
+
+    
+
 }
