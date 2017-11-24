@@ -1,26 +1,21 @@
-package party.threebody.skean.jdbc;
+package party.threebody.skean.jdbc.eg.sk021.test;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import party.threebody.skean.collections.Maps;
-
-import java.io.Serializable;
-import java.util.LinkedHashMap;
+import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestAppConfig.class)
-@ActiveProfiles("memdb")
-public class TestChainedJdbcAffecting {
+@SpringBootTest
+public class ChainedJdbcWritingTest {
 	@Autowired
 	private JdbcTemplate jdbcTmpl;
 	@Autowired

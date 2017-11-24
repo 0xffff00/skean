@@ -1,4 +1,4 @@
-package party.threebody.skean.jdbc;
+package party.threebody.skean.jdbc.eg.sk021.domain;
 
 public class ShipDO {
 	private String code, name;

@@ -1,0 +1,27 @@
+spring:
+  h2:
+    console:
+      path: /h2
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:navy0
+    username: sa
+    password:
+
+  output:
+    ansi.enabled: ALWAYS
+
+  jackson:
+    serialization.write_dates_as_timestamps: false
+
+server:
+  port: 18923
+
+logging:
+  level: DEBUG
+
+skean:
+  jdbc:
+    sql-builder:
+      modify-all-rows-enabled: true

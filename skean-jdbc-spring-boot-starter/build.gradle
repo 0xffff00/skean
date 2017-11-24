@@ -9,5 +9,8 @@ dependencies {
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
-    testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
+
+    testCompile group: 'com.h2database', name: 'h2', version: versions.h2
+
+    testCompile project(':skean-jdbc-spring-boot-starter')
 }
