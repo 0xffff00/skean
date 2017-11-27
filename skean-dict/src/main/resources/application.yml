@@ -4,3 +4,18 @@ spring:
     url: jdbc:mariadb://10.0.0.101:3306/skean0
     username: skean
     password: skean
+
+  jackson:
+    serialization.write_dates_as_timestamps: false
+
+server:
+  port: 8080
+
+logging:
+  level:
+    party.threebody.skean.jdbc: DEBUG
+
+skean:
+  jdbc:
+    sql-printer:
+      print-sql-result-strategy: REFLECTION

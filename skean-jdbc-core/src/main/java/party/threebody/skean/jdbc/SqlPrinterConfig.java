@@ -20,7 +20,7 @@ import static party.threebody.skean.jdbc.SqlPrinterConfig.PrintSqlResultStrategy
 
 public class SqlPrinterConfig {
 
-    private boolean printSqlAndResult = false;
+    private boolean printSqlAndResult = true;
     private int maxCharsToPrintSqlResult = 1024;
     private int maxCharsToPrintInOneLine = 200;
     private PrintSqlResultStrategy printSqlResultStrategy = ALWAYS_TOSTRING;

@@ -7,8 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import party.threebody.skean.web.eg.navyapp.controller.FleetShipController;
 import party.threebody.skean.web.eg.navyapp.controller.ShipController;
 import party.threebody.skean.web.eg.navyapp.controller.ShipController2;
+import party.threebody.skean.web.eg.navyapp.dao.FleetDAO;
+import party.threebody.skean.web.eg.navyapp.domain.Fleet;
 import party.threebody.skean.web.eg.navyapp.domain.Ship;
 import party.threebody.skean.web.eg.navyapp.service.ShipService;
 
@@ -29,6 +32,8 @@ public class ShipRestApiMockTests {
     @Autowired MockMvc mvc;
     @Autowired ShipController2 shipController2;
     @Autowired ShipController shipController;
+    @Autowired FleetShipController fleetShipController;
+    @Autowired FleetDAO fleetDAO;
 
     @Test
     public void test1controller() throws Exception {
@@ -98,6 +103,14 @@ public class ShipRestApiMockTests {
 
         //
         assertEquals(0, shipService.countShips(null));
+    }
+
+    @Test
+    public void testRelationBetweenFleetAndShip() throws Exception {
+        shipController2.httpCreate(new Ship("CA06", "Emei", 16530, 2022));
+        fleetDAO.create(new Fleet("CN","SOUTH","south fleet","Zhangzz",null));
+        fleetDAO.addShipToFleet("CN","SOUTH","CA06");
+
     }
 
 }

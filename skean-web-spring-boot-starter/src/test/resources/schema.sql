@@ -14,3 +14,10 @@ create table IF NOT EXISTS `navy_fleet` (
   `leader_name` varchar (150),
   `update_time` datetime
 );
+
+create table IF NOT EXISTS `navy_fleet_ship` (
+  `country_code` varchar (150),
+  `fleet_code` varchar (150),
+  `ship_code` varchar (150),
+  `is_flagship` tinyint(1)
+);

@@ -23,8 +23,8 @@ public class ApiErrorInfo {
     private Long timestamp;
     private Integer status;
     private String error;
-    private String devException;
     private String message;
+    private DebugInfo debugInfo;
     private String path;
 
     public Long getTimestamp() {
@@ -67,11 +67,40 @@ public class ApiErrorInfo {
         this.path = path;
     }
 
-    public String getDevException() {
-        return devException;
+    public DebugInfo getDebugInfo() {
+        return debugInfo;
     }
 
-    public void setDevException(String devException) {
-        this.devException = devException;
+    public void setDebugInfo(DebugInfo debugInfo) {
+        this.debugInfo = debugInfo;
+    }
+
+    public static class DebugInfo {
+        private String exception;
+        private String message;
+
+        public DebugInfo() {
+        }
+
+        public DebugInfo(Exception e) {
+            exception = e.getClass().getName();
+            message = e.getMessage();
+        }
+
+        public String getException() {
+            return exception;
+        }
+
+        public void setException(String exception) {
+            this.exception = exception;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 }

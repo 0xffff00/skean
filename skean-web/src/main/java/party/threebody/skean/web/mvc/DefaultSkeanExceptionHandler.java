@@ -17,6 +17,7 @@
 package party.threebody.skean.web.mvc;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +28,8 @@ import party.threebody.skean.misc.SkeanInvalidArgumentException;
 import party.threebody.skean.misc.SkeanNotImplementedException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,18 +48,29 @@ public class DefaultSkeanExceptionHandler {
         EX2HTTP.put(SkeanInvalidArgumentException.class, HttpStatus.BAD_REQUEST);
         EX2HTTP.put(SkeanNotImplementedException.class, HttpStatus.NOT_IMPLEMENTED);
         EX2HTTP.put(SkeanException.class, HttpStatus.BAD_REQUEST);
+        EX2HTTP.put(DuplicateKeyException.class,HttpStatus.CONFLICT);
     }
 
     protected Map<Class<? extends Exception>, HttpStatus> getExceptionToHttpStatusMap() {
         return EX2HTTP;
     }
 
-    @ExceptionHandler(SkeanException.class)
-    ResponseEntity<?> handleAll(HttpServletRequest req, Exception e) {
-        return handleFromMapOrAnnotations(req, e);
+    @ExceptionHandler(DuplicateKeyException.class)
+    ResponseEntity<?> handleSQL(HttpServletRequest req, Exception e) {
+        return handleFromMapOrAnnotations(req, e,null);
     }
 
-    protected ResponseEntity<?> handleFromMapOrAnnotations(HttpServletRequest req, Exception e) {
+    @ExceptionHandler(SkeanException.class)
+    ResponseEntity<?> handleSkean(HttpServletRequest req, Exception e) {
+        return handleFromMapOrAnnotations(req, e,e.getMessage());
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    ResponseEntity<?> handleAllOthers(HttpServletRequest req, Exception e) {
+        return handleFromMapOrAnnotations(req, e,"Unexpected Error!");
+    }
+
+    protected ResponseEntity<?> handleFromMapOrAnnotations(HttpServletRequest req, Exception e,String message) {
         // find in EX2HTTP
         for (Class<? extends Exception> exClass : getExceptionToHttpStatusMap().keySet()) {
             if (exClass.isInstance(e)) {
@@ -76,11 +90,11 @@ public class DefaultSkeanExceptionHandler {
         ApiErrorInfo apiErrorInfo = new ApiErrorInfo();
         apiErrorInfo.setStatus(httpStatus.value());
         apiErrorInfo.setError(httpStatus.getReasonPhrase());
-        apiErrorInfo.setMessage(e.getMessage());
+        apiErrorInfo.setMessage(null);
         apiErrorInfo.setTimestamp(System.currentTimeMillis());
         apiErrorInfo.setPath(req.getContextPath());
-        apiErrorInfo.setDevException(e.getClass().getName());
-        return new ResponseEntity<ApiErrorInfo>(apiErrorInfo, httpStatus);
+        apiErrorInfo.setDebugInfo(new ApiErrorInfo.DebugInfo(e));
+        return new ResponseEntity<>(apiErrorInfo, httpStatus);
     }
 
 
