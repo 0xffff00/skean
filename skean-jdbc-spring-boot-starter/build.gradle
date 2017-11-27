@@ -12,5 +12,4 @@ dependencies {
 
     testCompile group: 'com.h2database', name: 'h2', version: versions.h2
 
-    testCompile project(':skean-jdbc-spring-boot-starter')
 }
