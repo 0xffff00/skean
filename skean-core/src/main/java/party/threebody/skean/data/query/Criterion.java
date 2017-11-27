@@ -24,7 +24,7 @@ package party.threebody.skean.data.query;
  */
 public interface Criterion {
 
-    public static final Criterion NONE = new BasicCriterion("1", "0");
+    public static final Criterion FALSE = new BasicCriterion("1", "0");
 
     void setName(String name);
 

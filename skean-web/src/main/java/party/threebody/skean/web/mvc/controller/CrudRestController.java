@@ -35,7 +35,9 @@ import java.util.function.Function;
 
 /**
  * @param <E>
- * @since skean 2.1
+ * @since 2.1
+ * @see UriVarCrudRestController
+ * @see MatrixVarCrudRestController
  */
 public abstract class CrudRestController<E> {
 

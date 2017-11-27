@@ -1,4 +1,13 @@
 spring:
+  h2:
+    console:
+      path: /h2
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:sk021;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+    username: sa
+    password:
 
   output:
     ansi.enabled: ALWAYS
@@ -7,7 +16,7 @@ spring:
     serialization.write_dates_as_timestamps: false
 
 server:
-  port: 18923
+  port: 18921
 
 logging:
   level: DEBUG

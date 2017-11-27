@@ -1,4 +1,13 @@
 spring:
+  h2:
+    console:
+      path: /h2
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:navy0;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false
+    username: sa
+    password:
 
   output:
     ansi.enabled: ALWAYS

@@ -1,4 +1,4 @@
-package party.threebody.skean.jdbc;
+package party.threebody.skean.jdbc.util;
 
 import org.junit.Test;
 import party.threebody.skean.data.query.BasicCriterion;
@@ -6,7 +6,7 @@ import party.threebody.skean.jdbc.util.CriteriaUtils;
 
 import java.util.Arrays;
 
-public class TestCriteriaUtils {
+public class CriteriaUtilsTest {
 
 
 	public void testToClausesAndArgs() {

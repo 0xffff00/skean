@@ -1,11 +1,12 @@
-package party.threebody.skean.jdbc;
+package party.threebody.skean.jdbc.util;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import party.threebody.skean.jdbc.SkeanSqlSecurityException;
 import party.threebody.skean.jdbc.util.SqlSecurityUtils;
 
-public class TestSqlSecurityUtils {
+public class SqlSecurityUtilsTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

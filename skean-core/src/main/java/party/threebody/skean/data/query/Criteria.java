@@ -27,8 +27,15 @@ public class Criteria {
 
     private Criterion[] criteria;
 
-    public static final Criteria ALL = new Criteria();
-    public static final Criteria NONE = new Criteria(new Criterion[]{Criterion.NONE});
+    /**
+     * allow all, deny nothing
+     */
+    public static final Criteria ALLOW_ALL = new Criteria();
+
+    /**
+     * allow none, deny all
+     */
+    public static final Criteria DENY_ALL = new Criteria(new Criterion[]{Criterion.FALSE});
 
     protected Criteria() {
 

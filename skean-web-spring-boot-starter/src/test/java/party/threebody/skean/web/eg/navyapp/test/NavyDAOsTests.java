@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import party.threebody.skean.collections.Maps;
 import party.threebody.skean.data.query.Criteria;
-import party.threebody.skean.data.query.Criterion;
 import party.threebody.skean.web.eg.navyapp.dao.FleetDAO;
 import party.threebody.skean.web.eg.navyapp.dao.ShipDAO;
 import party.threebody.skean.web.eg.navyapp.domain.Fleet;
@@ -26,6 +25,8 @@ public class NavyDAOsTests {
 
     @Test
     public void testShipDAO() throws Exception {
+        //delete all
+        shipDAO.deleteSome(Criteria.ALLOW_ALL);
         //create
         shipDAO.create(new Ship("CA01", "Taishan", 31180, 2020));
         shipDAO.create(new Ship("CA02", "Hengshan", 32500, 2024));
@@ -58,8 +59,8 @@ public class NavyDAOsTests {
         assertEquals(2026, (int) shipDAO.readOne("CA03").getBirthYear());
 
         //clear
-        shipDAO.deleteSome(Criteria.ALL);
-        assertEquals(0, shipDAO.readCount(Criteria.ALL));
+        shipDAO.deleteSome(Criteria.ALLOW_ALL);
+        assertEquals(0, shipDAO.readCount(Criteria.ALLOW_ALL));
 
 
     }

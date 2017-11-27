@@ -36,7 +36,8 @@ configure(allprojects) { project ->
 
             //data
             'mariadb-java-client' : '2.1.1',
-            'HikariCP'            : '2.7.1'
+            'HikariCP'            : '2.7.1',
+            'h2'                  : '1.4.196'
     ]
 
     repositories {
@@ -86,11 +87,11 @@ configure(subprojects) { project ->
     }
 
 
-    if (project.plugins.hasPlugin('groovy')){
-        compileGroovy{
+    if (project.plugins.hasPlugin('groovy')) {
+        compileGroovy {
             options.encoding = 'UTF-8'
         }
-        compileTestGroovy{
+        compileTestGroovy {
             options.encoding = 'UTF-8'
         }
     }
