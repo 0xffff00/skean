@@ -1,12 +1,26 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.0.M4'
+    }
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://repo.spring.io/milestone/' }
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
 dependencies {
 
     compile project(':skean-jdbc-spring-boot-starter')
     compile project(':skean-web-spring-boot-starter')
 
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: versions.groovy
-
 
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
     compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
@@ -17,7 +31,7 @@ dependencies {
     compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: versions.'mariadb-java-client'
 
 
-
-
-
+}
+bootJar {
+    enabled = true
 }
