@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ShipRestApiMockTests {
+public class ShipApiTestsByMockMvc {
 
     @Autowired ShipService shipService;
     @Autowired MockMvc mvc;
@@ -68,6 +68,8 @@ public class ShipRestApiMockTests {
     }
 
     void testShipsApis(String rootPath) throws Exception {
+        //delete all
+        shipService.deleteAll();
         //create
         mvc.perform(post(rootPath)
                 .contentType(APPLICATION_JSON)

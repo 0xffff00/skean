@@ -6,6 +6,9 @@ spring:
   jackson:
     serialization.write_dates_as_timestamps: false
 
+  datasource:
+    generate-unique-name: true
+
 server:
   port: 18923
 

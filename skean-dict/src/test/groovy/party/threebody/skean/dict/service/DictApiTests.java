@@ -1,5 +1,6 @@
 package party.threebody.skean.dict.service;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class DictApiTests {
 
     @Autowired TestRestTemplate restTemplate;
 
+    @Ignore
     @Test
     public void t1() throws Exception{
         Word w1=new Word();
@@ -30,6 +32,8 @@ public class DictApiTests {
                 .accept(APPLICATION_JSON).body(w1), Word.class);
 
         Word w1got = restTemplate.getForObject("/words/Apple", Word.class);
+
+
 
         assertEquals("Apple",w1got.getText());
         assertNotNull(w1got.getUpdateTime());

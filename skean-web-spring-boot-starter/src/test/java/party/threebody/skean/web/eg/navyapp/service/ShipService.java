@@ -44,4 +44,8 @@ public class ShipService {
         return shipDAO.delete(code);
     }
 
+    public int deleteAll(){
+        return shipDAO.deleteSome(null);
+    }
+
 }

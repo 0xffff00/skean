@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.dict.dao.DualRelDao;
 import party.threebody.skean.dict.dao.Ge1RelDao;
@@ -63,16 +64,16 @@ public class WordService {
         return wordDao.delete(text);
     }
 
-    public List<Word> listWords(CriteriaAndSortingAndPaging qps) {
-        return wordDao.readList(qps);
+    public List<Word> listWords(CriteriaAndSortingAndPaging csp) {
+        return wordDao.readList(csp);
     }
 
     public List<String> listTemporaryTexts() {
         return wordDao.listTemporaryTexts();
     }
 
-    public int countWords(CriteriaAndSortingAndPaging qps) {
-        return wordDao.readCount(qps);
+    public int countWords(Criteria criteria) {
+        return wordDao.readCount(criteria);
     }
 
     public Word getWord(String text) {

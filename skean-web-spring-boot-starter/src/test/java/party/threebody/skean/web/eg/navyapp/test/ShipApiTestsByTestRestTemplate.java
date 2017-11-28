@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-public class ShipRestApiRealTests {
+public class ShipApiTestsByTestRestTemplate {
 
     @Autowired ShipService shipService;
     @Autowired ShipController2 shipController2;
