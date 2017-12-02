@@ -130,6 +130,11 @@ public class WordService {
         return wordDao.listAliasRels();
     }
 
+    @Cacheable(value = "aliasRels")
+    public AliasRel getAliasRelByKV(String key, String val) {
+        return wordDao.getAliasRelByKV(key, val);
+    }
+
     @CacheEvict(value = "aliasRels")
     public int createAliasRel(AliasRel rel) {
         return wordDao.createAliasRel(rel);

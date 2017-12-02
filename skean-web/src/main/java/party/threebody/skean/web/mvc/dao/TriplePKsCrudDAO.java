@@ -41,7 +41,7 @@ public interface TriplePKsCrudDAO<E, PK1, PK2, PK3> extends MultiPKsCrudDAO<E> {
     }
 
     /**
-     * @since skean 2.0
+     * @since 2.0
      */
     default int partialUpdate(Map<String, Object> fieldsToUpdate, PK1 pk1, PK2 pk2, PK3 pk3) {
         return partialUpdate(fieldsToUpdate, Arrays.asList(pk1, pk2, pk3));

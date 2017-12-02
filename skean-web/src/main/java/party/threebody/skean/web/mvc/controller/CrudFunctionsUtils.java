@@ -24,22 +24,9 @@ import party.threebody.skean.web.mvc.dao.SinglePKCrudDAO;
 
 public class CrudFunctionsUtils {
 
-    protected static <O> O raiseNotImplemented() {
-        throw new SkeanNotImplementedException();
+    protected static <O> O raiseNotImplementedWithMsg(String msg) {
+        throw new SkeanNotImplementedException("Not Implemented Yet: " + msg);
     }
-
-    protected static <I, O> O raiseNotImplemented(I i) {
-        throw new SkeanNotImplementedException();
-    }
-
-    protected static <I1, I2, O> O raiseNotImplemented(I1 i1, I2 i2) {
-        throw new SkeanNotImplementedException();
-    }
-
-    protected static <I1, I2, I3, O> O raiseNotImplemented(I1 i1, I2 i2, I3 i3) {
-        throw new SkeanNotImplementedException();
-    }
-
 
     public static <E> void fillFromCrudDAO(CrudFunctions<E> funcs, AbstractCrudDAO<E> dao) {
         funcs.setListReader(dao::readList);

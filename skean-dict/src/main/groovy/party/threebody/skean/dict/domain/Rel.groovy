@@ -28,36 +28,11 @@ import java.time.LocalDateTime
  * @author hzk
  * @since 2017-08-05
  */
-@Table(name = 'dct_word')
-class Word {
-
-    @Id String text
-    @Column String desc
-    @LastUpdateTime LocalDateTime updateTime
-
-    //	Set<String> instancesDeep		//recursive
-    //	Set<String> definitions			//self <--(INST)-- defs <--(SUBS)-- all super defs
-
-    //	Set<String> supersetsDeep		//recursive
-    //	Set<String> subsetsDeep			//recursive
-    //	Set<String> aliases				//recursive
-
-    //4 Rels involved. Each rel list represents a DAG which current node can be from or to
-    Set<AliasRel> aliasRels
-    Set<DualRel> dualRels
-    Set<Ge1Rel> ge1Rels
-    Set<Ge2Rel> ge2Rels
-
-    boolean isTemp
-
-}
-
-
 class Rel {
     public static int VNO_BATCH = -1
     @Id String key
     @Id String val
-    @Id Integer vno
+    @Id Integer vno // ordinal number to display
     @Column String attr
     @Column String adv
 
@@ -96,7 +71,14 @@ class GeRel extends Rel {
     }
 }
 
-
+/**
+ * <h1>Special Relation</h1>
+ * attr has only 3 legal values:
+ * ALIA - alias
+ * SUBS - subset
+ * GECH - generic child
+ * INST - instance
+ */
 class SpRel extends Rel {
 }
 
@@ -104,24 +86,28 @@ class AliasRel extends SpRel {
     @Column String lang
 }
 
-@Table(name = 'dct_rel_ge_dat1')
+/**
+ * <h1>Generic Relation</h1>
+ * attr,attrx can be any string
+ */
+@Table(name = 'dct_rel_ge1')
 class Ge1Rel extends GeRel {
 
 
 }
 
-@Table(name = 'dct_rel_ge_dat2')
+@Table(name = 'dct_rel_ge2')
 class Ge2Rel extends GeRel {
-    @Column String valstr
-    @Column Integer valnum
-    @Column String valmu
+    @Column String valstr       //stringified value
+    @Column Integer valnum      //numeric value
+    @Column String valmu        //measure unit
 
     String getVal() {
         valstr ?: valnum
     }
 }
 
-@Table(name = 'dct_rel_sp_dual')
+@Table(name = 'dct_rel_dual')
 class DualRel extends SpRel {
 }
 

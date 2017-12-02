@@ -18,7 +18,6 @@ package party.threebody.skean.web.mvc.controller;
 
 import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
-import party.threebody.skean.web.mvc.dao.AbstractCrudDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -43,16 +42,15 @@ public class CrudFunctions<E> {
     private boolean batchUpdateEnabled;
 
     protected CrudFunctions() {
-        setListReader(CrudFunctionsUtils::raiseNotImplemented);
-        setCountReader(CrudFunctionsUtils::raiseNotImplemented);
-        setOneCreator(CrudFunctionsUtils::raiseNotImplemented);
-        setUpdater(CrudFunctionsUtils::raiseNotImplemented);
-        setPartialUpdater(CrudFunctionsUtils::raiseNotImplemented);
-        setDeleter(CrudFunctionsUtils::raiseNotImplemented);
+        setListReader(i1 -> CrudFunctionsUtils.raiseNotImplementedWithMsg("listReader"));
+        setCountReader(i1 -> CrudFunctionsUtils.raiseNotImplementedWithMsg("countReader"));
+        setOneCreator(i1 -> CrudFunctionsUtils.raiseNotImplementedWithMsg("oneCreator"));
+        setUpdater((i1, i2) -> CrudFunctionsUtils.raiseNotImplementedWithMsg("oneUpdater"));
+        setPartialUpdater((i1, i2) -> CrudFunctionsUtils.raiseNotImplementedWithMsg("partialUpdater"));
+        setDeleter(i1 -> CrudFunctionsUtils.raiseNotImplementedWithMsg("deleter"));
         setBatchDeleteEnabled(false);
         setBatchUpdateEnabled(false);
     }
-
 
 
     public Function<CriteriaAndSortingAndPaging, List<E>> getListReader() {

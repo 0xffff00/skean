@@ -16,6 +16,8 @@
 
 package party.threebody.skean.web.mvc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -28,8 +30,6 @@ import party.threebody.skean.misc.SkeanInvalidArgumentException;
 import party.threebody.skean.misc.SkeanNotImplementedException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,13 +42,15 @@ import java.util.Map;
 @RestControllerAdvice
 public class DefaultSkeanExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultSkeanExceptionHandler.class);
+
     static final Map<Class<? extends Exception>, HttpStatus> EX2HTTP = new LinkedHashMap<>();
 
     static {
         EX2HTTP.put(SkeanInvalidArgumentException.class, HttpStatus.BAD_REQUEST);
         EX2HTTP.put(SkeanNotImplementedException.class, HttpStatus.NOT_IMPLEMENTED);
         EX2HTTP.put(SkeanException.class, HttpStatus.BAD_REQUEST);
-        EX2HTTP.put(DuplicateKeyException.class,HttpStatus.CONFLICT);
+        EX2HTTP.put(DuplicateKeyException.class, HttpStatus.CONFLICT);
     }
 
     protected Map<Class<? extends Exception>, HttpStatus> getExceptionToHttpStatusMap() {
@@ -57,20 +59,22 @@ public class DefaultSkeanExceptionHandler {
 
     @ExceptionHandler(DuplicateKeyException.class)
     ResponseEntity<?> handleSQL(HttpServletRequest req, Exception e) {
-        return handleFromMapOrAnnotations(req, e,null);
+        return handleFromMapOrAnnotations(req, e, null);
     }
 
     @ExceptionHandler(SkeanException.class)
     ResponseEntity<?> handleSkean(HttpServletRequest req, Exception e) {
-        return handleFromMapOrAnnotations(req, e,e.getMessage());
+        logger.info(e.getMessage(), e);
+        return handleFromMapOrAnnotations(req, e, e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     ResponseEntity<?> handleAllOthers(HttpServletRequest req, Exception e) {
-        return handleFromMapOrAnnotations(req, e,"Unexpected Error!");
+        logger.warn("Unexpected Error!", e);
+        return handleFromMapOrAnnotations(req, e, "Unexpected Error!");
     }
 
-    protected ResponseEntity<?> handleFromMapOrAnnotations(HttpServletRequest req, Exception e,String message) {
+    protected ResponseEntity<?> handleFromMapOrAnnotations(HttpServletRequest req, Exception e, String message) {
         // find in EX2HTTP
         for (Class<? extends Exception> exClass : getExceptionToHttpStatusMap().keySet()) {
             if (exClass.isInstance(e)) {
@@ -87,6 +91,8 @@ public class DefaultSkeanExceptionHandler {
     }
 
     protected ResponseEntity<ApiErrorInfo> handle0(HttpServletRequest req, Exception e, HttpStatus httpStatus) {
+        logger.info("return {}({}) for HTTP request: {}",
+                httpStatus.value(), httpStatus.getReasonPhrase(), req.getRequestURI());
         ApiErrorInfo apiErrorInfo = new ApiErrorInfo();
         apiErrorInfo.setStatus(httpStatus.value());
         apiErrorInfo.setError(httpStatus.getReasonPhrase());

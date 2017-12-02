@@ -43,13 +43,14 @@ public class SinglePKCrudFunctions<E, PK> extends CrudFunctions<E> {
 
     protected SinglePKCrudFunctions() {
         super();
-        setPkNameSupplier(CrudFunctionsUtils::raiseNotImplemented);
-        setPkGetter(CrudFunctionsUtils::raiseNotImplemented);
-        setOneReader(CrudFunctionsUtils::raiseNotImplemented);
-        setOneUpdater(CrudFunctionsUtils::raiseNotImplemented);
-        setOnePartialUpdater(CrudFunctionsUtils::raiseNotImplemented);
-        setOneDeleter(CrudFunctionsUtils::raiseNotImplemented);
+        setPkNameSupplier(()-> CrudFunctionsUtils.raiseNotImplementedWithMsg("pkNamesSupplier"));
+        setPkGetter(i1-> CrudFunctionsUtils.raiseNotImplementedWithMsg("pkGetter"));
+        setOneReader(i1-> CrudFunctionsUtils.raiseNotImplementedWithMsg("oneReader"));
+        setOneUpdater((i1,i2)-> CrudFunctionsUtils.raiseNotImplementedWithMsg("oneUpdater"));
+        setOnePartialUpdater((i1,i2)-> CrudFunctionsUtils.raiseNotImplementedWithMsg("onePartialUpdater"));
+        setOneDeleter(i1-> CrudFunctionsUtils.raiseNotImplementedWithMsg("oneDeleter"));
         resetOneCreatorWithReturn();
+
     }
 
     protected void resetOneCreatorWithReturn(){

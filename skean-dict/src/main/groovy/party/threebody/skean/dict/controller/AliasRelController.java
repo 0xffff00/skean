@@ -18,8 +18,8 @@ public class AliasRelController extends MultiPKsMatrixVarCrudRestController<Alia
     @Override
     public void buildCrudFunctions(MultiPKsCrudFunctionsBuilder<AliasRel> builder) {
         builder.pkGetter(ar -> Arrays.asList(ar.getKey(), ar.getVal()))
-
+                .oneReader(pks -> wordService.getAliasRelByKV((String) pks.get(0), (String) pks.get(1)))
                 .oneCreator(wordService::createAliasRel)
-                .oneDeleter(pks -> wordService.deleteAliasRelsByKV((String)pks.get(0),(String)pks.get(1)));
+                .oneDeleter(pks -> wordService.deleteAliasRelsByKV((String) pks.get(0), (String) pks.get(1)));
     }
 }

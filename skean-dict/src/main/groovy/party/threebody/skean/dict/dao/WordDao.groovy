@@ -54,6 +54,11 @@ SELECT a.w FROM (
         cjt.from("dct_rel_sp_alias").list(AliasRel.class)
     }
 
+    AliasRel getAliasRelByKV(String key, String val) {
+        cjt.from("dct_rel_sp_alias").by('key', 'val').val(key, val).first(AliasRel.class)
+    }
+
+
     int createAliasRel(AliasRel rel) {
         cjt.from("dct_rel_sp_alias").affect('key', 'attr', 'lang', 'vno', 'val', 'adv').val(rel).insert()
     }
