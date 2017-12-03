@@ -1,42 +1,28 @@
-/*
- * Copyright 2017-present  Skean Project Contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package party.threebody.skean.jdbc.util;
+package party.threebody.skean.lang;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections4.ListUtils;
 import party.threebody.skean.misc.SkeanReflectionException;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.function.Function;
 
-public class JavaBeans {
-
+/**
+ * Bean Reflection Utilities
+ * @since 0.3
+ */
+public class Beans {
     final static Class<?>[] SIMPLE_CLASSES = {char.class, boolean.class, byte.class,
             int.class, long.class, short.class, float.class, double.class,
             Number.class, String.class, Character.class, Date.class, Temporal.class, Boolean.class};
-
-    private JavaBeans() {
-    }
 
     public static Object getProperty(Object bean, String propertyName) {
         try {
@@ -71,6 +57,18 @@ public class JavaBeans {
         return res;
     }
 
+    /**
+     * get all declared fields, including inherited fields from all super classes
+     * @param clazz
+     * @return
+     */
+    public static List<Field> getAllDeclaredFields(Class<?> clazz) {
+        if (clazz==null){
+            return Collections.emptyList();
+        }
+        return ListUtils.union(Arrays.asList(clazz.getDeclaredFields()),
+                getAllDeclaredFields(clazz.getSuperclass()));
+    }
 
     /**
      * like PropertyUtils.describe()
@@ -132,7 +130,6 @@ public class JavaBeans {
             throw new SkeanReflectionException("convertBeanToMap failed.", e);
         }
     }
-
 
     public static boolean isSimpleType(Class<?> clazz) {
         for (Class<?> simpleClass : SIMPLE_CLASSES) {

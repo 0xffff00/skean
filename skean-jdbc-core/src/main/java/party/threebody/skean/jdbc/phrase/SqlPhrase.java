@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 
 import party.threebody.skean.jdbc.ChainedJdbcTemplateContext;
-import party.threebody.skean.jdbc.util.JavaBeans;
 import party.threebody.skean.jdbc.util.SqlAndArgs;
+import party.threebody.skean.lang.Beans;
 
 public class SqlPhrase extends DefaultRootPhrase {
 
@@ -78,7 +78,7 @@ public class SqlPhrase extends DefaultRootPhrase {
 			if (v0 instanceof Collection) {
 				argArr(val);
 			}
-			if (JavaBeans.instanceOfSimpleType(v0)) {
+			if (Beans.instanceOfSimpleType(v0)) {
 				argArr(val);
 			}
 			argObj(val);

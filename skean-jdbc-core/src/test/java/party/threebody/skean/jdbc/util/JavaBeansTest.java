@@ -4,6 +4,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import party.threebody.skean.lang.Beans;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -25,8 +26,8 @@ public class JavaBeansTest {
     @Test
     public void testConvertBeanToMap() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        System.out.println(JavaBeans.convertBeanToMap(car1));
-        System.out.println(JavaBeans.convertBeanToSimpleMap(car1));
+        System.out.println(Beans.convertBeanToMap(car1));
+        System.out.println(Beans.convertBeanToSimpleMap(car1));
         System.out.println(PropertyUtils.describe(car1));
         System.out.println(BeanUtils.describe(car1));
     }

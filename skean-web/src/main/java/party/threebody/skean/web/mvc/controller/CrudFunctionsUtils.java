@@ -16,7 +16,7 @@
 
 package party.threebody.skean.web.mvc.controller;
 
-import party.threebody.skean.jdbc.util.JavaBeans;
+import party.threebody.skean.lang.Beans;
 import party.threebody.skean.misc.SkeanNotImplementedException;
 import party.threebody.skean.web.mvc.dao.AbstractCrudDAO;
 import party.threebody.skean.web.mvc.dao.MultiPKsCrudDAO;
@@ -44,7 +44,7 @@ public class CrudFunctionsUtils {
         funcs.setOnePartialUpdater(dao::partialUpdate);
         funcs.setOneDeleter(dao::delete);
         funcs.setPkNameSupplier(dao::getPrimaryKeyColumn);
-        funcs.setPkGetter(e -> (PK) JavaBeans.getProperty(e, funcs.getPkNameSupplier().get()));
+        funcs.setPkGetter(e -> (PK) Beans.getProperty(e, funcs.getPkNameSupplier().get()));
         //sfuncs.resetOneCreatorWithReturn();
     }
 
@@ -55,7 +55,7 @@ public class CrudFunctionsUtils {
         funcs.setOnePartialUpdater(dao::partialUpdate);
         funcs.setOneDeleter(dao::delete);
         funcs.setPkNamesSupplier(dao::getPrimaryKeyColumns);
-        funcs.setPkGetter(e -> JavaBeans.getProperties(e, funcs.getPkNamesSupplier().get()));
+        funcs.setPkGetter(e -> Beans.getProperties(e, funcs.getPkNamesSupplier().get()));
         funcs.resetOneCreatorWithReturn();
     }
 

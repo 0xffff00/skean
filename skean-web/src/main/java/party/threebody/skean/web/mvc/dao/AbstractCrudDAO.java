@@ -21,7 +21,7 @@ import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.jdbc.ChainedJdbcTemplate;
 import party.threebody.skean.jdbc.phrase.FromPhrase;
-import party.threebody.skean.jdbc.util.JavaBeans;
+import party.threebody.skean.lang.Beans;
 import party.threebody.skean.lang.StringCases;
 
 import java.util.*;
@@ -81,7 +81,7 @@ public interface AbstractCrudDAO<E> {
 
 
     default Map<String, Object> convertEntityBeanToMap(E entity) {
-        return JavaBeans.convertBeanToSimpleMap(entity, StringCases::camelToSnake);
+        return Beans.convertBeanToSimpleMap(entity, StringCases::camelToSnake);
 
     }
 

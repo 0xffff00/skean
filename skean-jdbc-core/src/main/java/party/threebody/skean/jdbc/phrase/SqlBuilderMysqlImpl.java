@@ -27,6 +27,7 @@ import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 import party.threebody.skean.jdbc.SqlBuilder;
 import party.threebody.skean.jdbc.SqlBuilderConfig;
 import party.threebody.skean.jdbc.util.*;
+import party.threebody.skean.lang.Beans;
 import party.threebody.skean.lang.StringCases;
 
 import java.util.*;
@@ -206,7 +207,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
                 return ArrayAndMapUtils.getValsArr(p.afVal.getMap(), p.afCols);
             }
             if (p.afVal.getObj() != null) {
-                return JavaBeans.getProperties(p.afVal.getObj(), p.afCols);
+                return Beans.getProperties(p.afVal.getObj(), p.afCols);
             }
             throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
         }
@@ -225,7 +226,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
                 return ArrayAndMapUtils.getValsArr(p.val.getMap(), p.afCols);
             }
             if (p.val.getObj() != null) {
-                return JavaBeans.getProperties(p.val.getObj(), p.afCols);
+                return Beans.getProperties(p.val.getObj(), p.afCols);
             }
         }
         throw new ChainedJdbcTemplateException("build args of 'INSERT' or 'UPDATE' clause failed. ");
@@ -270,7 +271,7 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
             return ArrayAndMapUtils.getValsArr(p.val.getMap(), p.byCols);
         }
         if (p.val.getObj() != null) {
-            return JavaBeans.getProperties(p.val.getObj(), p.byCols);
+            return Beans.getProperties(p.val.getObj(), p.byCols);
         }
         throw new ChainedJdbcTemplateException("build args of 'WHERE' clause failed. ");
     }

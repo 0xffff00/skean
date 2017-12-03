@@ -18,21 +18,27 @@ package party.threebody.skean.dict.dao
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
-import party.threebody.skean.dict.domain.AliasRel
-import party.threebody.skean.dict.domain.DualRel
+import party.threebody.skean.dict.domain.BasicRelation
+import party.threebody.skean.dict.domain.X1Relation
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 import party.threebody.skean.web.mvc.dao.TriplePKsJpaCrudDAO
 
 @Repository
-class AliasRelDao extends TriplePKsJpaCrudDAO<AliasRel, String, String, Integer> {
+class X1RelationDao extends TriplePKsJpaCrudDAO<X1Relation, String, String, Integer> {
 
     @Autowired
     ChainedJdbcTemplate cjt
 
     @Override
     ChainedJdbcTemplate getChainedJdbcTemplate() {
-        return cjt
+        cjt
     }
 
+    List<X1Relation> listBySrc(String src) {
+        fromTable().by('src').val(src).list(X1Relation.class)
+    }
 
+    List<X1Relation> listByDst(String dst) {
+        fromTable().by('dst').val(dst).list(X1Relation.class)
+    }
 }

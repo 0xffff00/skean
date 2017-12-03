@@ -23,6 +23,7 @@ import party.threebody.skean.data.Column;
 import party.threebody.skean.data.CreateTime;
 import party.threebody.skean.data.LastUpdateTime;
 import party.threebody.skean.data.PrimaryKey;
+import party.threebody.skean.lang.Beans;
 
 import javax.persistence.Table;
 import java.lang.reflect.Field;
@@ -119,14 +120,14 @@ public interface JpaCrudDAO<E> extends MultiPKsCrudDAO<E> {
          * fetch all field names which is annotated of any annotationTypes and their sub-types
          */
         static <E> List<String> fetchFieldNamesByAnnotated(Class<E> entityClass, Class... annotationTypes) {
-            return Stream.of(entityClass.getDeclaredFields())
+            return Beans.getAllDeclaredFields(entityClass).stream()
                     .filter(field -> isAnnotatedOfAnyType(field, annotationTypes))
                     .map(Field::getName)
                     .collect(Collectors.toList());
         }
 
         static <E> Map<String, Object> buildNowTimeMapByAnnotated(Class<E> entityClass, Class... annotationTypes) {
-            return Stream.of(entityClass.getDeclaredFields())
+            return Beans.getAllDeclaredFields(entityClass).stream()
                     .filter(field -> isAnnotatedOfAnyType(field, annotationTypes))
                     .collect(Collectors.toMap(
                             f -> f.getName(),

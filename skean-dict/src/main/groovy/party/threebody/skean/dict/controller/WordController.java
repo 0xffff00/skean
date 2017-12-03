@@ -18,17 +18,12 @@ package party.threebody.skean.dict.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.domain.Word;
 import party.threebody.skean.dict.service.WordService;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKUriVarCrudRestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/words")
@@ -41,16 +36,21 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
         builder.fromSinglePKCrudDAO(wordDao);
     }
 
-    @GetMapping("/{text}")
+    @GetMapping("--disabled--")
     @Override
     public ResponseEntity<Word> httpReadOne(@PathVariable String text) {
-        Word word = wordService.getWordWithRels(text);
-        return ResponseEntity.ok().body(word);
+        return null;
     }
 
-    @GetMapping("/temporaryTexts")
-    public List<String> listTemporaryTexts() {
-        return wordService.listTemporaryTexts();
+    @GetMapping("/{text}")
+    public ResponseEntity<Word> httpReadOne(@PathVariable String text, @RequestParam(required = false) String mode) {
+        Word word;
+        if (mode != null && "basic".equals(mode)) {
+            word = wordService.getWord(text);
+        } else {
+            word = wordService.getWordWithRelSets(text);
+        }
+        return ResponseEntity.ok().body(word);
     }
 
 }

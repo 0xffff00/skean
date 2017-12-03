@@ -18,6 +18,7 @@ package party.threebody.skean.collections;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * complement some functions found in neither Google Guava nor Apache Common
@@ -58,18 +59,18 @@ public class Maps {
      * no offical syntactic sugar for java 8 stream
      * see: https://stackoverflow.com/questions/24630963/java-8-nullpointerexception-in-collectors-tomap
      */
-    public static <K1,V1,K2,V2> Map<K2,V2> rebuild(Map<K1,V1> source,
-                                                   Function<K1,K2> keyTransformer,
-                                                   Function<V1,V2> valTransformer){
-        if (source==null){
+    public static <K1, V1, K2, V2> Map<K2, V2> rebuild(Map<K1, V1> source,
+                                                       Function<K1, K2> keyTransformer,
+                                                       Function<V1, V2> valTransformer) {
+        if (source == null) {
             return null;
         }
-        Map res=new LinkedHashMap(source.size()*4/3);
-        for (K1 k1:source.keySet()){
-            V1 v1=source.get(k1);
-            K2 k2=keyTransformer.apply(k1);
-            V2 v2=valTransformer.apply(v1);
-            res.put(k2,v2);
+        Map res = new LinkedHashMap(source.size() * 4 / 3);
+        for (K1 k1 : source.keySet()) {
+            V1 v1 = source.get(k1);
+            K2 k2 = keyTransformer.apply(k1);
+            V2 v2 = valTransformer.apply(v1);
+            res.put(k2, v2);
         }
         return res;
     }
@@ -132,4 +133,14 @@ public class Maps {
         }
         return res;
     }
+
+    /**
+     * @return a new Map that all null values removed
+     */
+    public static <K, V> Map<K, V> filterNullValues(Map<K, V> source) {
+        return source.entrySet().stream()
+                .filter(e -> e.getValue() != null)
+                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
 }
