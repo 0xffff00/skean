@@ -48,7 +48,7 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
         if (mode != null && "basic".equals(mode)) {
             word = wordService.getWord(text);
         } else {
-            word = wordService.getWordWithRelSets(text);
+            word = wordService.getWordWithRels(text);
         }
         return ResponseEntity.ok().body(word);
     }

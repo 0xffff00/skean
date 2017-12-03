@@ -16,6 +16,8 @@
 
 package party.threebody.skean.dict.service;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +28,12 @@ import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.dao.X1RelationDao;
 import party.threebody.skean.dict.domain.BasicRelation;
 import party.threebody.skean.dict.domain.Word;
-import party.threebody.skean.dict.domain.X1Relation;
 
-import javax.management.relation.Relation;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class WordService {
@@ -55,24 +58,47 @@ public class WordService {
 
     }
 
-    public Word getWordWithRelSets(String text) {
+    public Word getWordWithRels(String text) {
         Word w = wordDao.readOne(text);
         if (w == null) {
             w = new Word();
             w.setText(text);
             w.setState("t");
         }
-        w.setAliasRelSet0(basicRelationDao.listBySAD(text, "ALIA", null));
+        w.setAliasRS0(basicRelationDao.listBySAD(text, "ALIA", null));
 
-        w.setSubsetRelSetR(listRecursively(text,"SUBS",true));
-        w.setSupersetRelSetR(listRecursively(text,"SUBS",false));
-        w.setInstancesRelSetR(listRecursively(text,"INST",true));
-        w.setDefinitionsRelSetR(listRecursively(text,"INST",false));
-        w.setSubtopicRelSetR(listRecursively(text,"TOPI",true));
-        w.setSupertopicRelSetR(listRecursively(text,"TOPI",false));
+        w.setSubsetRSR(listRecursively(text, "SUBS", true));
+        w.setSupersetRSR(listRecursively(text, "SUBS", false));
 
-        w.setAttributeRelSet0(x1RelationDao.listBySrc(text));
-        w.setReferenceRelSet0(x1RelationDao.listByDst(text));
+        w.setSubtopicRSR(listRecursively(text, "TOPI", true));
+        w.setSupertopicRSR(listRecursively(text, "TOPI", false));
+
+        // calc instanceESA: = (me + subsetESR)'s instES0
+        List<String> subsetAndMeESR = ListUtils.union(
+                w.getSubsetRSR().stream().map(BasicRelation::getDst).collect(Collectors.toList()),
+                Arrays.asList(text));
+        Set<String> instanceESA = subsetAndMeESR.stream()
+                .flatMap(vex -> basicRelationDao.listBySAD(vex, "INST", null).stream())
+                .map(BasicRelation::getDst)
+                .collect(Collectors.toSet());
+
+        // calc supersetESA: = defES0's supersetESR + defES0
+        Set<String> defES0 = basicRelationDao.listBySAD(null, "INST", text).stream()
+                .map(BasicRelation::getSrc).collect(Collectors.toSet());
+        Set<String> defES0_supersetESR = defES0.stream()
+                .flatMap(def -> listRecursively(def, "SUBS", false).stream())
+                .map(BasicRelation::getSrc)
+                .collect(Collectors.toSet());
+        Set<String> definitionESA = SetUtils.union(defES0_supersetESR, defES0);
+
+        w.setInstanceRS0(basicRelationDao.listBySAD(text, "INST", null));
+        w.setInstanceESA(instanceESA);
+        w.setDefinitionRS0(basicRelationDao.listBySAD(null, "INST", text));
+        w.setDefinitionESA(definitionESA);
+
+
+        w.setAttributeRS0(x1RelationDao.listBySrc(text));
+        w.setReferenceRS0(x1RelationDao.listByDst(text));
 
         return w;
     }
@@ -81,10 +107,10 @@ public class WordService {
      * use DAGVisitor, fetch all lines at first.
      * TODO perf problem to fix: maybe too large result set
      *
-     * @param me the start vertex
+     * @param me      the start vertex
      * @param forward forward(src->dst) or backward(dst->src)
      */
-    private Set<BasicRelation> listRecursively(String me,String attr, boolean forward) {
+    private Set<BasicRelation> listRecursively(String me, String attr, boolean forward) {
         DAGVisitor<String, BasicRelation> dagv;
         if (forward) {
             dagv = new DAGVisitor<>(
@@ -100,7 +126,13 @@ public class WordService {
             );
         }
         dagv.visitFrom(me);
-       return dagv.getEdgesVisited();
+        return dagv.getEdgesVisited();
+    }
+
+    private <E> List<E> toMerged(List<E> first, E last) {
+        List<E> res = new ArrayList(first);
+        res.add(last);
+        return res;
     }
 
 

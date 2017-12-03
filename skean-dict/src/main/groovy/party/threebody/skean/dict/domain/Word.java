@@ -19,6 +19,7 @@ import java.util.Collection;
  * <li>ESR, EntSetR: Entity Set recursive</li>
  * <li>RS0, RelSet0: Relation Set shallow</li>
  * <li>RSR, RelSetR: Relation Set recursive</li>
+ * <li>ESA: Entity Set all </li>
  * <p>
  * <h2>Explanation of Fields</h2>
  * <pre>
@@ -46,17 +47,19 @@ public class Word {
     @Column private String state;
     @LastUpdateTime private LocalDateTime updateTime;
 
-    private Collection<BasicRelation> aliasRelSet0;
+    private Collection<BasicRelation> aliasRS0;
 
-    private Collection<BasicRelation> subsetRelSetR;
-    private Collection<BasicRelation> supersetRelSetR;
-    private Collection<BasicRelation> instancesRelSetR;
-    private Collection<BasicRelation> subtopicRelSetR;
-    private Collection<BasicRelation> supertopicRelSetR;
-    private Collection<BasicRelation> definitionsRelSetR;
+    private Collection<BasicRelation> subsetRSR;
+    private Collection<BasicRelation> supersetRSR;
+    private Collection<BasicRelation> instanceRS0;
+    private Collection<String> instanceESA;      //all instES=(me+subsetESR)'s instES0
+    private Collection<BasicRelation> definitionRS0;
+    private Collection<String> definitionESA;         //all defES= defES0's supersetESR + defES0
+    private Collection<BasicRelation> subtopicRSR;
+    private Collection<BasicRelation> supertopicRSR;
 
-    private Collection<X1Relation> attributeRelSet0;
-    private Collection<X1Relation> referenceRelSet0;
+    private Collection<X1Relation> attributeRS0;
+    private Collection<X1Relation> referenceRS0;
 
     public String getText() {
         return text;
@@ -90,75 +93,91 @@ public class Word {
         this.updateTime = updateTime;
     }
 
-    public Collection<BasicRelation> getAliasRelSet0() {
-        return aliasRelSet0;
+    public Collection<BasicRelation> getAliasRS0() {
+        return aliasRS0;
     }
 
-    public void setAliasRelSet0(Collection<BasicRelation> aliasRelSet0) {
-        this.aliasRelSet0 = aliasRelSet0;
+    public void setAliasRS0(Collection<BasicRelation> aliasRS0) {
+        this.aliasRS0 = aliasRS0;
     }
 
-    public Collection<BasicRelation> getSubsetRelSetR() {
-        return subsetRelSetR;
+    public Collection<BasicRelation> getSubsetRSR() {
+        return subsetRSR;
     }
 
-    public void setSubsetRelSetR(Collection<BasicRelation> subsetRelSetR) {
-        this.subsetRelSetR = subsetRelSetR;
+    public void setSubsetRSR(Collection<BasicRelation> subsetRSR) {
+        this.subsetRSR = subsetRSR;
     }
 
-    public Collection<BasicRelation> getSupersetRelSetR() {
-        return supersetRelSetR;
+    public Collection<BasicRelation> getSupersetRSR() {
+        return supersetRSR;
     }
 
-    public void setSupersetRelSetR(Collection<BasicRelation> supersetRelSetR) {
-        this.supersetRelSetR = supersetRelSetR;
+    public void setSupersetRSR(Collection<BasicRelation> supersetRSR) {
+        this.supersetRSR = supersetRSR;
     }
 
-    public Collection<BasicRelation> getInstancesRelSetR() {
-        return instancesRelSetR;
+    public Collection<BasicRelation> getInstanceRS0() {
+        return instanceRS0;
     }
 
-    public void setInstancesRelSetR(Collection<BasicRelation> instancesRelSetR) {
-        this.instancesRelSetR = instancesRelSetR;
+    public void setInstanceRS0(Collection<BasicRelation> instanceRS0) {
+        this.instanceRS0 = instanceRS0;
     }
 
-    public Collection<BasicRelation> getSubtopicRelSetR() {
-        return subtopicRelSetR;
+    public Collection<String> getInstanceESA() {
+        return instanceESA;
     }
 
-    public void setSubtopicRelSetR(Collection<BasicRelation> subtopicRelSetR) {
-        this.subtopicRelSetR = subtopicRelSetR;
+    public void setInstanceESA(Collection<String> instanceESA) {
+        this.instanceESA = instanceESA;
     }
 
-    public Collection<BasicRelation> getSupertopicRelSetR() {
-        return supertopicRelSetR;
+    public Collection<BasicRelation> getDefinitionRS0() {
+        return definitionRS0;
     }
 
-    public void setSupertopicRelSetR(Collection<BasicRelation> supertopicRelSetR) {
-        this.supertopicRelSetR = supertopicRelSetR;
+    public void setDefinitionRS0(Collection<BasicRelation> definitionRS0) {
+        this.definitionRS0 = definitionRS0;
     }
 
-    public Collection<BasicRelation> getDefinitionsRelSetR() {
-        return definitionsRelSetR;
+    public Collection<String> getDefinitionESA() {
+        return definitionESA;
     }
 
-    public void setDefinitionsRelSetR(Collection<BasicRelation> definitionsRelSetR) {
-        this.definitionsRelSetR = definitionsRelSetR;
+    public void setDefinitionESA(Collection<String> definitionESA) {
+        this.definitionESA = definitionESA;
     }
 
-    public Collection<X1Relation> getAttributeRelSet0() {
-        return attributeRelSet0;
+    public Collection<BasicRelation> getSubtopicRSR() {
+        return subtopicRSR;
     }
 
-    public void setAttributeRelSet0(Collection<X1Relation> attributeRelSet0) {
-        this.attributeRelSet0 = attributeRelSet0;
+    public void setSubtopicRSR(Collection<BasicRelation> subtopicRSR) {
+        this.subtopicRSR = subtopicRSR;
     }
 
-    public Collection<X1Relation> getReferenceRelSet0() {
-        return referenceRelSet0;
+    public Collection<BasicRelation> getSupertopicRSR() {
+        return supertopicRSR;
     }
 
-    public void setReferenceRelSet0(Collection<X1Relation> referenceRelSet0) {
-        this.referenceRelSet0 = referenceRelSet0;
+    public void setSupertopicRSR(Collection<BasicRelation> supertopicRSR) {
+        this.supertopicRSR = supertopicRSR;
+    }
+
+    public Collection<X1Relation> getAttributeRS0() {
+        return attributeRS0;
+    }
+
+    public void setAttributeRS0(Collection<X1Relation> attributeRS0) {
+        this.attributeRS0 = attributeRS0;
+    }
+
+    public Collection<X1Relation> getReferenceRS0() {
+        return referenceRS0;
+    }
+
+    public void setReferenceRS0(Collection<X1Relation> referenceRS0) {
+        this.referenceRS0 = referenceRS0;
     }
 }
