@@ -82,7 +82,7 @@ public class WordService {
                 .map(BasicRelation::getDst)
                 .collect(Collectors.toSet());
 
-        // calc supersetESA: = defES0's supersetESR + defES0
+        // calc definitionESA: = defES0's supersetESR + defES0
         Set<String> defES0 = basicRelationDao.listBySAD(null, "INST", text).stream()
                 .map(BasicRelation::getSrc).collect(Collectors.toSet());
         Set<String> defES0_supersetESR = defES0.stream()

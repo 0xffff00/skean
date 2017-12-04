@@ -46,7 +46,7 @@ public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
     public Criteria toCriteria(Map<String, Object> paramsMap) {
         // build criteria
         BasicCriterion[] criterionArr = buildBasicCriterionArray(paramsMap, null);
-        return new Criteria(criterionArr);
+        return Criteria.of(criterionArr);
     }
 
     @Override

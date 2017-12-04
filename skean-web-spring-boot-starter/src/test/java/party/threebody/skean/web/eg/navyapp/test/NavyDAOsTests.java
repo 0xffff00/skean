@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import party.threebody.skean.collections.Maps;
+import party.threebody.skean.data.query.BasicCriterion;
 import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.web.eg.navyapp.dao.FleetDAO;
 import party.threebody.skean.web.eg.navyapp.dao.ShipDAO;
@@ -70,6 +71,9 @@ public class NavyDAOsTests {
         fleetDAO.create(new Fleet("CHN", "SOUTH1", "South No.1 Fleet", "Zhangzz", null));
         fleetDAO.create(new Fleet("CHN", "SOUTH2", "South No.2 Fleet", "Zhangzz", null));
         assertEquals(2, fleetDAO.readCount(null));
+        assertEquals(2, fleetDAO.readCount(Criteria.ALLOW_ALL));
+        assertEquals(0, fleetDAO.readCount(Criteria.DENY_ALL));
+        assertEquals(1, fleetDAO.readCount(Criteria.of(new BasicCriterion("code","SOUTH2"))));
         Fleet f2 = fleetDAO.readOne("CHN", "SOUTH2");
         LocalDateTime t1 = f2.getUpdateTime();
         assertNotNull(t1);

@@ -19,20 +19,29 @@ import java.util.Collection;
  * <li>ESR, EntSetR: Entity Set recursive</li>
  * <li>RS0, RelSet0: Relation Set shallow</li>
  * <li>RSR, RelSetR: Relation Set recursive</li>
- * <li>ESA: Entity Set all </li>
+ * <li>ESA: Entity Set all, no unified calculation logic shared.
+ * <ul> for example:
+ * <li>instanceESA = (me + subsetESR)'s instES0</li>
+ * <li>definitionESA = defES0's supersetESR + defES0</li>
+ * </ul>
+ * </li>
  * <p>
  * <h2>Explanation of Fields</h2>
  * <pre>
  * ----------------------------------------------------
  * these fields can be drawn as:
+ *
  *  src ==[attr]==> dst
+ *
  * so, for example:
- * - BasicRelation：
+ *
+ * -- BasicRelation：
  * officalName ==[ALIA]==> me ==[ALIA]==> alias
  * subset      ==[SUBS]==> me ==[SUBS]==> subset
  * definition  ==[INST]==> me ==[INST]==> instance
  * supertopic  ==[TOPI]==> me ==[TOPI]==> subtopic
- * - X1Relation:
+ *
+ * -- X1Relation:
  * reference ==[*]==> me ==[*]==> attribute
  * ----------------------------------------------------
  * </pre>

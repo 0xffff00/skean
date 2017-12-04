@@ -18,13 +18,18 @@ package party.threebody.skean.data.query;
 
 import party.threebody.skean.misc.SkeanInvalidArgumentException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @since 2.1
  */
 public class Criteria {
 
+    public static final String NON_EXIST_COL_NAME = "51892";   //just a random number
+    private static final List<String> SKEAN_OBJ_NAME_WHITELIST = Arrays.asList(NON_EXIST_COL_NAME);
     private Criterion[] criteria;
 
     /**
@@ -41,7 +46,7 @@ public class Criteria {
 
     }
 
-    public Criteria(Criterion[] criteria) {
+    protected Criteria(Criterion[] criteria) {
         this.criteria = criteria;
     }
 
@@ -49,17 +54,23 @@ public class Criteria {
         return criteria;
     }
 
+    public static Criteria of(Criterion... arr) {
+        return new Criteria(arr);
+    }
+
     public void setCriteria(Criterion[] criteria) {
         this.criteria = criteria;
     }
 
     public void ensureAllNamesLegal(Collection<String> whiteList) {
+        List<String> finalWhiteList = new ArrayList(SKEAN_OBJ_NAME_WHITELIST);
+        finalWhiteList.addAll(whiteList);
         if (criteria == null) {
             return;
         }
         for (int i = 0; i < criteria.length; ++i) {
             String name = criteria[i].getName();
-            if (!whiteList.contains(name)) {
+            if (!finalWhiteList.contains(name)) {
                 throw new SkeanInvalidArgumentException("illegal field name: [" + name + "]");
             }
         }
