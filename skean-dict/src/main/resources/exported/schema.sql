@@ -32,9 +32,9 @@ insert  into `dct_rel_b`(`src`,`attr`,`no`,`dst`,`memo`) values
 
   ('C9高校','INST',3,'复旦大学',NULL),
 
-  ('中国','TOPI',0,'中国高校',NULL),
+  ('中国','SUBT',0,'中国高校',NULL),
 
-  ('中国','TOPI',1,'中国经济',NULL),
+  ('中国','SUBT',1,'中国经济',NULL),
 
   ('中国高校','SUBS',0,'211高校',NULL),
 

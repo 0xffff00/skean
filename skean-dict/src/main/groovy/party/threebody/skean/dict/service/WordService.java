@@ -22,14 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.dict.dao.BasicRelationDao;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.dao.X1RelationDao;
 import party.threebody.skean.dict.domain.BasicRelation;
 import party.threebody.skean.dict.domain.Word;
+import party.threebody.skean.dict.domain.X1Relation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -70,8 +71,8 @@ public class WordService {
         w.setSubsetRSR(listRecursively(text, "SUBS", true));
         w.setSupersetRSR(listRecursively(text, "SUBS", false));
 
-        w.setSubtopicRSR(listRecursively(text, "TOPI", true));
-        w.setSupertopicRSR(listRecursively(text, "TOPI", false));
+        w.setSubtopicRSR(listRecursively(text, "SUBT", true));
+        w.setSupertopicRSR(listRecursively(text, "SUBT", false));
 
         // calc instanceESA: = (me + subsetESR)'s instES0
         List<String> subsetAndMeESR = ListUtils.union(
@@ -129,11 +130,18 @@ public class WordService {
         return dagv.getEdgesVisited();
     }
 
-    private <E> List<E> toMerged(List<E> first, E last) {
-        List<E> res = new ArrayList(first);
-        res.add(last);
-        return res;
+    @Transactional
+    public int createBasicRelation(BasicRelation br) {
+        int maxNo = basicRelationDao.getMaxNo(br.getSrc(), br.getAttr());
+        br.setNo(maxNo + 1);
+        return basicRelationDao.create(br);
     }
 
+    @Transactional
+    public int createX1Relation(X1Relation x1r) {
+        int maxNo = x1RelationDao.getMaxNo(x1r.getSrc(), x1r.getAttr());
+        x1r.setNo(maxNo + 1);
+        return x1RelationDao.create(x1r);
+    }
 
 }

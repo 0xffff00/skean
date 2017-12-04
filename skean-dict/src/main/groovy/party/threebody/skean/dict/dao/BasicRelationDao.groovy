@@ -39,4 +39,9 @@ class BasicRelationDao extends TriplePKsJpaCrudDAO<BasicRelation, String, String
         fromTable().by(valMap).list(BasicRelation.class)
     }
 
+    int getMaxNo(String src, String attr) {
+        def sql = "SELECT MAX(`NO`) FROM dct_rel_b WHERE src=? AND attr=?"
+        Integer res = cjt.sql(sql).arg(src, attr).firstCell()
+        res == null ? -1 : res
+    }
 }

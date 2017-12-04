@@ -57,7 +57,7 @@ abstract class AttrBasedRelation {
  * <ol>
  * <li>ALIA - alias</li>
  * <li>SUBS - subset</li>
- * <li>TOPI - topic</li>
+ * <li>SUBT - topic</li>
  * <li>INST - instance</li>
  * </ol>
  */

@@ -41,4 +41,10 @@ class X1RelationDao extends TriplePKsJpaCrudDAO<X1Relation, String, String, Inte
     List<X1Relation> listByDst(String dst) {
         fromTable().by('dst').val(dst).list(X1Relation.class)
     }
+
+    int getMaxNo(String src, String attr) {
+        def sql = "SELECT MAX(`NO`) FROM dct_rel_x1 WHERE src=? AND attr=?"
+        Integer res = cjt.sql(sql).arg(src, attr).firstCell()
+        res == null ? -1 : res
+    }
 }

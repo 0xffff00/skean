@@ -70,6 +70,7 @@ public final class MultiPKsCrudFunctionsBuilder<E> {
 
     public MultiPKsCrudFunctionsBuilder<E> oneCreator(Function<E, Integer> oneCreator) {
         multiPKsCrudFunctions.setOneCreator(oneCreator);
+        multiPKsCrudFunctions.resetOneCreatorWithReturn();
         return this;
     }
 

@@ -39,7 +39,7 @@ import java.util.Collection;
  * officalName ==[ALIA]==> me ==[ALIA]==> alias
  * subset      ==[SUBS]==> me ==[SUBS]==> subset
  * definition  ==[INST]==> me ==[INST]==> instance
- * supertopic  ==[TOPI]==> me ==[TOPI]==> subtopic
+ * supertopic  ==[SUBT]==> me ==[SUBT]==> subtopic
  *
  * -- X1Relation:
  * reference ==[*]==> me ==[*]==> attribute
