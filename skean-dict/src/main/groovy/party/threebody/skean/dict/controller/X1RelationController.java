@@ -22,7 +22,7 @@ public class X1RelationController extends MultiPKsMatrixVarCrudRestController<X1
                 .oneCreator(wordService::createX1Relation);
     }
 
-    @PostMapping("")
+    @PostMapping(value = "", params = {"batch"})
     public ResponseEntity<X1Relation> httpCreate(@RequestBody X1Relation entity, @PathVariable boolean batch) {
         if (batch) {
             return respondRowNumAffected(wordService.createX1Relations(entity, "\\s+"));

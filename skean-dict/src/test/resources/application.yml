@@ -1,7 +1,7 @@
 spring:
 
   output:
-    ansi.enabled: ALWAYS
+    #ansi.enabled: ALWAYS
 
   jackson:
     serialization.write_dates_as_timestamps: false
