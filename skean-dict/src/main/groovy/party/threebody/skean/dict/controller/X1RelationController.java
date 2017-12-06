@@ -1,8 +1,8 @@
 package party.threebody.skean.dict.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import party.threebody.skean.dict.dao.X1RelationDao;
 import party.threebody.skean.dict.domain.X1Relation;
 import party.threebody.skean.dict.service.WordService;
@@ -12,12 +12,22 @@ import party.threebody.skean.web.mvc.controller.MultiPKsMatrixVarCrudRestControl
 @RestController
 @RequestMapping("/relations/x1")
 public class X1RelationController extends MultiPKsMatrixVarCrudRestController<X1Relation> {
-    @Autowired WordService wordService;
     @Autowired X1RelationDao x1RelationDao;
+
+    @Autowired WordService wordService;
 
     @Override
     public void buildCrudFunctions(MultiPKsCrudFunctionsBuilder<X1Relation> builder) {
         builder.fromMultiPKsCrudDAO(x1RelationDao)
                 .oneCreator(wordService::createX1Relation);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<X1Relation> httpCreate(@RequestBody X1Relation entity, @PathVariable boolean batch) {
+        if (batch) {
+            return respondRowNumAffected(wordService.createX1Relations(entity, "\\s+"));
+        }
+        return super.httpCreate(entity);
+
     }
 }

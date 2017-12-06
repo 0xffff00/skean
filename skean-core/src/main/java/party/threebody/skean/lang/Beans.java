@@ -1,5 +1,6 @@
 package party.threebody.skean.lang;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.ListUtils;
 import party.threebody.skean.misc.SkeanReflectionException;
@@ -17,6 +18,7 @@ import java.util.function.Function;
 
 /**
  * Bean Reflection Utilities
+ *
  * @since 0.3
  */
 public class Beans {
@@ -50,8 +52,8 @@ public class Beans {
         if (propertyNames == null) {
             return null;
         }
-        List<Object> res=new ArrayList<>(propertyNames.size());
-        for (String propertyName:propertyNames){
+        List<Object> res = new ArrayList<>(propertyNames.size());
+        for (String propertyName : propertyNames) {
             res.add(getProperty(bean, propertyName));
         }
         return res;
@@ -59,11 +61,12 @@ public class Beans {
 
     /**
      * get all declared fields, including inherited fields from all super classes
+     *
      * @param clazz
      * @return
      */
     public static List<Field> getAllDeclaredFields(Class<?> clazz) {
-        if (clazz==null){
+        if (clazz == null) {
             return Collections.emptyList();
         }
         return ListUtils.union(Arrays.asList(clazz.getDeclaredFields()),
@@ -144,5 +147,18 @@ public class Beans {
         return (v instanceof Number) || (v instanceof String) || (v instanceof Character) ||
                 (v instanceof Date) || (v instanceof Temporal) || (v instanceof Boolean);
 
+    }
+
+    /**
+     * clone an object, using Apache Commons Beanutils but without checked exceptions
+     *
+     * @since 2.3
+     */
+    public static <T> T clone(T source) {
+        try {
+            return (T) BeanUtils.cloneBean(source);
+        } catch (ReflectiveOperationException e) {
+            throw new SkeanReflectionException("clone failed.", e);
+        }
     }
 }

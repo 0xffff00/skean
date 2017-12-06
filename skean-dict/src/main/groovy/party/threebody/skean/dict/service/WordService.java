@@ -16,8 +16,11 @@
 
 package party.threebody.skean.dict.service;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,10 @@ import party.threebody.skean.dict.dao.X1RelationDao;
 import party.threebody.skean.dict.domain.BasicRelation;
 import party.threebody.skean.dict.domain.Word;
 import party.threebody.skean.dict.domain.X1Relation;
+import party.threebody.skean.lang.Beans;
+import party.threebody.skean.misc.SkeanInvalidArgumentException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -137,11 +143,46 @@ public class WordService {
         return basicRelationDao.create(br);
     }
 
+
     @Transactional
     public int createX1Relation(X1Relation x1r) {
         int maxNo = x1RelationDao.getMaxNo(x1r.getSrc(), x1r.getAttr());
         x1r.setNo(maxNo + 1);
         return x1RelationDao.create(x1r);
+    }
+
+    /**
+     * batch create, splitting src/dst to array
+     *
+     * @param x1r
+     * @param delimitter eg. "\\s+"
+     * @return cnt(src)*cnt(dst)
+     */
+    @Transactional
+    public int createX1Relations(X1Relation x1r, String delimitter) {
+        int no = x1RelationDao.getMaxNo(x1r.getSrc(), x1r.getAttr());
+        String rawSrc = x1r.getSrc();
+        String rawDst = x1r.getDst();
+        if (StringUtils.isBlank(rawSrc)) {
+            throw new SkeanInvalidArgumentException("missing argument: 'src'");
+        }
+        if (StringUtils.isBlank(rawDst)) {
+            throw new SkeanInvalidArgumentException("missing argument: 'dst'");
+        }
+        X1Relation r = Beans.clone(x1r);
+        String[] srcArr = rawSrc.split(delimitter);
+        String[] dstArr = rawDst.split(delimitter);
+        int rna = 0;
+        for (String src : srcArr) {
+            for (String dst : dstArr) {
+                r.setSrc(src);
+                r.setDst(dst);
+                r.setNo(++no);
+                rna += x1RelationDao.create(r);
+            }
+        }
+        return rna;
+
     }
 
 }

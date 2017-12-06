@@ -55,6 +55,9 @@ public abstract class CrudRestController<E> {
         this.skeanWebConfig = skeanWebConfig;
     }
 
+    protected SkeanWebConfig getSkeanWebConfig(){
+        return skeanWebConfig;
+    }
     public abstract void buildCrudFunctions(CrudFunctionsBuilder<E> builder);
 
     protected CrudFunctions<E> getCrudFunctions() {
@@ -150,9 +153,9 @@ public abstract class CrudRestController<E> {
                 .header(skeanWebConfig.getHeaderName().getTotalCount(), String.valueOf(totalCount)).body(entities);
     }
 
-    protected ResponseEntity<Object> respondRowNumAffected(Integer rowNumAffected) {
+    protected <E> ResponseEntity<E> respondRowNumAffected(Integer rowNumAffected) {
         if (rowNumAffected == null || rowNumAffected == 0) {
-            return new ResponseEntity<Object>(HttpStatus.GONE);
+            return new ResponseEntity<>(HttpStatus.GONE);
         }
         return ResponseEntity.noContent()
                 .header(skeanWebConfig.getHeaderName().getTotalAffected(), String.valueOf(rowNumAffected)).build();
