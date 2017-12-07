@@ -1,4 +1,4 @@
-package party.threebody.skean.dict.service;
+package party.threebody.skean.dict.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +9,7 @@ import party.threebody.skean.data.query.BasicCriterion;
 import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.domain.Word;
+import party.threebody.skean.dict.service.WordService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

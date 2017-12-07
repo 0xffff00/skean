@@ -1,7 +1,7 @@
 spring:
 
   output:
-    #ansi.enabled: ALWAYS
+    ansi.enabled: DETECT
 
   jackson:
     serialization.write_dates_as_timestamps: false
@@ -10,7 +10,7 @@ spring:
     generate-unique-name: true
 
 server:
-  port: 18924
+  port: 18920
 
 logging:
   level: DEBUG

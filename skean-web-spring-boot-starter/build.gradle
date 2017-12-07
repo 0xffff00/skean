@@ -7,27 +7,14 @@ dependencies {
     compile project(':skean-web')
 
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: versions.'spring-boot'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
 
 
-
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.springframework', name: 'spring-test', version: versions.spring
-
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-test-autoconfigure', version: versions.'spring-boot'
 
     testCompile group: 'com.h2database', name: 'h2', version: versions.h2
 
 
 
 }
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled true
-        csv.enabled true
-    }
-}
-

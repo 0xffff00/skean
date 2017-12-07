@@ -16,10 +16,8 @@
 
 package party.threebody.skean.dict.service;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +34,6 @@ import party.threebody.skean.dict.domain.X1Relation;
 import party.threebody.skean.lang.Beans;
 import party.threebody.skean.misc.SkeanInvalidArgumentException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
