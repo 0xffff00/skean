@@ -113,10 +113,10 @@ configure(subprojects) { project ->
 
 
 }
-//see https://gist.github.com/aalmiray/e6f54aa4b3803be0bcac
-//see https://docs.gradle.org/current/userguide/jacoco_plugin.html
-//see https://docs.gradle.org/current/dsl/org.gradle.testing.jacoco.tasks.JacocoReport.html
-task jacocoRootReport(type: JacocoReport) {
+// see https://gist.github.com/aalmiray/e6f54aa4b3803be0bcac
+// see https://docs.gradle.org/current/userguide/jacoco_plugin.html
+// see https://docs.gradle.org/current/dsl/org.gradle.testing.jacoco.tasks.JacocoReport.html
+task rootJacocoReport(type: JacocoReport) {
     dependsOn = subprojects.test
     additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
     sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
@@ -133,4 +133,10 @@ task jacocoRootReport(type: JacocoReport) {
         true
     }
 
+}
+
+// see: https://goo.gl/gthmv8
+task rootTestReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    reportOn subprojects.collect { it.tasks.withType(Test) }
 }

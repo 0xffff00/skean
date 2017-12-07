@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'jacoco'
 
 dependencies {
     testCompile project(':skean-jdbc-spring-boot-starter')
@@ -18,3 +17,4 @@ dependencies {
 
 
 }
+
