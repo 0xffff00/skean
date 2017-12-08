@@ -158,7 +158,7 @@ public class CriteriaUtils {
                 }
                 break;
             default:
-                throw new ChainedJdbcTemplateException("illegal 'opt': " + opt);
+                throw new ChainedJdbcTemplateException("illegal Operator [" + opt+"]");
 
         }
         if (valArr == null) {

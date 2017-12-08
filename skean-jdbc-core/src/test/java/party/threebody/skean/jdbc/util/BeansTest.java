@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertTrue;
 
-public class JavaBeansTest {
+public class BeansTest {
 
     static Car car1;
     @BeforeClass
