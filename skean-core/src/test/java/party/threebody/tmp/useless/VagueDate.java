@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package party.threebody.skean.lang;
+package party.threebody.tmp.useless;
+
+import party.threebody.skean.lang.ChronoUnitX;
+import party.threebody.skean.lang.DateTimeFormatters;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -36,6 +39,8 @@ import java.time.temporal.TemporalUnit;
  * Here is examples:<br>
  * <p>
  * <pre>
+ * VagueDate.parse("2017Q3").begin().equals(LocalDate.parse("2017-07-01"));
+ * VagueDate.parse("2017Q3").end().equals(LocalDate.parse("2017-10-01"));
  * </pre>
  *
  * @author hzk
@@ -65,12 +70,9 @@ public class VagueDate {
      * <h4>Use Cases:</h4>
      * <p>
      * <pre>
-     * of(20170000
-     * dsf
-     * dsfds
      *
      * </pre>
-     *
+     * TODO
      * @param num
      * @return
      */
@@ -100,6 +102,11 @@ public class VagueDate {
         return new VagueDate(begin, end, null, null);
     }
 
+    /**
+     *
+     * @param text
+     * @return
+     */
     public static VagueDate parse(String text) {
         int len = text.length();
         if (len == 4) {
@@ -128,7 +135,7 @@ public class VagueDate {
             }
         } else if (len == 19) {
             try {
-                LocalDate t = LocalDate.parse(text, DateTimeFormatters.DASHED_YEAR2DAY);
+                LocalDate t = LocalDate.parse(text, DateTimeFormatters.DASHED_YEAR2SEC);
                 return new VagueDate(t, ChronoUnit.SECONDS);
             } catch (DateTimeParseException e) {
                 // skip
@@ -248,6 +255,8 @@ public class VagueDate {
         }
         return begin.format(DateTimeFormatters.DEFAULT) + "~" + end.format(DateTimeFormatters.DEFAULT);
     }
+
+
 
     @Override
     public int hashCode() {

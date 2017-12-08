@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 import org.junit.Test;
-import party.threebody.skean.lang.VagueDateTime;
+import party.threebody.tmp.useless.VagueDateTime;
 
 public class VagueDateTimeTest {
 	@Test
