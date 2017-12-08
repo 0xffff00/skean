@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
 public class MultiValueMaps {
 
     public static Map<String, Object> toMap(MultiValueMap<String, String> mvmap) {
+        if (mvmap == null) {
+            return null;
+        }
         return mvmap.keySet().stream().collect(Collectors.toMap(
                 Function.identity(),
                 key -> {

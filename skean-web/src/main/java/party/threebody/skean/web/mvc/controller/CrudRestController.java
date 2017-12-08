@@ -29,15 +29,16 @@ import party.threebody.skean.web.data.CriteriaBuilder;
 import party.threebody.skean.web.data.SkeanWebConfig;
 import party.threebody.skean.web.mvc.MultiValueMaps;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
  * @param <E>
- * @since 2.1
  * @see UriVarCrudRestController
  * @see MatrixVarCrudRestController
+ * @since 2.1
  */
 public abstract class CrudRestController<E> {
 
@@ -55,9 +56,10 @@ public abstract class CrudRestController<E> {
         this.skeanWebConfig = skeanWebConfig;
     }
 
-    protected SkeanWebConfig getSkeanWebConfig(){
+    protected SkeanWebConfig getSkeanWebConfig() {
         return skeanWebConfig;
     }
+
     public abstract void buildCrudFunctions(CrudFunctionsBuilder<E> builder);
 
     protected CrudFunctions<E> getCrudFunctions() {
@@ -174,7 +176,9 @@ public abstract class CrudRestController<E> {
             Map<String, Object> varMap,
             Function<CriteriaAndSortingAndPaging, List<E>> listReader,
             Function<Criteria, Integer> countReader) {
-        CriteriaAndSortingAndPaging csp = criteriaBuilder.toCriteriaAndSortingAndPaging(varMap);
+        CriteriaAndSortingAndPaging csp = (varMap == null) ?
+                criteriaBuilder.toCriteriaAndSortingAndPaging(Collections.emptyMap()) :
+                criteriaBuilder.toCriteriaAndSortingAndPaging(varMap);
         return respondListAndCount(csp, listReader, countReader);
     }
 }

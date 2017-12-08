@@ -27,7 +27,8 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
- * PLOx means pageNum(P),pageLength(L),Orders(O) and any other user-defined flat eXtensible Vars(X)
+ * Operator as tail
+ *
  */
 public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
 

@@ -11,7 +11,7 @@ import party.threebody.skean.web.mvc.controller.SinglePKUriVarCrudRestController
 import java.util.Map;
 
 @RestController
-@RequestMapping("fleets/{fleetCode}/ships")
+@RequestMapping("v2/fleets/{fleetCode}/ships")
 
 public class FleetShipController extends SinglePKUriVarCrudRestController<Ship,String> {
 

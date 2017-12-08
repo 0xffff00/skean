@@ -35,6 +35,11 @@ import java.util.Map;
  */
 public abstract class MatrixVarCrudRestController<E> extends CrudRestController<E> {
 
+    @GetMapping("")
+    public ResponseEntity<List<E>> httpReadListAll() {
+        return httpReadList0(null);
+    }
+
     @GetMapping("{matrixVars}")
     public ResponseEntity<List<E>> httpReadList(
             @MatrixVariable(pathVar = "matrixVars") MultiValueMap<String, String> matrixVars) {
