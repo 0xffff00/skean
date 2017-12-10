@@ -19,7 +19,7 @@ package party.threebody.skean.jdbc.util;
 import org.apache.commons.lang3.StringUtils;
 import party.threebody.skean.data.query.BasicCriterion;
 import party.threebody.skean.data.query.Criterion;
-import party.threebody.skean.data.query.Operators;
+import party.threebody.skean.data.query.Operator;
 import party.threebody.skean.data.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
 
@@ -77,97 +77,129 @@ public class CriteriaUtils {
         if (criterion instanceof BasicCriterion) {
             return toClauseAndArgs((BasicCriterion) criterion);
         }
-        throw new ChainedJdbcTemplateException("unsupport Criterion Impl yet");
+        throw new ChainedJdbcTemplateException("Unsupported Criterion Impl yet");
 
+    }
+
+    private static Operator toOperator(String optName) {
+        if (optName == null) {
+            return Operator.EQ;
+        }
+        try {
+            return Operator.valueOf(optName);
+        } catch (IllegalArgumentException e) {
+            throw new ChainedJdbcTemplateException("Illegal Operator [" + optName + "]");
+        }
     }
 
     public static ClauseAndArgs toClauseAndArgs(BasicCriterion criterion) {
         SqlSecurityUtils.checkColumnNameLegality(criterion.getName());
         // handle 'opt'
         String name = criterion.getName();
-        String opt = criterion.getOperator();
+        Operator opt = toOperator(criterion.getOperator());
         Object val = criterion.getValue();
         Object[] valArr = null;
-        if (opt == null) {
-            opt = "=";
-        }
+
 
         String part0 = name;
-        String part1 = opt;
+        String part1;
         String part2 = "?";
         switch (opt) {
-            case Operators.LE:
-            case Operators.GE:
-            case Operators.LT:
-            case Operators.GT:
+            case LE:
+                part1 = "<=";
                 break;
-            case Operators.EQ:
+            case GE:
+                part1 = ">=";
+                break;
+            case LT:
+                part1 = "<";
+                break;
+            case GT:
+                part1 = ">";
+                break;
+            case EQ:
+                part1 = "=";
                 // handle null value
                 if (val == null) {
                     part1 = " IS ";
                     part2 = "NULL";
+                    valArr = new Object[]{};
                 }
                 break;
-            case Operators.NE:
+            case NE:
+                part1 = "!=";
                 // handle null value
                 if (val == null) {
                     part1 = " IS NOT ";
                     part2 = "NULL";
+                    valArr = new Object[]{};
                 }
                 break;
-            case Operators.K:
+            case IS:
+                part1 = " IS ";
+                part2 = "NULL";
+                valArr = new Object[]{};
+                break;
+            case ISNOT:
+                part1 = " IS NOT ";
+                part2 = "NULL";
+                valArr = new Object[]{};
+                break;
+            case K:
                 part1 = " LIKE ";
                 val = escapePercentSymbolAndWrap(val, "%", "%");
                 break;
-            case Operators.KR:
+            case KR:
                 part1 = " LIKE ";
                 val = escapePercentSymbolAndWrap(val, "%", "");
                 break;
-            case Operators.KL:
+            case KL:
                 part1 = " LIKE ";
                 val = escapePercentSymbolAndWrap(val, "", "%");
                 break;
-            case Operators.NK:
+            case NK:
                 part1 = " NOT LIKE ";
                 val = escapePercentSymbolAndWrap(val, "%", "%");
                 break;
-            case Operators.NKR:
+            case NKR:
                 part1 = " NOT LIKE ";
                 val = escapePercentSymbolAndWrap(val, "%", "");
                 break;
-            case Operators.NKL:
+            case NKL:
                 part1 = " NOT LIKE ";
                 val = escapePercentSymbolAndWrap(val, "", "%");
                 break;
-            case Operators.IN:
+            case IN:
                 part1 = " IN ";
                 if (val instanceof Collection) {
                     Collection<?> valColl = (Collection<?>) val;
                     int len = valColl.size();
                     part2 = generateQMarkArrStrWithComma(len);
                     valArr = valColl.toArray(new Object[len]);
+                } else {  // regard as a singleton collection
+                    part2 = "(?)";
+                    valArr = new Object[]{val};
                 }
                 break;
-            case Operators.NIN:
+            case NIN:
                 part1 = " NOT IN ";
                 if (val instanceof Collection) {
                     Collection<?> valColl = (Collection<?>) val;
                     int len = ((Collection<?>) val).size();
                     part2 = generateQMarkArrStrWithComma(len);
                     valArr = valColl.toArray(new Object[len]);
+                } else {  // regard as a singleton collection
+                    part2 = "(?)";
+                    valArr = new Object[]{val};
                 }
                 break;
             default:
-                throw new ChainedJdbcTemplateException("illegal Operator [" + opt+"]");
+                throw new ChainedJdbcTemplateException("Unknown Operator [" + opt + "]");
 
         }
+        // set default valArr.
         if (valArr == null) {
-            if ("?".equals(part2)) {
-                valArr = new Object[]{val};
-            } else {
-                valArr = new Object[]{};
-            }
-
+            valArr = new Object[]{val};
         }
         return new ClauseAndArgs(part0 + part1 + part2, valArr);
     }

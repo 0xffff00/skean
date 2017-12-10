@@ -44,7 +44,7 @@ public interface CriteriaBuilder {
      * <h1>read parameters by keys restricted by a white list</h1>
      *
      * @param paramsMap          a parameter Map
-     * @param paramNamewhiteList white list to filter keys of the parameter Map
+     * @param paramNamewhiteList white list to filter keys of the parameter Map, if null filter disabled
      * @return CriteriaAndSortingAndPaging built
      */
     CriteriaAndSortingAndPaging toCriteriaAndSortingAndPaging(Map<String, Object> paramsMap,

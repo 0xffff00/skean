@@ -25,6 +25,10 @@ public class CriteriaAndSortingAndPaging extends Criteria {
     private SortingField[] sortingField;
     private PagingInfo pagingInfo;
 
+
+    public static CriteriaAndSortingAndPaging EMPTY =
+            new CriteriaAndSortingAndPaging(null, null, null);
+
     public CriteriaAndSortingAndPaging() {
     }
 

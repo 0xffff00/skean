@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import party.threebody.skean.collections.Sets;
 import party.threebody.skean.data.query.*;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,6 @@ import java.util.regex.Pattern;
 
 /**
  * Operator as tail
- *
  */
 public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
 
@@ -55,9 +55,17 @@ public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
         return toCriteriaAndSortingAndPaging(paramsMap, null);
     }
 
+    /**
+     * @param paramsMap          nullable, a parameter Map
+     * @param paramNamewhiteList nullable, white list to filter keys of the parameter Map, if null filter disabled
+     * @return not null
+     */
     @Override
     public CriteriaAndSortingAndPaging toCriteriaAndSortingAndPaging(Map<String, Object> paramsMap,
                                                                      Collection<String> paramNamewhiteList) {
+        if (paramsMap == null) {
+            return CriteriaAndSortingAndPaging.EMPTY;
+        }
         // build sortingFields
         SortingField[] sortingFields = buildSortingFields(paramsMap);
         // build pagingInfo
@@ -192,8 +200,9 @@ public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
         if (paramsMap == null) {
             return null;
         }
-        final Predicate<String> whiteListChecker = paramNameWhiteList == null ? (s -> true) :
-                paramNameWhiteList::contains;
+        final Predicate<String> whiteListChecker = paramNameWhiteList == null
+                ? (s -> true)
+                : paramNameWhiteList::contains;
 
         return paramsMap
                 .keySet().stream()
@@ -212,17 +221,40 @@ public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
         return template.replace("{x}", x);
     }
 
+    /**
+     * convert displayed url request params to actual.
+     * <pre>
+     * for example:
+     *   toBasicCriterion("age_GE",18) ---> new BasicCriterion("age","GE",18)
+     *   toBasicCriterion("state_IN", "A,B,C") ---> new BasicCriterion("age","IN",["A","B","C"])
+     * </pre>
+     *
+     * @param paramName
+     * @param paramValue
+     * @return
+     */
     private BasicCriterion toBasicCriterion(String paramName, Object paramValue) {
         Map<String, String> displayed2real = config.getCriteriaVarName().getOperators();
+        Object realParamVal = paramValue;
+        String dlmt = config.getUriVarMultiValuesDelimitter();
+        if (dlmt != null) {
+            if (paramValue != null && paramValue instanceof String) {
+                String s = (String) paramValue;
+                if (s.contains(dlmt)) {
+                    realParamVal = Arrays.asList(s.split(dlmt));
+                }
+            }
+        }
+
         for (String displayed : displayed2real.keySet()) {
             String rendered = getRenderedVarSuffix(displayed);
             if (paramName.endsWith(rendered)) {
-                String realParamName = paramName.substring(0, paramName.length() - displayed.length());
+                String realParamName = paramName.substring(0, paramName.length() - rendered.length());
                 String real = displayed2real.get(displayed);
-                return new BasicCriterion(realParamName, real, paramValue);
+                return new BasicCriterion(realParamName, real, realParamVal);
             }
         }
         // default to equals
-        return new BasicCriterion(paramName, paramValue);
+        return new BasicCriterion(paramName, realParamVal);
     }
 }

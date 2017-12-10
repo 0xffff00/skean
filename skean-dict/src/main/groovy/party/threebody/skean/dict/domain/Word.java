@@ -35,7 +35,7 @@ import java.util.Collection;
  *
  * so, for example:
  *
- * -- BasicRelation：
+ * -- BasicRelation:
  * officalName ==[ALIA]==> me ==[ALIA]==> alias
  * subset      ==[SUBS]==> me ==[SUBS]==> subset
  * definition  ==[INST]==> me ==[INST]==> instance

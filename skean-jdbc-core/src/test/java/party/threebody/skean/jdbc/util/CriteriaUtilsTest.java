@@ -12,10 +12,6 @@ import static org.junit.Assert.assertTrue;
 public class CriteriaUtilsTest {
 
 
-    public void testToClausesAndArgs() {
-
-    }
-
     private static void assert1(String expectedClause, Object expectedFirstArg, BasicCriterion c) {
         ClauseAndArgs caa = CriteriaUtils.toClauseAndArgs(c);
         Object actualFirstArg = (caa.getArgs() != null && caa.getArgs().length > 0) ? caa.getArgs()[0] : null;
@@ -30,17 +26,17 @@ public class CriteriaUtilsTest {
         assert1("Name=?", "M2@",
                 new BasicCriterion("Name", "M2@"));
         assert1("Name LIKE ?", "%M2@%",
-                new BasicCriterion("Name", "like", "M2@"));
+                new BasicCriterion("Name", "K", "M2@"));
         assert1("Name LIKE ?", "M2@%",
-                new BasicCriterion("Name", "likeLeft", "M2@"));
+                new BasicCriterion("Name", "KL", "M2@"));
         assert1("Name LIKE ?", "%M2@",
-                new BasicCriterion("Name", "likeRight", "M2@"));
-        assert1("key IN ?", 12,
-                new BasicCriterion("key", "in", 12));
+                new BasicCriterion("Name", "KR", "M2@"));
+        assert1("key IN (?)", 12,
+                new BasicCriterion("key", "IN", 12));
         assert1("key NOT IN (?,?)", 12,
-                new BasicCriterion("key", "notIn", Arrays.asList(12, 32)));
+                new BasicCriterion("key", "NIN", Arrays.asList(12, 32)));
         assert1("key IN (?,?,?)", 12,
-                new BasicCriterion("key", "in", Arrays.asList(12, "", "6")));
+                new BasicCriterion("key", "IN", Arrays.asList(12, "", "6")));
 
     }
 

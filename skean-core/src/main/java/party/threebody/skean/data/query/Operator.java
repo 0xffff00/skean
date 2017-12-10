@@ -16,21 +16,26 @@
 
 package party.threebody.skean.data.query;
 
+/**
+ * expression looks like CSS3 style.
+ */
 public enum Operator {
-    EQ("Equal", "="),
-    LT("LessThan", "<"),
-    GT("GreaterThan", ">"),
-    NE("NotEqual", "!="),
-    LE("LessThanOrEqual", "<="),
-    GE("GreaterThanOrEqual", ">="),
-    K("Like", "~="),
-    NK("NotLike", "!~="),
-    KL("LikeLeft", "^="),
-    KR("LikeRight", "$="),
-    NKL("NotLikeLeft", "!^="),
-    NKR("NotLikeRight", "!$="),
-    IN("In"),
-    NIN("NotIn");
+    EQ("equals", "="),
+    LT("lessThan", "<"),
+    GT("greaterThan", ">"),
+    NE("notEqual", "!="),
+    LE("lessThanOrEqual", "<="),
+    GE("greaterThanOrEqual", ">="),
+    K("like", "~="),
+    NK("notLike", "!~="),
+    KL("likeLeft", "^="),
+    KR("likeRight", "$="),
+    NKL("notLikeLeft", "!^="),
+    NKR("notLikeRight", "!$="),
+    IN("in"),
+    NIN("motIn"),
+    IS("is"),
+    ISNOT("isNot");
 
 
     private String fullName;

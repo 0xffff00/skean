@@ -30,6 +30,20 @@ public class SkeanWebConfig {
     private CriteriaVarNameConfig criteriaVarName = new CriteriaVarNameConfig();
     private HeaderNameConfig headerName = new HeaderNameConfig();
 
+    private String UriVarMultiValuesDelimitter =",";
+
+    public String getUriVarMultiValuesDelimitter() {
+        return UriVarMultiValuesDelimitter;
+    }
+
+    /**
+     * if null diabled. default to comma
+     * @param uriVarMultiValuesDelimitter
+     */
+    public void setUriVarMultiValuesDelimitter(String uriVarMultiValuesDelimitter) {
+        this.UriVarMultiValuesDelimitter = uriVarMultiValuesDelimitter;
+    }
+
     public CriteriaVarNameConfig getCriteriaVarName() {
         return criteriaVarName;
     }
