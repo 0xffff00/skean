@@ -38,7 +38,8 @@ public class ShipApiTests {
 
     @Test
     public void testCSPAndOptAsTailQuery() throws Exception {
-        // ----- create -----
+        // ----- create for preparation -----
+        shipService.deleteAll();
         Ship ssn41 = new Ship("SSN41", "SSN41", 20900, 2001);
         Ship ssn42 = new Ship("SSN42", "SSN42", 21030, 2008);
         Ship ssn43 = new Ship("SSN43", "SSN43", 21188, 2010);
@@ -50,7 +51,7 @@ public class ShipApiTests {
         for (Ship ssn : ssnList) {
             shipService.createAndGet(ssn);
         }
-        // ----- read : test OptAsTail-----
+        // ----- read : main test OptAsTail-----
         List<Map> list1;
         list1 = restTemplate.getForObject("/ships2/?birthYear=2011", List.class);
         assertEquals(2, list1.size());
@@ -63,8 +64,8 @@ public class ShipApiTests {
         list1 = restTemplate.getForObject("/ships2/?code_KR=1&weight_GT=20900", List.class);
         assertEquals(1, list1.size());
         list1 = restTemplate.getForObject("/ships2/?code_NKR=3&name_NKL=DD", List.class);
-        // [NOT] IN
         assertEquals(3, list1.size());
+        // [NOT] IN
         list1 = restTemplate.getForObject("/ships2/?weight_LT=23000&birthYear_NIN=2001", List.class);
         assertEquals(3, list1.size());
         list1 = restTemplate.getForObject("/ships2/?birthYear_IN=2010,2011,2014", List.class);
@@ -80,7 +81,7 @@ public class ShipApiTests {
         assertEquals(2, list1.size());
         list1 = restTemplate.getForObject("/ships2/?name_ISNOT=NULL&birthYear_GE=2011", List.class);
         assertEquals(1, list1.size());
-        // ----- delete all -----
+        // ----- delete all for clean -----
         shipService.deleteAll();
 
 
