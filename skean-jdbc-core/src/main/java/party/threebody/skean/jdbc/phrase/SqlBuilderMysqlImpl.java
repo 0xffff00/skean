@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import party.threebody.skean.collections.Maps;
+import party.threebody.skean.data.query.BasicCriterion;
 import party.threebody.skean.data.query.Criterion;
 import party.threebody.skean.data.query.SortingField;
 import party.threebody.skean.jdbc.ChainedJdbcTemplateException;
@@ -401,20 +402,15 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         return nq + String.join(nq + CM + nq, names) + nq;
     }
 
-    /**
-     * exist side-effect
-     */
-    private static void convertToSnakeCase(String[] cols) {
+    private static String[] convertToSnakeCase(String[] cols) {
         if (cols == null) {
-            return;
+            return null;
         }
-        for (int i = 0; i < cols.length; i++) {
-            cols[i] = StringCases.camelToSnake(cols[i]);
-        }
+        return Stream.of(cols).map(StringCases::camelToSnake).toArray(String[]::new);
     }
 
     /**
-     * exist side-effect
+     * exist side-effect on ValueHolder, but not on ValueHolder.valMap
      */
     private static void convertValMapToSnakeCase(ValueHolder valueHolder) {
         if (valueHolder == null || !valueHolder.enabled()) {
@@ -435,20 +431,21 @@ public class SqlBuilderMysqlImpl implements SqlBuilder {
         if (!conf.isConvertParamNameToSnakeCaseEnabled()) {
             return;
         }
-        convertToSnakeCase(p.seCols);
-        convertToSnakeCase(p.afCols);
-        convertToSnakeCase(p.byCols);
+        p.seCols = convertToSnakeCase(p.seCols);
+        p.afCols = convertToSnakeCase(p.afCols);
+        p.byCols = convertToSnakeCase(p.byCols);
         convertValMapToSnakeCase(p.val);
         convertValMapToSnakeCase(p.afVal);
         if (p.criteria != null) {
-            for (Criterion criterion : p.criteria) {
-                criterion.setName(StringCases.camelToSnake(criterion.getName()));
-            }
+            p.criteria = Stream.of(p.criteria).map(old ->
+                    new BasicCriterion(StringCases.camelToSnake(old.getName()), old.getOperator(), old.getValue())
+            ).toArray(Criterion[]::new);
+
         }
         if (p.sortingFields != null) {
-            for (SortingField sortingField : p.sortingFields) {
-                sortingField.setName(StringCases.camelToSnake(sortingField.getName()));
-            }
+            p.sortingFields = Stream.of(p.sortingFields).map(old ->
+                    new SortingField(StringCases.camelToSnake(old.getName()), old.isDesc())
+            ).toArray(SortingField[]::new);
         }
 
 

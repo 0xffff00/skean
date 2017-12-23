@@ -63,7 +63,7 @@ public class Criteria {
     }
 
     public void ensureAllNamesLegal(Collection<String> whiteList) {
-        List<String> finalWhiteList = new ArrayList(SKEAN_OBJ_NAME_WHITELIST);
+        List<String> finalWhiteList = new ArrayList<>(SKEAN_OBJ_NAME_WHITELIST);
         finalWhiteList.addAll(whiteList);
         if (criteria == null) {
             return;

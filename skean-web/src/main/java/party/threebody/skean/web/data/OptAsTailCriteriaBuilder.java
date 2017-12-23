@@ -176,7 +176,7 @@ public class OptAsTailCriteriaBuilder implements CriteriaBuilder {
             reservedVarNamesCache = Sets.of(
                     config.getCriteriaVarName().getPageIndex(),
                     config.getCriteriaVarName().getPageLimit(),
-                    config.getCriteriaVarName().getPageIndex(),
+                    config.getCriteriaVarName().getPageOffset(),
                     config.getCriteriaVarName().getOrders()
             );
         }

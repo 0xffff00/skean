@@ -17,7 +17,7 @@
 package party.threebody.skean.data.query;
 
 /**
- * 通用查询条件准则<br>
+ * maybe useless & over-engineering
  *
  * @author hzk
  * @since 2017-06-17
@@ -33,4 +33,9 @@ public interface Criterion {
     void setValue(Object value);
 
     Object getValue();
+
+    String getOperator();
+
+    void setOperator(String operator);
+
 }
