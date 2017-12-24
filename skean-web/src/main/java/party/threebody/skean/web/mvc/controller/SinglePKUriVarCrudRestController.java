@@ -52,6 +52,9 @@ public abstract class SinglePKUriVarCrudRestController<E, PK> extends UriVarCrud
     @GetMapping("/{pk}")
     public ResponseEntity<E> httpReadOne(@PathVariable PK pk) {
         E entity = getCrudFunctions().getOneReader().apply(pk);
+        if (entity == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok().body(entity);
     }
 

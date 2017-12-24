@@ -32,8 +32,7 @@ import java.util.Map;
  * @author hzk
  * @since skean 2.1
  */
-public abstract class
-UriVarCrudRestController<E> extends CrudRestController<E> {
+public abstract class UriVarCrudRestController<E> extends CrudRestController<E> {
 
 
     /**
