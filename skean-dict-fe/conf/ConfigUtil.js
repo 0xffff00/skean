@@ -31,7 +31,3 @@ module.exports = {
   writeConfigToFile,
   fetchConfigByMergingEnvArgs
 }
-// export default {
-//   writeConfigToFile,
-//   fetchConfigByMergingEnvArgs
-// }
