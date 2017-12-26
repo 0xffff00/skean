@@ -1,0 +1,5 @@
+{
+  "port": 8921,
+  "herdApiUrl":"http://localhost:8980",
+  "dictApiUrl":"http://localhost:8920"
+}
