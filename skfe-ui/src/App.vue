@@ -6,7 +6,6 @@
     </div>
 </template>
 <script>
-  import MsgBox from './components/MsgBox'
   import conf from './libs/config'
 
   export default {

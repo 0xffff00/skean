@@ -4,9 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const merge = require('webpack-merge')
 const webpackBaseConfig = require('./webpack.base.config.js')
 
-const ConfigUtil = require('./ConfigUtil')
-const finalConfig = ConfigUtil.fetchConfigByMergingEnvArgs({env: 'dev', args: process.env})
-ConfigUtil.writeConfigToFile(finalConfig)
+const globalConfig = require('./conf-util.js').fetchConfigByMergingEnvArgs({env: 'dev', args: process.env})
 
 module.exports = merge(webpackBaseConfig, {
   // devtool: '#source-map',
@@ -20,9 +18,12 @@ module.exports = merge(webpackBaseConfig, {
     fs: 'empty'
   },
   devServer: {
-    port: finalConfig.port
+    port: globalConfig.port
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'GLOBAL_CONFIG': JSON.stringify(globalConfig)
+    }),
     new ExtractTextPlugin({
       filename: '[name].css',
       allChunks: true
@@ -33,7 +34,7 @@ module.exports = merge(webpackBaseConfig, {
     }),
     new HtmlWebpackPlugin({
       filename: '../index.html',
-      template: './src/template/index.ejs',
+      template: './src/assets/index.ejs',
       inject: false
     })
     // new FriendlyErrorsPlugin()

@@ -1,4 +1,3 @@
-const fs = require('fs')
 const _ = require('lodash')
 const devConfig = require('./global-config.dev.json')
 const prodConfig = require('./global-config.prod.json')
@@ -17,17 +16,6 @@ function fetchConfigByMergingEnvArgs (globalEnvArgs) {
   return conf
 }
 
-function writeConfigToFile (config, path = 'dist/global-config-233.json') {
-  if (!fs.existsSync('dist')) {
-    fs.mkdirSync('dist')
-  }
-  fs.open(path, 'w', function (err1, fd) {
-    const buf = JSON.stringify(config, null, 4)
-    fs.write(fd, buf, 0, buf.length, 0, function (err1, written, buffer) {})
-  })
-}
-
 module.exports = {
-  writeConfigToFile,
   fetchConfigByMergingEnvArgs
 }

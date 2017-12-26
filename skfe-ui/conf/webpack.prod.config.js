@@ -4,9 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const merge = require('webpack-merge')
 const webpackBaseConfig = require('./webpack.base.config.js')
 
-const ConfigUtil = require('./ConfigUtil')
-const finalConfig = ConfigUtil.fetchConfigByMergingEnvArgs({env: 'dev', args: process.env})
-ConfigUtil.writeConfigToFile(finalConfig)
+const globalConfig = require('./conf-util.js').fetchConfigByMergingEnvArgs({env: 'prod', args: process.env})
 
 module.exports = merge(webpackBaseConfig, {
   output: {

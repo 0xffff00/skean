@@ -5,7 +5,7 @@
  * @returns {{title: string, body: string}}
  */
 function toErrInfo (resp2, actionName = '操作') {
-  console.log(resp2, actionName)
+  // console.log(resp2, actionName)
   let st0 = resp2.status || (resp2.data ? resp2.data.status : '')
   let st1 = st0 ? '[' + st0 + ']' : ''
   let err1 = resp2.data && resp2.data.error || ''
