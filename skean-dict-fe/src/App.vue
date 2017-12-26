@@ -1,23 +1,27 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
-  </div>
+    <div>
+
+        <div>aa2a</div>
+        <router-view></router-view>
+    </div>
 </template>
-
 <script>
-export default {
-  name: 'app'
-}
-</script>
+  import MsgBox from './components/MsgBox'
+  import conf from './libs/config'
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+  export default {
+    data () {
+      return {}
+    },
+    mounted () {
+
+    },
+    created () {
+      console.log('config=', conf)
+    },
+    beforeDestroy () {
+
+    },
+    methods: {}
+  }
+</script>

@@ -1,0 +1,5 @@
+{
+  "port": 2333,
+  "herdApiUrl":"http://herd.api.a-prod-host.com",
+  "dictApiUrl":"http://dict.api.a-prod-host.com"
+}
