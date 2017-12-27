@@ -16,7 +16,7 @@ function toErrInfo (resp2, actionName = '操作') {
   }
 }
 
-const open = (vue, actionName = null) => (resp2) => {
+const opening = (vue, actionName = null) => (resp2) => {
   if (resp2.ok) {
     let title = (actionName || '操作') + '成功'
     let body = ''
@@ -42,5 +42,5 @@ function openConfirmDialog (actionDesc, nextAction) {
 }
 
 export default {
-  open
+  open: opening
 }
