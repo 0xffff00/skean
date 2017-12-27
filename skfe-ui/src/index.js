@@ -5,7 +5,7 @@ import TableMan from './components/table-man.vue'
 import TableManRenders from './components/table-man-renders'
 import TimeGrid from './components/time-grid.vue'
 
-export default {
+export {
     MsgBox,
     RestApi,
     AsyncProcessBox,
