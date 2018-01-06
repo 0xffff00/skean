@@ -135,16 +135,20 @@ public class WordService {
 
     @Transactional
     public int createBasicRelation(BasicRelation br) {
-        int maxNo = basicRelationDao.getMaxNo(br.getSrc(), br.getAttr());
-        br.setNo(maxNo + 1);
+        if (br.getNo() == null) {
+            int maxNo = basicRelationDao.getMaxNo(br.getSrc(), br.getAttr());
+            br.setNo(maxNo + 1);
+        }
         return basicRelationDao.create(br);
     }
 
 
     @Transactional
     public int createX1Relation(X1Relation x1r) {
-        int maxNo = x1RelationDao.getMaxNo(x1r.getSrc(), x1r.getAttr());
-        x1r.setNo(maxNo + 1);
+        if (x1r.getNo() == null) {
+            int maxNo = x1RelationDao.getMaxNo(x1r.getSrc(), x1r.getAttr());
+            x1r.setNo(maxNo + 1);
+        }
         return x1RelationDao.create(x1r);
     }
 
