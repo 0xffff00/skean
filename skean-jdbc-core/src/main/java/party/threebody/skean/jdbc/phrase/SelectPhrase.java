@@ -34,7 +34,7 @@ public class SelectPhrase implements Phrase {
     }
 
     // ------ filtering --------
-    public PagePhrase suite(CriteriaAndSortingAndPaging qps) {
+    public PagePhrase criteriaAndSortAndPage(CriteriaAndSortingAndPaging qps) {
         return root.criteriaAndSortAndPage(qps);
     }
 
