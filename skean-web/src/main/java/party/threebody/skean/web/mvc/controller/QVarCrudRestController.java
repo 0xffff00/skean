@@ -26,13 +26,13 @@ import java.util.Map;
 /**
  * a simple RestController supporting typical CRUD operations of an entity
  * bean<br>
- * all parameters are UriVar or PathVar
+ * all parameters are q-var(@RequestParam)
  *
  * @param <E> type of the entity bean
  * @author hzk
  * @since skean 2.1
  */
-public abstract class UriVarCrudRestController<E> extends CrudRestController<E> {
+public abstract class QVarCrudRestController<E> extends CrudRestController<E> {
 
 
     /**

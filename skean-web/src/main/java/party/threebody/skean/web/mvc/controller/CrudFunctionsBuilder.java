@@ -18,6 +18,7 @@ package party.threebody.skean.web.mvc.controller;
 
 import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
+import party.threebody.skean.web.mvc.dao.AbstractCrudDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,11 @@ public final class CrudFunctionsBuilder<E> {
 
     public CrudFunctionsBuilder<E> batchUpdateEnabled(boolean batchUpdateEnabled) {
         crudFunctions.setBatchUpdateEnabled(batchUpdateEnabled);
+        return this;
+    }
+
+    public CrudFunctionsBuilder<E> fillFromCrudDAO(AbstractCrudDAO<E> dao) {
+        CrudFunctionsUtils.fillFromCrudDAO(crudFunctions, dao);
         return this;
     }
 

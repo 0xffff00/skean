@@ -26,14 +26,14 @@ import java.util.Map;
 /**
  * a simple RestController supporting typical CRUD operations of an entity
  * bean<br>
- * ,which contains a single-column primary key.
- *
+ * ,which contains a single-column primary key.<br>
+ * all uri vars are q-var(@RequestParam) or path-var(@PathVariable)
  * @param <E>  type of the entity bean
  * @param <PK> primitive type of the single-column primary key
  * @author hzk
  * @since skean 2.1
  */
-public abstract class SinglePKUriVarCrudRestController<E, PK> extends UriVarCrudRestController<E> {
+public abstract class SinglePKUriVarCrudRestController<E, PK> extends QVarCrudRestController<E> {
 
     @Override
     public void buildCrudFunctions(CrudFunctionsBuilder<E> builder) {

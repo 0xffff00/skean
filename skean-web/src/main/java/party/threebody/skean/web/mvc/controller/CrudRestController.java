@@ -36,7 +36,7 @@ import java.util.function.Function;
 
 /**
  * @param <E>
- * @see UriVarCrudRestController
+ * @see QVarCrudRestController
  * @see MatrixVarCrudRestController
  * @since 2.1
  */

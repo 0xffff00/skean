@@ -26,7 +26,8 @@ import java.util.Map;
 /**
  * a simple RestController supporting typical CRUD operations of an entity
  * bean<br>
- * ,which contains a single-column primary key.
+ * ,which contains a single-column primary key.<br>
+ * all vars are matrix-var(@MatrixVariable), while q-var(@RequestParam) or path-var(@PathVariable) are not supported
  *
  * @param <E> type of the entity bean
  * @author hzk
