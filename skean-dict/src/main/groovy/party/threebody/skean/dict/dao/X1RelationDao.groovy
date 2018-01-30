@@ -18,7 +18,7 @@ package party.threebody.skean.dict.dao
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
-import party.threebody.skean.dict.domain.BasicRelation
+import party.threebody.skean.collections.Maps
 import party.threebody.skean.dict.domain.X1Relation
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 import party.threebody.skean.web.mvc.dao.TriplePKsJpaCrudDAO
@@ -46,5 +46,10 @@ class X1RelationDao extends TriplePKsJpaCrudDAO<X1Relation, String, String, Inte
         def sql = "SELECT MAX(`NO`) FROM dct_rel_x1 WHERE src=? AND attr=?"
         Integer res = cjt.sql(sql).arg(src, attr).firstCell()
         res == null ? -1 : res
+    }
+
+    List<X1Relation> listBySAD(String src, String attr, String dst) {
+        def valMap = Maps.filterNullValues([src: src, attr: attr, dst: dst])
+        fromTable().by(valMap).list(X1Relation.class)
     }
 }

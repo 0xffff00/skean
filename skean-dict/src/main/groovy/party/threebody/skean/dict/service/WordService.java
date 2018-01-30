@@ -16,7 +16,6 @@
 
 package party.threebody.skean.dict.service;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,10 +33,11 @@ import party.threebody.skean.dict.domain.X1Relation;
 import party.threebody.skean.lang.Beans;
 import party.threebody.skean.misc.SkeanInvalidArgumentException;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class WordService {
@@ -69,42 +69,139 @@ public class WordService {
             w.setText(text);
             w.setState("t");
         }
-        w.setAliasRS0(basicRelationDao.listBySAD(text, "ALIA", null));
+        w.setAliasRS0(listBasicRelsBySAD(text, "ALIA", null));
 
-        w.setSubsetRSR(listRecursively(text, "SUBS", true));
-        w.setSupersetRSR(listRecursively(text, "SUBS", false));
+        w.setSubsetRSR(fetchSubsetRSR(text));
+        w.setSupersetRSR(fetchSupersetRSR(text));
 
-        w.setSubtopicRSR(listRecursively(text, "SUBT", true));
-        w.setSupertopicRSR(listRecursively(text, "SUBT", false));
+        w.setSubtopicRSR(fetchSubtopicRSR(text));
+        w.setSupertopicRSR(fetchSupertopicRSR(text));
 
-        // calc instanceESA: = (me + subsetESR)'s instES0
-        List<String> subsetAndMeESR = ListUtils.union(
-                w.getSubsetRSR().stream().map(BasicRelation::getDst).collect(Collectors.toList()),
-                Arrays.asList(text));
-        Set<String> instanceESA = subsetAndMeESR.stream()
-                .flatMap(vex -> basicRelationDao.listBySAD(vex, "INST", null).stream())
-                .map(BasicRelation::getDst)
-                .collect(Collectors.toSet());
+        Set<String> meAndMySubsetESR = w.getSubsetRSR().stream().map(BasicRelation::getDst).collect(toSet());
+        Set<String> instanceESA = fetchInstanceESA(text, meAndMySubsetESR);
+        Set<String> definitionESA = fetchDefinitionESA(text);
 
-        // calc definitionESA: = defES0's supersetESR + defES0
-        Set<String> defES0 = basicRelationDao.listBySAD(null, "INST", text).stream()
-                .map(BasicRelation::getSrc).collect(Collectors.toSet());
-        Set<String> defES0_supersetESR = defES0.stream()
-                .flatMap(def -> listRecursively(def, "SUBS", false).stream())
-                .map(BasicRelation::getSrc)
-                .collect(Collectors.toSet());
-        Set<String> definitionESA = SetUtils.union(defES0_supersetESR, defES0);
-
-        w.setInstanceRS0(basicRelationDao.listBySAD(text, "INST", null));
+        w.setInstanceRS0(listBasicRelsBySAD(text, "INST", null));
         w.setInstanceESA(instanceESA);
-        w.setDefinitionRS0(basicRelationDao.listBySAD(null, "INST", text));
+        w.setDefinitionRS0(listBasicRelsBySAD(null, "INST", text));
         w.setDefinitionESA(definitionESA);
-
 
         w.setAttributeRS0(x1RelationDao.listBySrc(text));
         w.setReferenceRS0(x1RelationDao.listByDst(text));
 
         return w;
+    }
+
+    public Set<String> fetchInstanceESA(String me) {
+        Set<String> mySubsetESR = fetchSubsetESR(me);
+        return fetchInstanceESA(me, mySubsetESR);
+    }
+
+    /**
+     * calc instanceESA = (me + subsetESR)'s instES0
+     * 所有实例子孙=所有孩子+所有子集子孙的所有孩子
+     */
+    private Set<String> fetchInstanceESA(String me, Set<String> mySubsetESR) {
+
+        Set<String> meAndMySubsetESR = SetUtils.union(mySubsetESR, Collections.singleton(me));
+        Set<String> instanceESA = meAndMySubsetESR.stream()
+                .flatMap(vex -> listBasicRelsBySAD(vex, "INST", null).stream())
+                .map(BasicRelation::getDst)
+                .collect(toSet());
+        return instanceESA;
+    }
+
+    /**
+     * calc definitionESA = defES0's supersetESR + defES0
+     * 所有超类祖先=所有超类父亲的所有超集+所有超类父亲
+     */
+    public Set<String> fetchDefinitionESA(String me) {
+        // 获取所有超类父亲defES0
+        Set<String> myDefES0 = listBasicRelsBySAD(null, "INST", me).stream()
+                .map(BasicRelation::getSrc).collect(toSet());
+        Set<String> supersetESRofMyDefES0 = myDefES0.stream()
+                .flatMap(def -> listRecursively(def, "SUBS", false).stream())
+                .map(BasicRelation::getSrc)
+                .collect(toSet());
+        Set<String> definitionESA = SetUtils.union(supersetESRofMyDefES0, myDefES0);
+        return definitionESA;
+    }
+
+
+    public Set<String> fetchSubsetESR(String me) {
+        return fetchSubsetRSR(me).stream().map(BasicRelation::getDst).collect(toSet());
+    }
+
+    public Set<String> fetchSupersetESR(String me) {
+        return fetchSubsetRSR(me).stream().map(BasicRelation::getSrc).collect(toSet());
+    }
+    public Set<String> fetchSubtopicESR(String me) {
+        return fetchSubtopicRSR(me).stream().map(BasicRelation::getDst).collect(toSet());
+    }
+    public Set<String> fetchSupertopicESR(String me) {
+        return fetchSubtopicRSR(me).stream().map(BasicRelation::getSrc).collect(toSet());
+    }
+
+
+    public Set<BasicRelation> fetchSubsetRSR(String me) {
+        return listRecursively(me, "SUBS", true);
+    }
+
+    public Set<BasicRelation> fetchSupersetRSR(String me) {
+        return listRecursively(me, "SUBS", false);
+    }
+
+    public Set<BasicRelation> fetchSubtopicRSR(String me) {
+        return listRecursively(me, "SUBT", true);
+    }
+
+    public Set<BasicRelation> fetchSupertopicRSR(String me) {
+        return listRecursively(me, "SUBT", false);
+    }
+
+    public Set<String> fetchSubESR(String me) {
+        DAGVisitor<String, BasicRelation> dagVisitor = new DAGVisitor<>(
+                this::listBasicRelsNonAlias,
+                BasicRelation::getSrc,
+                BasicRelation::getDst
+        );
+        dagVisitor.visitFrom(me);
+        return dagVisitor.getVerticesVisitedExceptSource();
+    }
+
+    public Set<String> fetchSuperESR(String me) {
+        DAGVisitor<String, BasicRelation> dagVisitor = new DAGVisitor<>(
+                this::listBasicRelsNonAlias,
+                BasicRelation::getDst,
+                BasicRelation::getSrc
+        );
+        dagVisitor.visitFrom(me);
+        return dagVisitor.getVerticesVisitedExceptSource();
+    }
+
+    /**
+     * TODO cache this
+     *
+     * @param src  if null, ignore this filter
+     * @param attr if null, ignore this filter
+     * @param dst  if null, ignore this filter
+     */
+    protected List<BasicRelation> listBasicRelsBySAD(String src, String attr, String dst) {
+        return basicRelationDao.listBySAD(src, attr, dst);
+    }
+
+    protected List<BasicRelation> listBasicRelsNonAlias() {
+        return basicRelationDao.listNonAlias();
+    }
+    /**
+     * TODO cache this
+     *
+     * @param src  if null, ignore this filter
+     * @param attr if null, ignore this filter
+     * @param dst  if null, ignore this filter
+     */
+    protected List<X1Relation> listX1RelsBySAD(String src, String attr, String dst) {
+        return x1RelationDao.listBySAD(src, attr, dst);
     }
 
     /**
@@ -118,13 +215,13 @@ public class WordService {
         DAGVisitor<String, BasicRelation> dagv;
         if (forward) {
             dagv = new DAGVisitor<>(
-                    () -> basicRelationDao.listBySAD(null, attr, null),
+                    () -> listBasicRelsBySAD(null, attr, null),
                     BasicRelation::getSrc,
                     BasicRelation::getDst
             );
         } else {
             dagv = new DAGVisitor<>(
-                    () -> basicRelationDao.listBySAD(null, attr, null),
+                    () -> listBasicRelsBySAD(null, attr, null),
                     BasicRelation::getDst,
                     BasicRelation::getSrc
             );
@@ -185,5 +282,6 @@ public class WordService {
         return rna;
 
     }
+
 
 }

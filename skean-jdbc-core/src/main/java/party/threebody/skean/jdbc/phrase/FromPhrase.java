@@ -102,7 +102,7 @@ public class FromPhrase extends DefaultRootPhrase {
     }
 
     public CriteriaPhrase criteria(Criteria criteria) {
-        if (criteria!=null){
+        if (criteria != null) {
             return criteria(criteria.getCriteria());
         }
         return criteria();
@@ -282,6 +282,5 @@ public class FromPhrase extends DefaultRootPhrase {
 
     // -------- getters & setters --------
 
-    
 
 }

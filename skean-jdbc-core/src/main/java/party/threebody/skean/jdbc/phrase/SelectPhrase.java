@@ -18,6 +18,7 @@ package party.threebody.skean.jdbc.phrase;
 
 import org.springframework.jdbc.core.RowMapper;
 import party.threebody.skean.data.query.BasicCriterion;
+import party.threebody.skean.data.query.Criteria;
 import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.jdbc.rs.DualColsBean;
 import party.threebody.skean.jdbc.rs.TripleColsBean;
@@ -51,6 +52,9 @@ public class SelectPhrase implements Phrase {
     }
 
     public CriteriaPhrase criteria(BasicCriterion[] criteria) {
+        return root.criteria(criteria);
+    }
+    public CriteriaPhrase criteria(Criteria criteria) {
         return root.criteria(criteria);
     }
 
