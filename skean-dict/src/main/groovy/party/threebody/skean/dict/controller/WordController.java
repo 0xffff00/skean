@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.domain.Word;
-import party.threebody.skean.dict.service.SearchEngine;
+import party.threebody.skean.dict.service.WordSearchEngine;
 import party.threebody.skean.dict.service.WordService;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKUriVarCrudRestController;
@@ -34,7 +34,7 @@ import java.util.Map;
 public class WordController extends SinglePKUriVarCrudRestController<Word, String> {
     @Autowired WordDao wordDao;
     @Autowired WordService wordService;
-    @Autowired SearchEngine searchEngine;
+    @Autowired WordSearchEngine searchEngine;
 
     @Override
     public void buildCrudFunctions(SinglePKCrudFunctionsBuilder<Word, String> builder) {

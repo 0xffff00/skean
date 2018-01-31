@@ -19,6 +19,7 @@ package party.threebody.skean.dict.dao
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import party.threebody.skean.data.query.Criteria
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging
 import party.threebody.skean.dict.domain.Word
 import party.threebody.skean.jdbc.ChainedJdbcTemplate
 import party.threebody.skean.web.mvc.dao.SinglePKJpaCrudDAO
@@ -33,17 +34,22 @@ class WordDao extends SinglePKJpaCrudDAO<Word, String> {
         cjt
     }
 
-    def sql_1='''
-          SELECT src FROM dct_rel_b
-    UNION SELECT dst FROM dct_rel_b
-    UNION SELECT src FROM dct_rel_x1
-    UNION SELECT dst FROM dct_rel_x1'''
+    def sql_1 = '''
+          SELECT src text FROM dct_rel_b
+    UNION SELECT dst text FROM dct_rel_b
+    UNION SELECT src text FROM dct_rel_x1
+    UNION SELECT dst text FROM dct_rel_x1'''
 
-
-    List<String> listAllWordsMentioned(Criteria criteria){
-        cjt.fromSql(sql_1).criteria(criteria).listOfSingleColumn(String.class)
+    def sql_2="SELECT * FROM ($sql_1) t"
+    List<String> listAllWordsMentioned(Criteria csp) {
+        cjt.fromSql(sql_2).criteria(csp).listOfSingleCol(String.class)
     }
-    int countAllWordsMentioned(Criteria criteria){
+
+    List<String> listAllWordsMentioned(CriteriaAndSortingAndPaging csp) {
+        cjt.fromSql(sql_2).criteriaAndSortAndPage(csp).listOfSingleCol(String.class)
+    }
+
+    int countAllWordsMentioned(Criteria criteria) {
         cjt.fromSql(sql_1).criteria(criteria).count()
     }
 
