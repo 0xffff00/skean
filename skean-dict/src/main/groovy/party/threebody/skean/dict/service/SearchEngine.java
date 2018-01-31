@@ -1,7 +1,7 @@
 package party.threebody.skean.dict.service;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import party.threebody.skean.data.query.Criteria;
@@ -13,9 +13,12 @@ import party.threebody.skean.misc.SkeanNotImplementedException;
 import party.threebody.skean.web.data.CriteriaBuilder;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static party.threebody.skean.dict.service.RelPredicate.*;
 
 @Service
 public class SearchEngine {
@@ -27,52 +30,98 @@ public class SearchEngine {
     @Autowired BasicRelationDao basicRelationDao;
     @Autowired X1RelationDao x1RelationDao;
 
-    public Set<String> search(Map<String, Object> paramMap) {
+    public static final int MIN_FORWARD_SEARCH = 10;
+
+    public Collection<String> search(Map<String, Object> paramMap) {
         Map<String, Object> basicParamMap = Maps.filterKeys(paramMap, key -> !isKindOfRelCriterion(key));
         Map<String, Object> relParamMap = Maps.filterKeys(paramMap, key -> !isKindOfRelCriterion(key));
         Criteria basicCriteria = criteriaBuilder.toCriteria(basicParamMap);
-        // TODO build RelCriterion[] from relParamMap
-        List<RelCriterion> relCriteria = null;
+        List<RelCriterion> relCriteria = relParamMap.entrySet().stream()
+                .map(entry -> RelCriterion.of(entry.getKey(), entry.getValue().toString()))
+                .collect(toList());
         return search(basicCriteria, relCriteria);
     }
 
-    public static boolean isKindOfRelCriterion(String paramName) {
+
+    /**
+     * <h3>调优2：</h3>
+     * 调整relCriteria的顺序，优先级如下：
+     * <ol>
+     * <li>super*Of</li>
+     * <li>sub*Of</li>
+     * <li>subOf instanceOf</li>
+     * </ol>
+     * <h3>调优3：</h3>
+     * 如果basicCriteria为空，直接忽略
+     *
+     * @param basicCriteria 基础查询条件，可翻译成sql的where子句，代价小，可带limit参数保证性能
+     * @param relCriteria   高级关系查询条件，需要用到DAG的递归搜索，代价较高
+     * @return
+     */
+    public Collection<String> search(Criteria basicCriteria, List<RelCriterion> relCriteria) {
+        List<String> res0;
+        if (basicCriteria == null || basicCriteria.isEmpty()) {
+            res0 = null;  // null means full
+        } else {
+            res0 = wordDao.listAllWordsMentioned(basicCriteria);
+        }
+        return search0(res0, new LinkedList<>(relCriteria));
+    }
+
+    private LinkedList<RelCriterion> rearrangeRelCriteria(List<RelCriterion> relCriteria) {
+        List<RelCriterion> res0 = Stream.of(
+                relCriteria.stream().filter(c -> hasPredicateAmong(c, superOf, supersetOf, supertopicOf, definitionOf)),
+                relCriteria.stream().filter(c -> hasPredicateAmong(c, subsetOf, subtopicOf)),
+                relCriteria.stream().filter(c -> hasPredicateAmong(c, subOf, instanceOf))
+        ).flatMap(Function.identity()).collect(toList());
+        return new LinkedList<>(res0);
+    }
+
+    private static boolean hasPredicateAmong(RelCriterion relCriterion, RelPredicate... predicates) {
+        RelPredicate pred = relCriterion.getPredicate();
+        for (RelPredicate p : predicates) {
+            if (p.equals(pred)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isKindOfRelCriterion(String paramName) {
         return Stream.of(RelPredicate.values()).map(RelPredicate::toString).anyMatch(paramName::equals)
                 || paramName.startsWith(RelMapper.attr.toString() + "^")
                 || paramName.startsWith(RelMapper.rel.toString() + "^");
     }
 
     /**
-     * 简单的优化：
-     * 如果sql结果较小，正向过滤，SQL result->DAG result
-     * 否则反向过滤,DAG result->SQL result
+     * if  previous result is too large,
+     * forward search in DAG and intersect previous result,
+     * else backward search in DAG from each node in previous result
      *
-     * @param basicCriteria 基础查询条件，可翻译成sql的where子句，代价小
-     * @param relCriteria   高级关系查询条件，需要用到DAG的递归搜索，代价较高
-     * @return
+     * @param unfiltered  previous result,if null,means full set
+     * @param relCriteria
+     * @return a set filtered by all criteria
      */
-    public Set<String> search(Criteria basicCriteria, List<RelCriterion> relCriteria) {
-        int cnt1 = wordDao.countAllWordsMentioned(basicCriteria);
-        List<String> words = wordDao.listAllWordsMentioned(basicCriteria);
-        return search0(new HashSet<>(words), new LinkedList<>(relCriteria));
-    }
-
-    public Set<String> search0(Set<String> unfiltered, LinkedList<RelCriterion> relCriteria) {
+    private Collection<String> search0(Collection<String> unfiltered, LinkedList<RelCriterion> relCriteria) {
         if (relCriteria.isEmpty()) {
             return unfiltered;
         }
         RelCriterion crit = relCriteria.pollFirst();
-        if (unfiltered.size() > 30) {
+        if (unfiltered == null) {
+            Set<String> filtered = fetchByRelCriterion(crit);
+            return search0(filtered, relCriteria);
+        }
+        if (unfiltered.size() > MIN_FORWARD_SEARCH) {
             // forward search in DAG, then intersect previous result
             Set<String> res = fetchByRelCriterion(crit);
-            Set<String> filtered = SetUtils.intersection(unfiltered, res);
+            Collection<String> filtered = CollectionUtils.intersection(unfiltered, res);
             return search0(filtered, relCriteria);
         } else {
             // backward search in DAG from each node in previous result
             Set<String> filtered = unfiltered.stream().filter(word -> {
                 Set<String> wordsMapped = relMap(word, crit.getMapper(), crit.getMapperArg());
                 return wordsMapped.stream().anyMatch(w2 ->
-                        existsPathOnDAG(w2, crit.getPredicate(), crit.getPredicateArg()));
+                        existsPathInDAG(w2, crit.getPredicate(), crit.getPredicateArg()));
             }).collect(toSet());
             return search0(filtered, relCriteria);
         }
@@ -145,7 +194,7 @@ public class SearchEngine {
      * @param src not null
      * @param dst not null
      */
-    private boolean existsPathOnDAG(String src, RelPredicate pred, String dst) {
+    private boolean existsPathInDAG(String src, RelPredicate pred, String dst) {
         if (src == null || dst == null) {
             return false;
         }

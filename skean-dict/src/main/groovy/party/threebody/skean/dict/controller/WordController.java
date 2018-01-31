@@ -26,8 +26,8 @@ import party.threebody.skean.dict.service.WordService;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKUriVarCrudRestController;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/words")
@@ -74,10 +74,11 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
      * &attr^instanceOf=principal^Shanghaiese
      * &ref^text=motherschool^Bob
      *
+     *
      * </pre>
      */
     @GetMapping("/search")
-    public Set<String> search(@RequestParam Map<String, Object> paramMap) {
+    public Collection<String> search(@RequestParam Map<String, Object> paramMap) {
         return searchEngine.search(paramMap);
     }
 

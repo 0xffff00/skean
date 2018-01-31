@@ -1,5 +1,7 @@
 package party.threebody.skean.dict.service;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class RelCriterion {
     private RelMapper mapper;
     private String mapperArg;
@@ -15,6 +17,24 @@ public class RelCriterion {
         c.predicate = RelPredicate.valueOf(predicateName);
         c.predicateArg = predicateArg;
         return c;
+    }
+
+    public static RelCriterion of(String paramName, String paramValue) {
+        String[] names = StringUtils.split(paramName, '^');
+        String[] vals = StringUtils.split(paramValue, '^');
+        String mapperName = null;
+        String mapperArg = null;
+        String predicateName = paramName;
+        String predicateArg = paramValue;
+        if (names.length >= 2) {
+            mapperName = names[0];
+            predicateName = names[1];
+        }
+        if (vals.length >= 2) {
+            mapperArg = vals[0];
+            predicateArg = vals[0];
+        }
+        return of(mapperName, mapperArg, predicateName, predicateArg);
     }
 
     public RelMapper getMapper() {

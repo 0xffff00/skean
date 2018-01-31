@@ -111,6 +111,10 @@ public class WordService {
         return instanceESA;
     }
 
+    int countInstanceES0(String me){
+        return countBasicRelsBySAD(me,"INST",null);
+    }
+
     /**
      * calc definitionESA = defES0's supersetESR + defES0
      * 所有超类祖先=所有超类父亲的所有超集+所有超类父亲
@@ -177,6 +181,16 @@ public class WordService {
         );
         dagVisitor.visitFrom(me);
         return dagVisitor.getVerticesVisitedExceptSource();
+    }
+    /**
+     * TODO cache this
+     *
+     * @param src  if null, ignore this filter
+     * @param attr if null, ignore this filter
+     * @param dst  if null, ignore this filter
+     */
+    protected int countBasicRelsBySAD(String src, String attr, String dst) {
+        return 0;
     }
 
     /**

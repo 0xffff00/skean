@@ -75,4 +75,8 @@ public class Criteria {
             }
         }
     }
+
+    public boolean isEmpty() {
+        return criteria == null || criteria.length == 0;
+    }
 }
