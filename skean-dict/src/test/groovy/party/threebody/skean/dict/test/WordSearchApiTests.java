@@ -67,7 +67,8 @@ public class WordSearchApiTests {
                 buildX1R("Lily", "出生年份", "1991"),
                 buildX1R("Lucy", "出生年份", "1993"),
                 buildX1R("北京", "GDP省排名", "5"),
-                buildX1R("浙江", "GDP省排名", "3")
+                buildX1R("浙江", "GDP省排名", "3"),
+                buildX1R("A校", "星级", "5")
         );
 //        for (BasicRelation br : brels) {
 //            restTemplate.exchange(RequestEntity.post(new URI("/relations/basic"))
@@ -97,7 +98,11 @@ public class WordSearchApiTests {
         assertSetEquals(se.search(Maps.of("instanceOf", "A校k届3班学生", "attr^text_NE", "出生年份^1991")),
                  "Lucy");
         Maps.of("attr^attr^d_LE","省籍^GDP省排名^3");
-        Maps.of("attr^instanceOf^s_K","省籍^^辖");
+        Maps.of("attr^instanceOf^s_K","省籍^辖");
+        Maps.of("attr^instanceOf^s","省籍^直辖市");
+        Maps.of("attr^instanceOf","省籍^直辖市");
+        // 4星以上的
+        Maps.of("subsetOf^subtopicOf^attr^d_GT^","4"); //= "A校k届2班学生","A校k届3班学生"
 
 //        UriComponentsBuilder.fromOriginHeader("")
 //        restTemplate.1

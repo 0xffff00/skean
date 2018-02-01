@@ -1,6 +1,5 @@
 package party.threebody.skean.dict.domain.criteria;
 
-public interface WordCriteriaPhrase {
+public class FilterNode extends CritTreeNode {
 
 }
-

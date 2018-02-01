@@ -57,7 +57,9 @@ public class Criteria {
     public static Criteria of(Criterion... arr) {
         return new Criteria(arr);
     }
-
+    public static Criteria of(Collection<? extends Criterion> coll) {
+        return new Criteria(coll.stream().toArray(Criterion[]::new));
+    }
     public void setCriteria(Criterion[] criteria) {
         this.criteria = criteria;
     }

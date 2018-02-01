@@ -1,24 +1,27 @@
 package party.threebody.skean.dict.service;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import party.threebody.skean.data.query.BasicCriterion;
 import party.threebody.skean.data.query.Criteria;
-import party.threebody.skean.data.query.Criterion;
 import party.threebody.skean.dict.dao.BasicRelationDao;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.dao.X1RelationDao;
 import party.threebody.skean.dict.domain.X1Relation;
-import party.threebody.skean.dict.domain.criteria.FilterPhrase;
-import party.threebody.skean.dict.domain.criteria.MapPhrase;
-import party.threebody.skean.dict.domain.criteria.WordCriteriaPhrase;
+import party.threebody.skean.dict.domain.criteria.CritTreeNode;
+import party.threebody.skean.dict.domain.criteria.MapNode;
+import party.threebody.skean.dict.domain.criteria.RelFilterNode;
+import party.threebody.skean.dict.domain.criteria.TextFilterNode;
 import party.threebody.skean.misc.SkeanNotImplementedException;
 import party.threebody.skean.web.data.CriteriaBuilder;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -33,110 +36,173 @@ public class WordSearchEngine {
 
     public static final int MIN_FORWARD_SEARCH = 10;
 
-    public Collection<String> search(Map<String, Object> paramMap) {
-        // TODO
-        return null;
-    }
 
     /**
-     * backward derivation
+     * prior:
+     * BasicFilterNode[] > RelFilterNode > MapNode
      *
-     * @param phrases must end with a FilterPhrase
+     * @param critTreeNodes
      * @return
      */
-    public Collection<String> search2(LinkedList<WordCriteriaPhrase> phrases) {
-        Collection<String> result = null;
-        while (!phrases.isEmpty()) {
-            if (phrases.getLast() instanceof FilterPhrase) {
-                WordCriteriaPhrase ph = phrases.getLast();
-                List<FilterPhrase> filterPhrases = new ArrayList<>();
-                for (; ph instanceof FilterPhrase; ph = phrases.getLast()) {
-                    filterPhrases.add((FilterPhrase) phrases.pollLast());
-                    if (phrases.isEmpty()) {
-                        break;
-                    }
-                }
-                result = unfilter(filterPhrases, result);
-            } else { // MapPhrase
-                MapPhrase mapPhrase = (MapPhrase) phrases.pollLast();
-                result = unmap(mapPhrase, result);
-            }
-        }
-        return result;
+    public Set<String> search(List<CritTreeNode> critTreeNodes) {
+        return filter(null, critTreeNodes);
     }
 
+
     /**
-     * umapped <--[unmap]-- mapped
+     * unfiltered --[filter]--> filtered
+     * <p>
+     * if unfiltered are too many, filtered = sql results by crits INTERSECTION filtered
+     * if unfiltered are not many, filtered = sql results by crits and IN-unfiltered-crit
      *
-     * @param mapPhrase
-     * @param mapped    mapped set
-     * @return umapped set
+     * @param unfiltered      unfiltered set
+     * @param textFilterNodes can be tranlated to crits
+     * @return filtered set
      */
-    private Collection<String> unmap(MapPhrase mapPhrase, Collection<String> mapped) {
-        return mapped.stream().flatMap(x -> unmap(mapPhrase, x)).collect(toSet());
+    private Set<String> filterBySql(Set<String> unfiltered, List<TextFilterNode> textFilterNodes) {
+        List<BasicCriterion> crits = textFilterNodes.stream().map(TextFilterNode::toBasicCriterion).collect(toList());
+        if (unfiltered != null && unfiltered.size() < MIN_FORWARD_SEARCH) {
+            BasicCriterion crit1 = new BasicCriterion("text", "IN", unfiltered);
+            crits.add(crit1);
+            return new HashSet<>(wordDao.listAllWordsMentioned(Criteria.of(crits)));
+        } else {
+            List<String> sqlResults = wordDao.listAllWordsMentioned(Criteria.of(crits));
+            return sqlResults.stream().filter(unfiltered::contains).collect(toSet());
+        }
     }
 
-    /**
-     * umapped <--[unmap]-- mapped
-     */
-    private Stream<String> unmap(MapPhrase mapPhrase, String mapped) {
-        String arg = mapPhrase.getArg();
-        switch (mapPhrase.getType()) {
-            case attr:
-                return wordService.listX1RelsBySAD(null, arg, mapped).stream()
-                        .map(X1Relation::getSrc);
-            case ref:
-                return wordService.listX1RelsBySAD(mapped, arg, null).stream()
-                        .map(X1Relation::getDst);
+    private Set<String> filter(Set<String> unfiltered, RelFilterNode relFilterNode) {
+        boolean tooManyUnfiltered = unfiltered == null || unfiltered.size() > MIN_FORWARD_SEARCH;
+        if (tooManyUnfiltered) {
+            return SetUtils.intersection(filterFromFullSet(relFilterNode), unfiltered);
+        } else {
+            return unfiltered.stream().filter(src -> evaluate(src, relFilterNode)).collect(toSet());
+        }
+    }
+
+    private Set<String> filter(Set<String> unfiltered, MapNode mapNode) {
+        boolean tooManyUnfiltered = unfiltered == null || unfiltered.size() > MIN_FORWARD_SEARCH * 1000;
+        if (tooManyUnfiltered) {
+            // TODO realize backward derivation (filter->unmap->..->unmap)
+            throw new SkeanNotImplementedException();
+        } else {
+            if (unfiltered == null) {
+                // TODO to be removed cuz of low performance.
+                unfiltered = new HashSet<>(wordDao.listAllWordsMentioned(Criteria.ALLOW_ALL));
+            }
+            return unfiltered.stream().filter(x -> {
+                Set<String> mapped = mapping(x, mapNode).collect(toSet());
+                Set<String> res1 = filter(mapped, mapNode.getChildren());
+                return !res1.isEmpty();
+            }).collect(toSet());
+        }
+    }
+
+    private Set<String> filter(Set<String> unfiltered, List<CritTreeNode> nodes) {
+        if (nodes == null) {
+            return unfiltered;
+        }
+        // divide nodes to 3 parts
+        List<TextFilterNode> textFilterNodes = nodes.stream()
+                .filter(TextFilterNode.class::isInstance)
+                .map(TextFilterNode.class::cast)
+                .collect(toList());
+        List<RelFilterNode> relFilterNodes = nodes.stream()
+                .filter(RelFilterNode.class::isInstance)
+                .map(RelFilterNode.class::cast)
+                .collect(toList());
+        List<MapNode> mapNodes = nodes.stream()
+                .filter(MapNode.class::isInstance)
+                .map(MapNode.class::cast)
+                .collect(toList());
+
+        Set<String> res = null;
+        res = filterBySql(unfiltered, textFilterNodes);
+        for (RelFilterNode node : relFilterNodes) {
+            res = filter(res, node);
+        }
+        for (MapNode node : mapNodes) {
+            res = filter(res, node);
+        }
+        return res;
+    }
+
+    private boolean evaluate(String src, RelFilterNode relFilterNode) {
+        String dst = relFilterNode.getVal();
+        switch (relFilterNode.getType()) {
             case subOf:
-                return wordService.fetchSubESR(mapped).stream();
-            case subsetOf:
-                return wordService.fetchSubsetESR(mapped).stream();
-            case subtopicOf:
-                return wordService.fetchSubtopicESR(mapped).stream();
-            case instanceOf:
-                return wordService.fetchInstanceESA(mapped).stream();
-            case superOf:
-                return wordService.fetchSuperESR(mapped).stream();
-            case supersetOf:
-                return wordService.fetchSupersetESR(mapped).stream();
-            case supertopicOf:
-                return wordService.fetchSupertopicESR(mapped).stream();
-            case definitionOf:
-                return wordService.fetchDefinitionESA(mapped).stream();
+                return wordService.fetchSuperESR(src).contains(dst);
+            case subsOf:
+                return wordService.fetchSuperESR(src).contains(dst);
+            case subtOf:
+                return wordService.fetchSupertopicESR(src).contains(dst);
+            case instOf:
+                return wordService.fetchDefinitionESA(src).contains(dst);
+            case supOf:
+                return wordService.fetchSubESR(src).contains(dst);
+            case supsOf:
+                return wordService.fetchSubsetESR(src).contains(dst);
+            case suptOf:
+                return wordService.fetchSubtopicESR(src).contains(dst);
+            case defOf:
+                return wordService.fetchInstanceESA(src).contains(dst);
             default:
                 throw new SkeanNotImplementedException();
         }
     }
 
-    /**
-     * unfiltered <--[unfilter]-- filtered
-     * <p>
-     * if filtered too large, unfiltered = sql results on filterPhrases INTERSECTION filtered
-     * if filtered not large, unfiltered = sql results on filterPhrases and IN-filtered-items-criterion
-     *
-     * @param filterPhrases
-     * @param filtered      filtered set, if null means full set
-     * @return unfiltered set
-     */
-    private Collection<String> unfilter(List<FilterPhrase> filterPhrases, Collection<String> filtered) {
-        Criterion[] crits = filterPhrases.stream()
-                .map(FilterPhrase::getBasicCriterion).toArray(BasicCriterion[]::new);
-        if (filtered == null || filtered.size() > MIN_FORWARD_SEARCH) {
-            // if filtered too large, unfiltered = sql results on filterPhrases INTERSECTION filtered
-            List<String> sqlResults = wordDao.listAllWordsMentioned(Criteria.of(crits));
-            if (filtered == null) {
-                return sqlResults;
-            } else {
-                return CollectionUtils.intersection(sqlResults, filtered);
-            }
-        } else {
-            // if filtered not large, unfiltered = sql results on filterPhrases and IN-filtered-items-criterion
-            BasicCriterion inFilteredCriterion = new BasicCriterion("text", "IN", filtered);
-            Criterion[] crits1 = Arrays.copyOf(crits, crits.length + 1);
-            crits1[crits.length] = inFilteredCriterion;
-            List<String> sqlResults = wordDao.listAllWordsMentioned(Criteria.of(crits1));
-            return sqlResults;
+    private Stream<String> mapping(String unmapped, MapNode mapNode) {
+        String arg = mapNode.getVal();
+        switch (mapNode.getType()) {
+            case attr:
+                return wordService.listX1RelsBySAD(unmapped, arg, null).stream()
+                        .map(X1Relation::getDst);
+            case ref:
+                return wordService.listX1RelsBySAD(null, arg, unmapped).stream()
+                        .map(X1Relation::getSrc);
+            case sub:
+                return wordService.fetchSubESR(unmapped).stream();
+            case subs:
+                return wordService.fetchSubsetESR(unmapped).stream();
+            case subt:
+                return wordService.fetchSubtopicESR(unmapped).stream();
+            case inst:
+                return wordService.fetchInstanceESA(unmapped).stream();
+            case sup:
+                return wordService.fetchSuperESR(unmapped).stream();
+            case sups:
+                return wordService.fetchSupersetESR(unmapped).stream();
+            case supt:
+                return wordService.fetchSupertopicESR(unmapped).stream();
+            case def:
+                return wordService.fetchDefinitionESA(unmapped).stream();
+            default:
+                throw new SkeanNotImplementedException();
+
+        }
+    }
+
+    private Set<String> filterFromFullSet(RelFilterNode relFilterNode) {
+        String what = relFilterNode.getVal();
+        switch (relFilterNode.getType()) {
+            case subOf:
+                return wordService.fetchSubESR(what);
+            case subsOf:
+                return wordService.fetchSubsetESR(what);
+            case subtOf:
+                return wordService.fetchSubtopicESR(what);
+            case instOf:
+                return wordService.fetchInstanceESA(what);
+            case supOf:
+                return wordService.fetchSuperESR(what);
+            case supsOf:
+                return wordService.fetchSupersetESR(what);
+            case suptOf:
+                return wordService.fetchSupertopicESR(what);
+            case defOf:
+                return wordService.fetchDefinitionESA(what);
+            default:
+                throw new SkeanNotImplementedException();
         }
     }
 
