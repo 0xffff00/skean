@@ -61,9 +61,8 @@ class CritTreeNodeBuilder {
 
     public CritTreeNode build() {
         if (o != null) {
-            Operator opt = Operator.valueOf(o);
             TextFilterNode n = new TextFilterNode();
-            n.setOpt(opt);
+            n.setOpt(o);
             n.setVal(v);
             return n;
         }

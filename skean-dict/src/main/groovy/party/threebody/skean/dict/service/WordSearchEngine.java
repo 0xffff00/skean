@@ -9,10 +9,7 @@ import party.threebody.skean.dict.dao.BasicRelationDao;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.dao.X1RelationDao;
 import party.threebody.skean.dict.domain.X1Relation;
-import party.threebody.skean.dict.domain.criteria.CritTreeNode;
-import party.threebody.skean.dict.domain.criteria.MapNode;
-import party.threebody.skean.dict.domain.criteria.RelFilterNode;
-import party.threebody.skean.dict.domain.criteria.TextFilterNode;
+import party.threebody.skean.dict.domain.criteria.*;
 import party.threebody.skean.misc.SkeanNotImplementedException;
 import party.threebody.skean.web.data.CriteriaBuilder;
 
@@ -34,8 +31,11 @@ public class WordSearchEngine {
     @Autowired BasicRelationDao basicRelationDao;
     @Autowired X1RelationDao x1RelationDao;
 
-    public static final int MIN_FORWARD_SEARCH = 10;
+    public static final int LARGE_SIZE_THRESHOLD = 20;
 
+    public Set<String> searchByJson(String json) {
+        return search(CritTrees.fromJson(json));
+    }
 
     /**
      * prior:
@@ -48,6 +48,9 @@ public class WordSearchEngine {
         return filter(null, critTreeNodes);
     }
 
+    private static boolean tooManyUnfiltered(Set<String> unfiltered) {
+        return unfiltered == null || unfiltered.size() > LARGE_SIZE_THRESHOLD;
+    }
 
     /**
      * unfiltered --[filter]--> filtered
@@ -61,19 +64,25 @@ public class WordSearchEngine {
      */
     private Set<String> filterBySql(Set<String> unfiltered, List<TextFilterNode> textFilterNodes) {
         List<BasicCriterion> crits = textFilterNodes.stream().map(TextFilterNode::toBasicCriterion).collect(toList());
-        if (unfiltered != null && unfiltered.size() < MIN_FORWARD_SEARCH) {
+        if (unfiltered == null) {
+            List<String> sqlResults = wordDao.listAllWordsMentioned(Criteria.of(crits));
+            return new HashSet<>(sqlResults);
+        } else if (unfiltered.isEmpty()) {
+            return unfiltered;
+        } else if (tooManyUnfiltered(unfiltered)) {
+            List<String> sqlResults = wordDao.listAllWordsMentioned(Criteria.of(crits));
+            return sqlResults.stream().filter(unfiltered::contains).collect(toSet());
+        } else {
             BasicCriterion crit1 = new BasicCriterion("text", "IN", unfiltered);
             crits.add(crit1);
             return new HashSet<>(wordDao.listAllWordsMentioned(Criteria.of(crits)));
-        } else {
-            List<String> sqlResults = wordDao.listAllWordsMentioned(Criteria.of(crits));
-            return sqlResults.stream().filter(unfiltered::contains).collect(toSet());
         }
     }
 
     private Set<String> filter(Set<String> unfiltered, RelFilterNode relFilterNode) {
-        boolean tooManyUnfiltered = unfiltered == null || unfiltered.size() > MIN_FORWARD_SEARCH;
-        if (tooManyUnfiltered) {
+        if (unfiltered == null) {
+            return filterFromFullSet(relFilterNode);
+        } else if (tooManyUnfiltered(unfiltered)) {
             return SetUtils.intersection(filterFromFullSet(relFilterNode), unfiltered);
         } else {
             return unfiltered.stream().filter(src -> evaluate(src, relFilterNode)).collect(toSet());
@@ -81,21 +90,18 @@ public class WordSearchEngine {
     }
 
     private Set<String> filter(Set<String> unfiltered, MapNode mapNode) {
-        boolean tooManyUnfiltered = unfiltered == null || unfiltered.size() > MIN_FORWARD_SEARCH * 1000;
-        if (tooManyUnfiltered) {
-            // TODO realize backward derivation (filter->unmap->..->unmap)
-            throw new SkeanNotImplementedException();
-        } else {
-            if (unfiltered == null) {
-                // TODO to be removed cuz of low performance.
-                unfiltered = new HashSet<>(wordDao.listAllWordsMentioned(Criteria.ALLOW_ALL));
-            }
-            return unfiltered.stream().filter(x -> {
-                Set<String> mapped = mapping(x, mapNode).collect(toSet());
-                Set<String> res1 = filter(mapped, mapNode.getChildren());
-                return !res1.isEmpty();
-            }).collect(toSet());
+        if (unfiltered == null) {
+            // TODO to be removed cuz of low performance.
+            unfiltered = new HashSet<>(wordDao.listAllWordsMentioned(Criteria.ALLOW_ALL));
         }
+        // TODO realize backward derivation (filter->unmap->..->unmap)
+
+        return unfiltered.stream().filter(x -> {
+            Set<String> mapped = mapping(x, mapNode).collect(toSet());
+            Set<String> res1 = filter(mapped, mapNode.getChildren());
+            return !res1.isEmpty();
+        }).collect(toSet());
+
     }
 
     private Set<String> filter(Set<String> unfiltered, List<CritTreeNode> nodes) {

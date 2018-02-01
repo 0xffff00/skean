@@ -5,19 +5,18 @@ import party.threebody.skean.data.query.Operator;
 
 public class TextFilterNode extends FilterNode {
     private static String NAME = "text";
-    private Operator opt;
+    private String opt;
 
-    public Operator getOpt() {
+    public String getOpt() {
         return opt;
     }
 
-    public void setOpt(Operator opt) {
+    public void setOpt(String opt) {
         this.opt = opt;
     }
 
     public BasicCriterion toBasicCriterion() {
-        // TODO a static criteriaBuilder
-        return new BasicCriterion(NAME, opt.getExpression(), getVal());
+        return new BasicCriterion(NAME, opt, getVal());
     }
 
 }
