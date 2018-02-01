@@ -1,7 +1,10 @@
 package party.threebody.skean.dict.domain.criteria;
 
+import java.util.List;
+
 public class MapNode extends CritTreeNode {
     private Type type;
+    private List<CritTreeNode> children;
 
     public Type getType() {
         return type;
@@ -11,6 +14,13 @@ public class MapNode extends CritTreeNode {
         this.type = type;
     }
 
+    public List<CritTreeNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<CritTreeNode> children) {
+        this.children = children;
+    }
     public enum Type {
         ref(4), attr(7),
         sub(9), inst(8), subs(3), subt(3),

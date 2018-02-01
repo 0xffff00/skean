@@ -79,7 +79,7 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
      */
     @GetMapping("/search")
     public Collection<String> search(@RequestParam Map<String, Object> paramMap) {
-        return searchEngine.search(paramMap);
+        return searchEngine.search(null);
     }
 
 }

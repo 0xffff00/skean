@@ -93,10 +93,10 @@ public class WordSearchApiTests {
 //        assertSizeEquals(se.search(Maps.of("subsetOf", "中国学校")), 2);
 //        assertSetEquals(se.search(Maps.of("subtopicOf", "A校")), "A校学生");
 //        assertSizeEquals(se.search(Maps.of("instanceOf", "A校学生")), 4);
-        assertSetEquals(se.search(Maps.of("attr^text_NE", "出生年份^1991")),
-                "李雷", "Lucy");
-        assertSetEquals(se.search(Maps.of("instanceOf", "A校k届3班学生", "attr^text_NE", "出生年份^1991")),
-                 "Lucy");
+//        assertSetEquals(se.search(Maps.of("attr^text_NE", "出生年份^1991")),
+//                "李雷", "Lucy");
+//        assertSetEquals(se.search(Maps.of("instanceOf", "A校k届3班学生", "attr^text_NE", "出生年份^1991")),
+//                 "Lucy");
         Maps.of("attr^attr^d_LE","省籍^GDP省排名^3");
         Maps.of("attr^instanceOf^s_K","省籍^辖");
         Maps.of("attr^instanceOf^s","省籍^直辖市");
