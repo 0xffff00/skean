@@ -35,7 +35,6 @@ import java.util.Map;
 public class WordController extends SinglePKUriVarCrudRestController<Word, String> {
     @Autowired WordDao wordDao;
     @Autowired WordService wordService;
-    @Autowired WordSearchEngine searchEngine;
 
     @Override
     public void buildCrudFunctions(SinglePKCrudFunctionsBuilder<Word, String> builder) {
@@ -59,9 +58,5 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
         return ResponseEntity.ok().body(word);
     }
 
-    @GetMapping("/search")
-    public Collection<String> search(@RequestParam String q) {
-        return searchEngine.searchByJson(q);
-    }
 
 }

@@ -31,6 +31,7 @@ public class SqlPrinter {
 
     SqlPrinterConfig config;
     static final Logger logger = LoggerFactory.getLogger(SqlPrinter.class);
+
     public SqlPrinter(SqlPrinterConfig config) {
         super();
         this.config = config;
@@ -100,6 +101,9 @@ public class SqlPrinter {
     }
 
     private <T> String stringify(T bean) {
+        if (bean == null) {
+            return null;
+        }
         switch (config.getPrintSqlResultStrategy()) {
             case JACKSON:
                 // TODO refactor sqlPrintConfig

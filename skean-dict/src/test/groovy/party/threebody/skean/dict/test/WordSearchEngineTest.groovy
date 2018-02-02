@@ -72,7 +72,6 @@ public class WordSearchEngineTest {
         for (X1Relation x1r : x1rels) {
             wordService.createX1Relation(x1r);
         }
-
         // ---test tree.height=1
         assertSetEquals(se.searchByJson('[{"o":"EQ","v":"Lily"}]'), "Lily")
         assertSetEquals(se.searchByJson('[{"o":"K","v":"i"}]'), "Lily")
