@@ -3,15 +3,15 @@ package party.threebody.skean.dict.domain.criteria;
 import java.util.List;
 
 public class MapNode extends CritTreeNode {
-    private Type type;
+    private Mapper mapper;
     private List<CritTreeNode> children;
 
-    public Type getType() {
-        return type;
+    public Mapper getMapper() {
+        return mapper;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setMapper(Mapper mapper) {
+        this.mapper = mapper;
     }
 
     public List<CritTreeNode> getChildren() {
@@ -21,13 +21,13 @@ public class MapNode extends CritTreeNode {
     public void setChildren(List<CritTreeNode> children) {
         this.children = children;
     }
-    public enum Type {
+    public enum Mapper {
         ref(4), attr(7),
         sub(9), inst(8), subs(3), subt(3),
         sup(3), def(2), sups(2), supt(2);
         private int cost;
 
-        Type(int cost) {
+        Mapper(int cost) {
             this.cost = cost;
         }
     }

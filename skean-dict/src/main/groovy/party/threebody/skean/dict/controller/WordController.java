@@ -26,6 +26,7 @@ import party.threebody.skean.dict.service.WordService;
 import party.threebody.skean.web.mvc.controller.SinglePKCrudFunctionsBuilder;
 import party.threebody.skean.web.mvc.controller.SinglePKUriVarCrudRestController;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -58,28 +59,9 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
         return ResponseEntity.ok().body(word);
     }
 
-    /**
-     * <pre>
-     * <b>--- a example ---</b>
-     * find a high school
-     * which principal is a Shanghaiese
-     * and which located in Pudong
-     * and which is Bob's motherschool
-     * and which name contains Normal
-     * <b>--- this will be translated to:---</b>
-     * /search
-     * ?text_K=Normal
-     * &instanceOf=school
-     * &attr^text=location^Pudong
-     * &attr^instanceOf=principal^Shanghaiese
-     * &ref^text=motherschool^Bob
-     *
-     *
-     * </pre>
-     */
     @GetMapping("/search")
-    public Collection<String> search(@RequestParam Map<String, Object> paramMap) {
-        return searchEngine.search(null);
+    public Collection<String> search(@RequestParam String q) {
+        return searchEngine.searchByJson(q);
     }
 
 }

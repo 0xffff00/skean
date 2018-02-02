@@ -77,43 +77,45 @@ public class WordSearchEngineTest {
         assertSetEquals(se.searchByJson('[{"o":"EQ","v":"Lily"}]'), "Lily")
         assertSetEquals(se.searchByJson('[{"o":"K","v":"i"}]'), "Lily")
         assertSetEquals(se.searchByJson('[{"o":"KR","v":"y"}]'), "Lily", "Lucy")
-        assertSizeEquals(se.searchByJson('[{"t":"subOf","v":"北京高中"}]'), 9)
-        assertSetEquals(se.searchByJson('[{"t":"instOf","v":"北京高中"}]'), "A校", "B校")
-        assertSizeEquals(se.searchByJson('[{"t":"subsOf","v":"中国学校"}]'), 2)
-        assertSetEquals(se.searchByJson('[{"t":"subtOf","v":"A校"}]'), "A校学生")
-        assertSizeEquals(se.searchByJson('[{"t":"instOf","v":"A校学生"}]'), 4)
+        assertSizeEquals(se.searchByJson('[{"f":"subOf","v":"北京高中"}]'), 9)
+        assertSetEquals(se.searchByJson('[{"f":"instOf","v":"北京高中"}]'), "A校", "B校")
+        assertSizeEquals(se.searchByJson('[{"f":"subsOf","v":"中国学校"}]'), 2)
+        assertSetEquals(se.searchByJson('[{"f":"subtOf","v":"A校"}]'), "A校学生")
+        assertSizeEquals(se.searchByJson('[{"f":"instOf","v":"A校学生"}]'), 4)
         // ---test higher tree but no multi children
-        assertSetEquals(se.searchByJson('[{"t":"attr","v":"出生年份","ch":[{"o":"NE","v":"1991"}]}]'),
+        assertSetEquals(se.searchByJson('[{"m":"attr","x":"出生年份","ch":[{"o":"NE","v":"1991"}]}]'),
                 "李雷", "Lucy")
+        assertSetEquals(se.searchByJson('[{"m":"attr","x":"出生年份","o0":"GE","v0":"1993"}]'),
+                "Lucy")
         // GDP前三名的富省人
         assertSetEquals(se.searchByJson('''
-[{"t":"attr","v":"省籍","ch":[
-  {"t":"attr","v":"GDP省排名","ch":[{"o":"LE","v":"3"}]}
+[{"m":"attr","x":"省籍","ch":[
+  {"m":"attr","x":"GDP省排名","ch":[{"o":"LE","v":"3"}]}
 ]}]'''), "韩梅梅")
         // 省籍是直辖市的A校男生
         assertSetEquals(se.searchByJson('''[
-{"t":"attr","v":"省籍","ch":[{"t":"instOf","v":"直辖市"}]},
-{"t":"attr","v":"性别","ch":[{"o":"EQ","v":"男"}]},
-{"t":"instOf","v":"A校学生"}]},
+{"m":"attr","x":"省籍","ch":[{"f":"instOf","v":"直辖市"}]},
+{"m":"attr","x":"性别", "v0":"男"},
+{"f":"instOf","v":"A校学生"}]},
 ]'''), "李雷")
         // 外国女生
         assertSetEquals(se.searchByJson('''[
-{"t":"attr","v":"国籍","ch":[{"o":"NE","v":"中国"}]},
-{"t":"attr","v":"性别","ch":[{"o":"EQ","v":"女"}]}
+{"m":"attr","x":"国籍","ch":[{"o":"NE","v":"中国"}]},
+{"m":"attr","x":"性别", "v0":"女"}
 ]'''), "Lucy", "Lily")
         // A校k届3班的外国女生
         assertSetEquals(se.searchByJson('''[
-{"t":"attr","v":"国籍","ch":[{"o":"NE","v":"中国"}]},
-{"t":"attr","v":"性别","ch":[{"o":"EQ","v":"女"}]},
-{"t":"instOf","v":"A校k届3班学生"}
+{"m":"attr","x":"国籍","ch":[{"o":"NE","v":"中国"}]},
+{"m":"attr","x":"性别","ch":[{"o":"EQ","v":"女"}]},
+{"f":"instOf","v":"A校k届3班学生"}
 ]'''), "Lucy")
 
         // 4星以上的,名字A开头的北京高校的学生
         assertSizeEquals(se.searchByJson('''
 [
-    {"t":"instOf","v":"北京学生"},
-    {"t":"sup","ch":[
-        {"t":"attr","v":"星级","ch":[{"o":"GT","v":"4"}]},
+    {"f":"instOf","v":"北京学生"},
+    {"m":"sup","ch":[
+        {"m":"attr","x":"星级","o0":"GT","v0":"4"},
         {"o":"KL","v":"A"}
     ]}
 ]'''), 4)

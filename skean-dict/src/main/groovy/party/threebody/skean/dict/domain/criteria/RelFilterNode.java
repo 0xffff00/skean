@@ -1,22 +1,22 @@
 package party.threebody.skean.dict.domain.criteria;
 
 public class RelFilterNode extends FilterNode {
-    private Type type;
+    private Pred pred;
 
-    public Type getType() {
-        return type;
+    public Pred getPred() {
+        return pred;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setPred(Pred pred) {
+        this.pred = pred;
     }
 
-    public enum Type {
+    public enum Pred {
         subOf(9), instOf(8), subsOf(3), subtOf(3),
         supOf(3), defOf(2), supsOf(2), suptOf(2);
         private int cost;
 
-        Type(int cost) {
+        Pred(int cost) {
             this.cost = cost;
         }
     }

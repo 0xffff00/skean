@@ -134,8 +134,8 @@ public class WordSearchEngine {
     }
 
     private boolean evaluate(String src, RelFilterNode relFilterNode) {
-        String dst = relFilterNode.getVal();
-        switch (relFilterNode.getType()) {
+        String dst = relFilterNode.getValStr();
+        switch (relFilterNode.getPred()) {
             case subOf:
                 return wordService.fetchSuperESR(src).contains(dst);
             case subsOf:
@@ -158,8 +158,8 @@ public class WordSearchEngine {
     }
 
     private Stream<String> mapping(String unmapped, MapNode mapNode) {
-        String arg = mapNode.getVal();
-        switch (mapNode.getType()) {
+        String arg = mapNode.getX();
+        switch (mapNode.getMapper()) {
             case attr:
                 return wordService.listX1RelsBySAD(unmapped, arg, null).stream()
                         .map(X1Relation::getDst);
@@ -189,8 +189,8 @@ public class WordSearchEngine {
     }
 
     private Set<String> filterFromFullSet(RelFilterNode relFilterNode) {
-        String what = relFilterNode.getVal();
-        switch (relFilterNode.getType()) {
+        String what = relFilterNode.getValStr();
+        switch (relFilterNode.getPred()) {
             case subOf:
                 return wordService.fetchSubESR(what);
             case subsOf:
