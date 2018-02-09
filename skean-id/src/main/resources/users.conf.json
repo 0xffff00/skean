@@ -1,0 +1,25 @@
+[
+  {
+    "username": "HZK",
+    "password": "123",
+    "authorities": [
+      "ADMIN"
+    ]
+  },
+  {
+    "username": "Alice",
+    "password": "123",
+    "authorities": [
+      "ADMIN",
+      "SITE1"
+    ]
+  },
+  {
+    "username": "Bob",
+    "password": "123",
+    "authorities": [
+      "SITE1",
+      "SITE2"
+    ]
+  }
+]

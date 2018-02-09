@@ -1,0 +1,5 @@
+server:
+  port: 8910
+
+
+#logging.level.org.springframework.security: DEBUG
