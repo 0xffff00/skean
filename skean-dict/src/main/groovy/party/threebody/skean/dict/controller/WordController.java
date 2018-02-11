@@ -59,4 +59,5 @@ public class WordController extends SinglePKUriVarCrudRestController<Word, Strin
     }
 
 
+
 }

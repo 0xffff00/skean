@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import party.threebody.skean.data.query.Criteria;
+import party.threebody.skean.data.query.CriteriaAndSortingAndPaging;
 import party.threebody.skean.dict.dao.BasicRelationDao;
 import party.threebody.skean.dict.dao.WordDao;
 import party.threebody.skean.dict.dao.X1RelationDao;
@@ -111,8 +112,8 @@ public class WordService {
         return instanceESA;
     }
 
-    int countInstanceES0(String me){
-        return countBasicRelsBySAD(me,"INST",null);
+    int countInstanceES0(String me) {
+        return countBasicRelsBySAD(me, "INST", null);
     }
 
     /**
@@ -139,9 +140,11 @@ public class WordService {
     public Set<String> fetchSupersetESR(String me) {
         return fetchSubsetRSR(me).stream().map(BasicRelation::getSrc).collect(toSet());
     }
+
     public Set<String> fetchSubtopicESR(String me) {
         return fetchSubtopicRSR(me).stream().map(BasicRelation::getDst).collect(toSet());
     }
+
     public Set<String> fetchSupertopicESR(String me) {
         return fetchSubtopicRSR(me).stream().map(BasicRelation::getSrc).collect(toSet());
     }
@@ -182,6 +185,7 @@ public class WordService {
         dagVisitor.visitFrom(me);
         return dagVisitor.getVerticesVisitedExceptSource();
     }
+
     /**
      * TODO cache this
      *
@@ -207,6 +211,7 @@ public class WordService {
     protected List<BasicRelation> listBasicRelsNonAlias() {
         return basicRelationDao.listNonAlias();
     }
+
     /**
      * TODO cache this
      *
@@ -295,6 +300,10 @@ public class WordService {
         }
         return rna;
 
+    }
+
+    public List<String> listAllWordsMentioned(CriteriaAndSortingAndPaging csp) {
+        return wordDao.listAllWordsMentioned(csp);
     }
 
 

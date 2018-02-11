@@ -75,8 +75,11 @@ public class SqlPrinter {
             int lnmax = config.getMaxCharsToPrintInOneLine() - 1;
             StringBuilder sb = new StringBuilder();
             int i = 0, ln = 0;
-            for (i = 0, ln = 0; i < count; i++) {
+            for (; i < count; i++) {
                 String str = stringify(resultList.get(i));
+                if (str == null) {
+                    str = "(null)";
+                }
                 if (sb.length() + str.length() > rsmax) {
                     break;
                 }
