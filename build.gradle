@@ -8,7 +8,7 @@ configure(allprojects) { project ->
 
             //apache commons
             'commons-lang'        : '2.6',
-            'commons-lang3'       : '3.5',
+            'commons-lang3'       : '3.7',
             'commons-collections' : '3.2.2',
             'commons-collections4': '4.1',
             'commons-io'          : '2.5',
@@ -24,19 +24,19 @@ configure(allprojects) { project ->
             'slf4j'               : '1.7.25',
 
             //spring
-            'spring'              : '5.0.0.RELEASE',
-            'spring-security'     : '5.0.0.M3',
-            'spring-boot'         : '2.0.0.M4',
+            'spring'              : '5.0.3.RELEASE',
+            'spring-security'     : '5.0.1.RELEASE',
+            'spring-boot'         : '2.0.0.RC1',
 
             //others
             'guava'               : '21.0',
-            'jackson'             : '2.9.1',
+            'jackson'             : '2.9.4',
             'ehcache'             : '3.3.1',
             'junit'               : '4.12',
 
             //data
-            'mariadb-java-client' : '2.1.1',
-            'HikariCP'            : '2.7.1',
+            'mariadb-java-client' : '2.2.1',
+            'HikariCP'            : '2.7.7',
             'h2'                  : '1.4.196'
     ]
 
