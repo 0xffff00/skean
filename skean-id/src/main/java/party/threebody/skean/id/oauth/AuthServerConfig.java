@@ -12,18 +12,16 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-import java.util.Arrays;
-
-@EnableAuthorizationServer
 @Configuration
+@EnableAuthorizationServer
 class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
-    @Autowired
-    AuthenticationManager authenticationManager;
+    @Autowired AuthenticationManager authenticationManager;
+
+    @Autowired AuthServerConfigProperties authServerConfigProperties;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -34,12 +32,12 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory().withClient("c1")
-                .secret("123")
+        clients.inMemory().withClient(authServerConfigProperties.getClientId())
+                .secret(authServerConfigProperties.getClientSecret())
                 .authorizedGrantTypes("password", "authorization_code", "refresh_token")
-                .scopes("write", "read", "write", "m11", "m12")
-                .accessTokenValiditySeconds(3600)
-                .refreshTokenValiditySeconds(3600 * 24 * 30)
+                .scopes("write", "read")
+                .accessTokenValiditySeconds(authServerConfigProperties.getAccessTokenValiditySeconds())
+                .refreshTokenValiditySeconds(authServerConfigProperties.getRefreshTokenValiditySeconds())
 
         //.authorities("ADMIN1")
         ;
@@ -53,7 +51,7 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("123");
+        converter.setSigningKey(authServerConfigProperties.getJwtSigningKey());
         //converter.setVerifierKey("123");
         //converter.setJwtClaimsSetVerifier(jwtClaimsSetVerifier());
         return converter;
@@ -65,15 +63,12 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setTokenEnhancer(tokenEnhancer());
         defaultTokenServices.setSupportRefreshToken(true);
-        defaultTokenServices.setAccessTokenValiditySeconds(7200);
+        defaultTokenServices.setAccessTokenValiditySeconds(authServerConfigProperties.getAccessTokenValiditySeconds());
         return defaultTokenServices;
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        // InMemoryTokenStore ts = new InMemoryTokenStore();
-        final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
         endpoints
                 .tokenStore(tokenStore())
                 .tokenServices(tokenServices())
@@ -84,7 +79,6 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public TokenEnhancer tokenEnhancer() {
         return new JwtAccessTokenConverter();
-        //return new BaeldungCustomTokenEnhancer();
     }
 
 

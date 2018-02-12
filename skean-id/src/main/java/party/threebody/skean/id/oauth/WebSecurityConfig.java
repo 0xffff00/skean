@@ -7,57 +7,66 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.util.ResourceUtils;
 import party.threebody.skean.id.oauth.domain.SkUser;
-import party.threebody.skean.lang.ObjectMappers;
+import party.threebody.skean.misc.SkeanInvalidArgumentException;
 import party.threebody.skean.misc.SkeanNotImplementedException;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired AuthServerConfigProperties authServerConfigProperties;
 
     static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     @Autowired ApplicationContext applicationContext;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService());
+        auth.userDetailsService(userDetailsService())
+                .passwordEncoder(passwordEncoder());
     }
 
+    // only support load from file now
     @Bean
     public UserDetailsService userDetailsService() {
-        List<SkUser> skUsers=SkeanResources.readValueFromLocalJsonFile(
-                "classpath:users.conf.json",
+        List<SkUser> skUsers = SkeanResources.readValueFromLocalJsonFile(
+                authServerConfigProperties.getInMemoryUserConfFilePath(),
                 new TypeReference<List<SkUser>>() {
-        });
-
-        if (skUsers!=null){ // load to memory
-            InMemoryUserDetailsManager m = new InMemoryUserDetailsManager();
-            skUsers.forEach(u->{
-                m.createUser(u.toSpringSecurityUser());
-            });
-            return m;
+                });
+        if (skUsers == null) {
+            throw new SkeanInvalidArgumentException("No any available users!");
         }
-        throw new SkeanNotImplementedException();
+        if (authServerConfigProperties.getUserPasswordStyle().equals("encrypted")) {
+            // no op
+        } else if (authServerConfigProperties.getUserPasswordStyle().equals("plain")) {
+            skUsers = skUsers.stream()
+                    .map(u -> u.toEncyptedInstance(passwordEncoder())).collect(Collectors.toList());
+        } else {
+            throw new SkeanNotImplementedException("wrong style: " + authServerConfigProperties.getUserPasswordStyle());
+        }
+
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        for (SkUser u : skUsers) {
+            manager.createUser(u.toSpringSecurityUser());
+        }
+        return manager;
     }
 
     @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Override

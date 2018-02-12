@@ -2,6 +2,7 @@ package party.threebody.skean.id.oauth.domain;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import party.threebody.skean.collections.Sets;
 
 import java.util.Set;
@@ -36,6 +37,15 @@ public class SkUser {
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    // translate plain password to encrypted
+    public SkUser toEncyptedInstance(PasswordEncoder passwordEncoder) {
+        SkUser u = new SkUser();
+        u.setUsername(username);
+        u.setPassword(passwordEncoder.encode(password));
+        u.setAuthorities(authorities);
+        return u;
     }
 
     public User toSpringSecurityUser() {
