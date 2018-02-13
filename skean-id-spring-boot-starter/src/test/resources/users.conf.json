@@ -1,0 +1,25 @@
+[
+  {
+    "username": "HZK",
+    "password": "$2a$10$YDWJ6IW7t0zFckP1LkKcGuklzG027BkVjIxtnpVR8WuBEQvzbbsAi",
+    "authorities": [
+      "ADMIN"
+    ]
+  },
+  {
+    "username": "Alice",
+    "password": "$2a$10$YDWJ6IW7t0zFckP1LkKcGuklzG027BkVjIxtnpVR8WuBEQvzbbsAi",
+    "authorities": [
+      "ADMIN",
+      "SITE1"
+    ]
+  },
+  {
+    "username": "Bob",
+    "password": "$2a$10$YDWJ6IW7t0zFckP1LkKcGuklzG027BkVjIxtnpVR8WuBEQvzbbsAi",
+    "authorities": [
+      "SITE1",
+      "SITE2"
+    ]
+  }
+]

@@ -1,4 +1,4 @@
-package party.threebody.skean.id.oauth;
+package party.threebody.skean.web.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
@@ -9,8 +9,11 @@ import party.threebody.skean.lang.ObjectMappers;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * @see org.springframework.util.ResourceUtils
+ */
 public class SkeanResources {
-    static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
+    static final Logger logger = LoggerFactory.getLogger(SkeanResources.class);
 
     public static <T> T readValueFromLocalJsonFile(String jsonFilePath, TypeReference<T> typeReference) {
         try {
