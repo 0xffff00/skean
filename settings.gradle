@@ -8,4 +8,5 @@ include 'skean-web-spring-boot-starter'
 include 'skean-id-oauth-server'
 include 'skean-dict'
 include 'skean-id-spring-boot-starter'
-
+include 'skean-samples'
+include 'skean-samples:navyapp'

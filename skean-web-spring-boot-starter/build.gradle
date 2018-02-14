@@ -1,8 +1,6 @@
 apply plugin: 'java'
 
 dependencies {
-    testCompile project(':skean-jdbc-spring-boot-starter')
-
     compile project(':skean-web')
 
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: versions.'spring-boot'
@@ -12,7 +10,6 @@ dependencies {
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
 
-    testCompile group: 'com.h2database', name: 'h2', version: versions.h2
 
 
 
