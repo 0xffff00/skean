@@ -12,9 +12,6 @@ spring:
 server:
   port: 18920
 
-logging:
-  level: DEBUG
-
 skean:
   jdbc:
     sql-builder:
