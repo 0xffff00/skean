@@ -1,0 +1,14 @@
+server:
+  port: 8910
+
+skean:
+  id:
+    oauth-auth-server:
+      client-id: c1
+      client-secret: '$2a$10$G4OlUys4SJH4KmLtmq8Cqep1.XOlRghB4e47ApJbxviMMyQxbp01W' # a bcrypt output of 123456
+
+      user-password-style: encrypted #plain or encrypted
+      #user-password-storingStyle: inMemory
+      jwt-signing-key: 888
+
+#logging.level.org.springframework.security: DEBUG

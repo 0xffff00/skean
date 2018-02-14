@@ -16,5 +16,6 @@ skean:
   jdbc:
     sql-builder:
       modify-all-rows-enabled: true
-
   id:
+    oauth-res-server:
+      jwt-signing-key: 888

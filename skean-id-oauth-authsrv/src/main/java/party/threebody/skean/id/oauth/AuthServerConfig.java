@@ -52,8 +52,6 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(authServerConfigProperties.getJwtSigningKey());
-        //converter.setVerifierKey("123");
-        //converter.setJwtClaimsSetVerifier(jwtClaimsSetVerifier());
         return converter;
     }
 
@@ -61,7 +59,7 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     public DefaultTokenServices tokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setTokenEnhancer(tokenEnhancer());
+        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setAccessTokenValiditySeconds(authServerConfigProperties.getAccessTokenValiditySeconds());
         return defaultTokenServices;
@@ -70,16 +68,11 @@ class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
-                .tokenStore(tokenStore())
                 .tokenServices(tokenServices())
                 .authenticationManager(authenticationManager);  //required
 
     }
 
-    @Bean
-    public TokenEnhancer tokenEnhancer() {
-        return new JwtAccessTokenConverter();
-    }
 
 
 }

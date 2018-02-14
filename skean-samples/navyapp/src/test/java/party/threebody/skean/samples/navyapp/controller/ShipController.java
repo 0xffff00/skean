@@ -33,6 +33,10 @@ public class ShipController extends SinglePKUriVarCrudRestController<Ship, Strin
                 .oneDeleter(shipService::delete);
     }
 
+    @GetMapping("/hi")
+    public String hi() {
+        return "hi";
+    }
 
     @GetMapping("/2222")
     @Override

@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=party.threebody.skean.id.oauth.ressrv.autoconfigure.ResServerAutoConfiguration

@@ -4,10 +4,14 @@ group 'party.threebody.skean.samples'
 dependencies {
     compile project(':skean-jdbc-spring-boot-starter')
     compile project(':skean-web-spring-boot-starter')
-    compile project(':skean-id-spring-boot-starter')
+    compile project(':skean-id-oauth-ressrv-spring-boot-starter')
+
+    //compile project(':skean-id-spring-boot-starter')
+    // compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: versions.'spring-boot'
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-devtools', version: versions.'spring-boot'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.'spring-boot'
+
 
 
     testCompile group: 'com.h2database', name: 'h2', version: versions.h2

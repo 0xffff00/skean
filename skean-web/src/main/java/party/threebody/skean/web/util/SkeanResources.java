@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * @see org.springframework.util.ResourceUtils
  */
-public class SkeanResources {
+public final class SkeanResources {
     static final Logger logger = LoggerFactory.getLogger(SkeanResources.class);
 
     public static <T> T readValueFromLocalJsonFile(String jsonFilePath, TypeReference<T> typeReference) {

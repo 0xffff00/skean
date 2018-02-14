@@ -4,16 +4,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("skean.auth-server")
+@ConfigurationProperties("skean.id.oauth-auth-server")
 public class AuthServerConfigProperties {
-    private String clientId = "skean-id-0";
+    private String clientId = "skean-id-authsrv-0";
     private String clientSecret;
 
     private String userPasswordStyle = "encrypt";
     private String inMemoryUserConfFilePath = "classpath:users.conf.json";
 
-    private int accessTokenValiditySeconds = 3600;
-    private int refreshTokenValiditySeconds = 3600 * 24 * 30;
+    private int refreshTokenValiditySeconds = 3600 * 24 * 60; // default 60 days.
+
+    private int accessTokenValiditySeconds = 3600 * 24 * 7; // default 7 days.
+
     private String jwtSigningKey;
 
     public String getClientId() {

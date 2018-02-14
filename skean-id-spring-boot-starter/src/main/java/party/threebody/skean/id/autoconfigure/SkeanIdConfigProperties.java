@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("skean.id")
-    public class SkeanIdConfigProperties {
+public class SkeanIdConfigProperties {
 
     private String userConfFilePath = "classpath:users.conf.json";
 
