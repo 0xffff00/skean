@@ -97,9 +97,9 @@ public class ShipApiTests {
         restTemplate.exchange(RequestEntity.post(new URI("/ships2"))
                 .accept(APPLICATION_JSON).body(ss01), Ship.class);
         restTemplate.exchange(RequestEntity.post(new URI("/ships2"))
-                .accept(APPLICATION_JSON).body(ss01), Ship.class);
+                .accept(APPLICATION_JSON).body(ss02), Ship.class);
         restTemplate.exchange(RequestEntity.post(new URI("/ships2"))
-                .accept(APPLICATION_JSON).body(ss01), Ship.class);
+                .accept(APPLICATION_JSON).body(ss03), Ship.class);
 
         Ship ss00got = restTemplate.getForObject("/ships2/SS00", Ship.class);
         Ship ss01got = restTemplate.getForObject("/ships2/SS01", Ship.class);
