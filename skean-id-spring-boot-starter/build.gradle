@@ -10,7 +10,6 @@ buildscript {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(':skean-web-spring-boot-starter')
 
@@ -23,7 +22,4 @@ dependencies {
 
 
 
-}
-bootJar {
-    enabled = true
 }
